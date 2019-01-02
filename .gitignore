@@ -3,6 +3,9 @@
 *.ap_
 *.aab
 
+# TODO 리스트 파일
+TODO-list.txt
+
 # Files for the ART/Dalvik VM
 *.dex
 
