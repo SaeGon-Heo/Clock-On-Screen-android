@@ -1,0 +1,34 @@
+﻿사용 가능한 구성요소
+.z		(string)		Line break (줄바꿈)\n
+.a		uuuu			년 (2018)\n
+.b		uu			년 (18)\n
+.c		Q			분기 (1 ~ 4)\n
+.d		QQQ			분기 (Q1, Q2, Q3, Q4)\n\n
+.e		M			월 (1 ~ 12)\n
+.f		MM			월 (01 ~ 12)\n
+.g		MMM			월 (Jan, Feb...)\n
+.h		MMMM			월 (January, February...)\n
+,i		W			주차 (1 ~ 5)\n\n
+.j		d			일 (1 ~ 31)\n
+.k		dd			일 (01 ~ 31)\n
+.l		EE			요일 (Mon, Tus...)\n
+.m		EEEE			요일 (Monday, Tuesday...)\n\n
+.n		a			"AM" 또는 "PM"\n
+.o		h			시간 (1 ~ 12)\n
+.p		hh			시간 (01 ~ 12)\n
+.q		H			시간 (0 ~ 23)\n
+.r		HH			시간 (00 ~ 23)\n
+.s		m			분 (0 ~ 59)\n
+.t		mm			분 (00 ~ 59)\n
+.u		s	    \uF002	초 (0 ~ 59)\n
+.v		ss	    \uF001	초 (00 ~ 59)\n\n
+.w		(none)	    \uF000	배터리 (0 ~ 100%⊙)\n
+..		(string)		.\n
+
+
+\uF00X = 유니코드 내 Private Use Area
+
+(삭제된 요소)
+%m	1	6	베터리(0~100)\n
+%n	2	6	베터리 충전상태\n\n
+%:	0	6	깜빡거리는 :

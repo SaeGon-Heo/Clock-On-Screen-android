@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_subject_text_position">
+        <Preference
+            android:title="@string/pref_clocktext_title"
+            android:summary="@string/pref_clocktext_des"
+            android:key="mClockText" />
+        <ListPreference
+            android:title="@string/pref_clockposition_title"
+            android:key="mClockPosition"
+            android:defaultValue="2"
+            android:entries="@array/pref_clockposition_list"
+            android:entryValues="@array/pref_clockposition_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <ListPreference
+            android:title="@string/pref_fsmode_title"
+            android:key="mFSMode_List"
+            android:defaultValue="0"
+            android:entries="@array/pref_fsmode_list"
+            android:entryValues="@array/pref_fsmode_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <Preference
+            android:title="@string/pref_clocktext_notfs_title"
+            android:summary="@string/pref_clocktext_des"
+            android:enabled="false"
+            android:key="mClockText_NotFS" />
+        <ListPreference
+            android:title="@string/pref_clockposition_notfs_title"
+            android:key="mClockPosition_NotFS"
+            android:enabled="false"
+            android:defaultValue="2"
+            android:entries="@array/pref_clockposition_list"
+            android:entryValues="@array/pref_clockposition_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_subject_font">
+        <ListPreference
+            android:title="@string/pref_font_title"
+            android:key="mFont"
+            android:defaultValue="0"
+            android:entries="@array/pref_font_list"
+            android:entryValues="@array/pref_font_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"/>
+        <Preference
+            android:title="@string/pref_fontsize_title"
+            android:key="mFontSize"/>
+        <ListPreference
+            android:title="@string/pref_fontappearance_title"
+            android:key="mFontAppearance"
+            android:defaultValue="0"
+            android:entries="@array/pref_fontappearance_list"
+            android:entryValues="@array/pref_fontappearance_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"/>
+        <ListPreference
+            android:title="@string/pref_gradient_title"
+            android:key="mGradient"
+            android:defaultValue="0"
+            android:entries="@array/pref_gradient_list"
+            android:entryValues="@array/pref_gradient_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"/>
+        <kr.hsg.clockonscreen.ColorPickerPreference
+            android:key="mFontColor"
+            android:title="@string/pref_fontcolor_title"
+            android:defaultValue="#ffffffff"
+            hexValue="true" />
+        <kr.hsg.clockonscreen.ColorPickerPreference
+            android:key="mGradientColor1"
+            android:title="@string/pref_gradientcolor1_title"
+            android:defaultValue="#ffff6609"
+            hexValue="true" />
+        <kr.hsg.clockonscreen.ColorPickerPreference
+            android:key="mGradientColor2"
+            android:title="@string/pref_gradientcolor2_title"
+            android:defaultValue="#ff09ffff"
+            hexValue="true" />
+        <kr.hsg.clockonscreen.ColorPickerPreference
+            android:key="mGradientColor3"
+            android:title="@string/pref_gradientcolor3_title"
+            android:defaultValue="#ff0909ff"
+            hexValue="true" />
+        <SwitchPreference
+            android:title="@string/pref_fontshadow_title"
+            android:key="mFontShadow"
+            android:defaultValue="false"
+            android:switchTextOn=""
+            android:switchTextOff=""
+            android:summary="@string/pref_fontshadow_des"/>
+        <Preference
+            android:title="@string/pref_fontshadowshape_title"
+            android:key="mFontShadowShape"
+            android:dependency="mFontShadow"/>
+        <kr.hsg.clockonscreen.ColorPickerPreference
+            android:key="mFontShadowColor"
+            android:dependency="mFontShadow"
+            android:title="@string/pref_fontshadowcolor_title"
+            android:defaultValue="#ff000000"
+            hexValue="true"/>
+        <Preference
+            android:title="@string/pref_clocktransparency_title"
+            android:key="mClockTransparency"/>
+        <SwitchPreference
+            android:title="@string/pref_background_title"
+            android:key="mBackground"
+            android:defaultValue="false"
+            android:switchTextOn=""
+            android:switchTextOff=""
+            android:summary="@string/pref_background_des"/>
+        <kr.hsg.clockonscreen.ColorPickerPreference
+            android:key="mBackgroundColor"
+            android:title="@string/pref_backgroundcolor_title"
+            android:defaultValue="#1fafafaf"
+            alphaSlider="true"
+            hexValue="true"
+            android:dependency="mBackground"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_subject_function">
+        <SwitchPreference
+            android:title="@string/pref_hidetheclock_title"
+            android:key="mHideTheClock"
+            android:defaultValue="false"
+            android:switchTextOn=""
+            android:switchTextOff=""
+            android:summary="@string/pref_hidetheclock_des" />
+        <Preference
+            android:title="@string/pref_hidetheclocktime_title"
+            android:key="mHideTheClockTime"
+            android:dependency="mHideTheClock" />
+        <SwitchPreference
+            android:title="@string/pref_longtouchtohide_title"
+            android:key="mLongTouchToHide"
+            android:defaultValue="false"
+            android:switchTextOn=""
+            android:switchTextOff=""
+            android:summary="@string/pref_longtouchtohide_des" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_subject_etc">
+        <SwitchPreference
+            android:title="@string/pref_english_title"
+            android:key="mEnglish"
+            android:switchTextOn=""
+            android:switchTextOff=""
+            android:summaryOn="@string/pref_english_deson"
+            android:summaryOff="@string/pref_english_desoff" />
+        <Preference
+            android:title="@string/pref_reset"
+            android:summary="@string/pref_reset_des"
+            android:key="mResetSettings" />
+    </PreferenceCategory>
+</PreferenceScreen>

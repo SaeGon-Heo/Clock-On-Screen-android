@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fffafafa"
+    android:fitsSystemWindows="true">
+
+    <ImageButton
+        android:id="@+id/btn_svc_toggle"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null"
+        android:padding="5dp"
+        android:background="#00000000"
+        android:src="@mipmap/ic_svc_off"
+        android:layout_centerInParent = "true"/>
+
+    <TextView
+        android:id="@+id/tv_svc_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_svc_toggle"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_margin="3dp"
+        android:gravity="center"
+        android:text="@string/text_svc_off"
+        android:textColor="#FFFF0000"
+        android:textSize="16dp"/>
+
+
+</RelativeLayout>

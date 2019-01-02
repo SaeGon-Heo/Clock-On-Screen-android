@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_request_overlay_permission_title">다른 앱 위에 그리기/표시되는 앱</string>
+    <string name="app_request_overlay_permission_content">Clock On Screen은 시계 표시를 위해 \"다른 앱 위에 그리기/표시되는 앱\" 권한이 필요합니다.\n확인 버튼을 누르고 뜨는 팝업 창에서 \"~ 허용\"을 활성화 해주세요.\n만약 활성화 하지 않으면 Clock On Screen을 사용 할 수 없습니다.</string>
+    <string name="app_info_content">Clock On Screen은 설정에 따라 날짜, 시간 및 배터리 잔량을 화면위에 표시하는 어플입니다.</string>
+    <string name="app_info_content_oreo_suffix">\n\n안드로이드 오레오(8.0)부터 \"Clock On Screen이(가) 다른 앱 위에 표시됨\"과 같은 알림이 나타납니다.\n해당 알림을 길게 누르면 나타나는 옵션을 비활성화 해주시고 \"완료\" 버튼을 누르시면 해당 알림은 사라집니다.\n이 옵션은 어플 마다 별도로 적용되므로 다른 어플의 이러한 알림은 정상적으로 보실 수 있습니다.</string>
+
+    <string name="press_color_to_apply">사용할 색을 눌러주세요</string>
+    <string name="dialog_color_picker">색 선택</string>
+
+    <string name="text_svc_off">Clock On Screen 서비스가 실행되고 있지 않습니다</string>
+    <string name="text_svc_on">Clock On Screen 서비스가 실행 중입니다</string>
+    <string name="text_svc_idle">Clock On Screen 서비스가 현재 유휴 상태입니다</string>
+    <string name="action_settings">설정</string>
+    <string name="action_info">정보</string>
+    <string name="action_exit">종료</string>
+
+    <string name="pref_clockText_default_string">.n .o:.t:.v</string>
+
+    <string name="pref_subject_text_position">시계 내용 및 위치</string>
+    <string name="pref_fsmode_title">풀스크린 모드</string>
+    <string name="pref_fsmode_summary_postfix">\n* 일부 기기에서 정상적으로 작동하지 않을 수 있습니다</string>
+    <string-array name="pref_fsmode_list">
+        <item>사용 안 함 (항상 시계를 표시)</item>
+        <item>풀스크린 상태에서만 시계를 표시</item>
+        <item>풀스크린 상태에 따라 시계를 다르게 표시</item>
+    </string-array>
+    <string name="pref_clocktext_title">시계 내용 변경</string>
+    <string name="pref_clocktext_notfs_title">시계 내용 변경 (풀스크린 아닐 때)</string>
+    <string name="pref_clocktext_des">시계에 표시 할 내용을 변경합니다</string>
+    <string name="pref_dialog_clocktext_title">사용가능한 구성요소</string>
+    <string name="pref_dialog_clocktext_components">.z => 줄바꿈\n\n.a => 년 (2018)\n.b => 년 (18)\n\n.c => 분기 (1, 2, 3, 4)\n.d => 분기 (Q1, Q2, Q3, Q4)\n\n.e => 월 (1 ~ 12)\n.f => 월 (01 ~ 12)\n.g => 월 (1월, 2월&#8230;)\n.h => 월 (1월, 2월&#8230;)\n\n.i => 주차 (1 ~ 5)\n\n.j => 일 (1 ~ 31)\n.k => 일 (01 ~ 31)\n\n.l => 요일 (월, 화&#8230;)\n.m => 요일 (월요일, 화요일&#8230;)\n\n.n => \"오전\" 또는 \"오후\"\n\n.o => 시간 (1 ~ 12)\n.p => 시간 (01 ~ 12)\n.q => 시간 (0 ~ 23)\n.r => 시간 (00 ~ 23)\n\n.s => 분 (0 ~ 59)\n.t => 분 (00 ~ 59)\n\n.u => 초 (0 ~ 59)\n.v => 초 (00 ~ 59)\n\n.w => 배터리 (0 ~ 100%&lt;상태&gt;)\n&lt;상태&gt; => 완충: ◎ / 충전 중: △▲\n/ 방전 중 (15% 미만): ▽▼\n\n.. => .</string>
+    <string name="pref_dialog_clocktext_preview">미리보기</string>
+    <string name="pref_clockposition_title">시계 위치 설정</string>
+    <string name="pref_clockposition_notfs_title">시계 위치 설정 (풀스크린 아닐 때)</string>
+    <string-array name="pref_clockposition_list">
+        <item>위 - 왼쪽</item>
+        <item>위 - 가운데</item>
+        <item>위 - 오른쪽 (기본값)</item>
+        <item>밑 - 왼쪽</item>
+        <item>밑 - 가운데</item>
+        <item>밑 - 오른쪽</item>
+    </string-array>
+    <string name="pref_toast_clockposition_warning">이 위치를 사용하는 동안 시계가 패키지 설치 관리자의 설치 버튼을 터치 못 할 수도 있습니다</string>
+
+    <string name="pref_subject_font">시계 폰트 및 색상</string>
+    <string name="pref_font_title">폰트</string>
+    <string-array name="pref_font_list">
+        <item>시스템 기본</item>
+        <item>Serif</item>
+        <item>Monospace</item>
+        <item>Sans-Serif</item>
+    </string-array>
+    <string name="pref_fontsize_title">폰트 크기</string>
+    <string name="pref_dialog_fontsize_title">폰트 크기 (10 ~ 45)</string>
+    <string name="pref_fontappearance_title">폰트 외관</string>
+    <string-array name="pref_fontappearance_list">
+        <item>보통 글씨</item>
+        <item>굵은 글씨</item>
+        <item>기울어진 글씨</item>
+    </string-array>
+    <string name="pref_gradient_title">그라데이션 사용</string>
+    <string-array name="pref_gradient_list">
+        <item>사용 안함</item>
+        <item>2색으로 그라데이션 사용</item>
+        <item>3색으로 그라데이션 사용</item>
+    </string-array>
+    <string name="pref_fontcolor_title">폰트 색상</string>
+    <string name="pref_gradientcolor1_title">그라데이션 색상 1</string>
+    <string name="pref_gradientcolor2_title">그라데이션 색상 2</string>
+    <string name="pref_gradientcolor3_title">그라데이션 색상 3</string>
+    <string name="pref_fontshadow_title">폰트 그림자</string>
+    <string name="pref_fontshadow_des">글자에 그림자를 추가합니다</string>
+    <string name="pref_fontshadowshape_title">폰트 그림자 모양</string>
+    <string name="pref_dialog_fontshadowshape_title">폰트 그림자 모양 설정</string>
+    <string name="pref_dialog_fontshadowshape_dx">수평 오프셋 (-10 ~ 10)</string>
+    <string name="pref_dialog_fontshadowshape_dy">수직 오프셋 (-10 ~ 10)</string>
+    <string name="pref_dialog_fontshadowshape_radius">반지름 (1 ~ 20)</string>
+    <string name="pref_fontshadowcolor_title">폰트 그림자 색상</string>
+    <string name="pref_clocktransparency_title">시계 투명도</string>
+    <string name="pref_dialog_clocktransparency_title">시계 투명도 (0 ~ 255)</string>
+    <string name="pref_background_title">배경 색상 사용</string>
+    <string name="pref_background_des">투명 배경 대신 색상이 들어간 배경을 사용합니다</string>
+    <string name="pref_backgroundcolor_title">배경 색상</string>
+
+    <string name="pref_subject_function">기능</string>
+    <string name="pref_toast_fsmode_ignored_on_prefactivity">설정 창에서는 항상 시계를 표시합니다</string>
+    <string name="pref_hidetheclock_title">터치로 숨기기</string>
+    <string name="pref_hidetheclock_des">시계를 터치하여 몇초간 시계를 숨깁니다</string>
+    <string name="pref_hidetheclocktime_title">시계를 숨기는 시간</string>
+    <string name="pref_dialog_hidetheclocktime_title">시계를 숨기는 시간 (3 ~ 600초)</string>
+    <string name="pref_longtouchtohide_title">롱터치 시 임시로 시계를 숨기기</string>
+    <string name="pref_longtouchtohide_des">시계를 롱터치하여 시계 표시 조건이 다시 충족 될 때까지 시계를 숨깁니다</string>
+    <string name="pref_toast_hidetheclocktemporary_fsmode">시계를 다시 표시하기 위해 화면이 껐다가 켜지거나 상태 바가 나타났다가 사라져야 합니다</string>
+    <string name="pref_toast_hidetheclocktemporary_notfsmode">시계를 다시 표시하기 위해 화면이 껐다가 켜져야 합니다</string>
+
+    <string name="pref_subject_etc">기타</string>
+    <string name="pref_reset">설정 초기화</string>
+    <string name="pref_reset_des">모든 설정을 초기화합니다</string>
+    <string name="pref_dialog_reset_summary">정말로 모든 설정을\n기본값으로 초기화 하시겠습니까?</string>
+    <string name="pref_toast_reset_complete">모든 설정이 기본값으로 초기화 되었습니다</string>
+
+    <string name="pref_prefix_current">현재 값:\u0020</string>
+    <string name="pref_suffix_second">초</string>
+
+    <string name="pref_dialog_btn_default">기본값</string>
+
+    <string name="notification_channel_title">Clock On Screen 서비스</string>
+    <string name="notification_channel_des">이 알림은 안드로이드 시스템이 Clock on Screen 서비스를 종료하지 못하게 하기 위해 사용됩니다</string>
+
+</resources>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fffafafa"
+    android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/image_launcher"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_above="@id/text_center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-3dp"
+        android:background="#00000000"
+        android:contentDescription="@null"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_launcher" />
+
+
+    <TextView
+        android:id="@+id/text_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_margin="3dp"
+        android:gravity="center"
+        android:textColor="#ff515151"
+        android:text="@string/app_info_content"
+        android:textSize="16dp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_center"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-3dp"
+        android:gravity="center"
+        android:textColor="#ff515151"
+        android:text="@string/app_author"
+        android:textSize="16dp" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/btn_open_source_library"
+        android:background="#ff909090" />
+
+
+    <TextView
+        android:id="@+id/btn_open_source_library"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_margin="3dp"
+        android:gravity="center"
+        android:textColor="#ff515151"
+        android:text="@string/app_open_source_library_title"
+        android:textSize="16dp" />
+
+</RelativeLayout>

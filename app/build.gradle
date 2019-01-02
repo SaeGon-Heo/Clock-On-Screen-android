@@ -1,0 +1,42 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "kr.hsg.clockonscreen"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 190101001
+        versionName "2.4.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude '**/ChronologyText.properties'
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "armeabi", "armeabi-v7a", "x86", "mips"
+            universalApk false
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if(task.name.contains("Test"))
+    {
+        //this is what you need
+        task.enabled = false
+    }
+}
+
+dependencies {
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+}

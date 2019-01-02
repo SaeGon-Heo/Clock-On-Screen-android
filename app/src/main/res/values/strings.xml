@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Clock On Screen</string>
+    <string name="app_author" translatable="false">Clock On Screen v2.4.0\nCopyright 2014-2018. Saegon Heo All rights reserved.</string>
+    <string name="app_open_source_library_title" translatable="false">Open Source Library</string>
+    <string name="app_request_overlay_permission_title">Display over other apps</string>
+    <string name="app_request_overlay_permission_content">Clock On Screen need \"Display over other apps\" to display the clock.\nPlease, press the OK button and activate \"Allow display over other apps\" in the popup window.\nIf you don\'t activate it, you can\'t use Clock On Screen.</string>
+    <string name="app_info_content">Clock On Screen is an app that displays the date, time and battery level on the screen according to the settings.</string>
+    <string name="app_info_content_oreo_suffix">\n\nFrom Android Oreo(8.0), you will see a notification such as \"Clock On Screen is displaying over other apps\".\nPlease, press and hold the corresponding notification, disable the option that appears and press the \"DONE\" button to disable the notification.\nThis option is applied to each application separately, so you can see such notification from other applications normally.</string>
+
+    <string name="press_color_to_apply">Press color to use</string>
+    <string name="dialog_color_picker">Choose color</string>
+
+    <string name="text_svc_off">Clock On Screen service is not running</string>
+    <string name="text_svc_on">Clock On Screen service is running</string>
+    <string name="text_svc_idle">Clock On Screen service is currently idle</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_info">Info</string>
+    <string name="action_exit">Exit</string>
+
+    <string name="pref_clockText_key_string" translatable="false">mClockText</string>
+    <string name="pref_clockText_notfs_key_string" translatable="false">mClockText_NotFS</string>
+    <string name="pref_fontSize_key_string" translatable="false">mFontSize</string>
+    <string name="pref_fontShadowShape_key_string" translatable="false">mFontShadowShape</string>
+    <string name="pref_hideTheClockTime_key_string" translatable="false">mHideTheClockTime</string>
+    <string name="pref_resetSettings_key_string" translatable="false">mResetSettings</string>
+
+    <string name="pref_fsmode_list_key_string" translatable="false">mFSMode_List</string>
+    <string name="pref_font_key_string" translatable="false">mFont</string>
+    <string name="pref_fontAppearance_key_string" translatable="false">mFontAppearance</string>
+    <string name="pref_gradient_key_string" translatable="false">mGradient</string>
+    <string name="pref_fontColor_key_string" translatable="false">mFontColor</string>
+    <string name="pref_gradientColor1_key_string" translatable="false">mGradientColor1</string>
+    <string name="pref_gradientColor2_key_string" translatable="false">mGradientColor2</string>
+    <string name="pref_gradientColor3_key_string" translatable="false">mGradientColor3</string>
+    <string name="pref_fontShadow_key_string" translatable="false">mFontShadow</string>
+    <string name="pref_fontShadowColor_key_string" translatable="false">mFontShadowColor</string>
+    <string name="pref_clockTransparency_key_string" translatable="false">mClockTransparency</string>
+    <string name="pref_hideTheClock_key_string" translatable="false">mHideTheClock</string>
+    <string name="pref_longTouchToHide_key_string" translatable="false">mLongTouchToHide</string>
+    <string name="pref_background_key_string" translatable="false">mBackground</string>
+    <string name="pref_backgroundColor_key_string" translatable="false">mBackgroundColor</string>
+
+    <string name="pref_clockPosition_key_string" translatable="false">mClockPosition</string>
+    <string name="pref_clockPosition_notfs_key_string" translatable="false">mClockPosition_NotFS</string>
+    <string name="pref_english_key_string" translatable="false">mEnglish</string>
+
+    <string name="pref_font_serif_string" translatable="false">Serif</string>
+    <string name="pref_font_monospace_string" translatable="false">Monospace</string>
+    <string name="pref_font_sans_serif_string" translatable="false">Sans-Serif</string>
+
+    <string name="pref_fontShadowShape_dx_key_string" translatable="false">mFontShadowDx</string>
+    <string name="pref_fontShadowShape_dy_key_string" translatable="false">mFontShadowDy</string>
+    <string name="pref_fontShadowShape_radius_key_string" translatable="false">mFontShadowRadius</string>
+
+    <string name="pref_clockText_default_string">.o:.t:.v .n</string>
+
+    <string name="pref_subject_text_position">Clock Text &amp; Position</string>
+    <string name="pref_fsmode_title">FullScreen Mode</string>
+    <string name="pref_fsmode_summary_postfix">\n* This may not work on some devices</string>
+    <string-array name="pref_fsmode_list">
+        <item>Not use (Always display clock)</item>
+        <item>Display clock only in full screen</item>
+        <item>Display clock differently\ndepending on full screen status</item>
+    </string-array>
+    <string-array name="pref_fsmode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="pref_clocktext_title">Change Clock Text</string>
+    <string name="pref_clocktext_notfs_title">Change Clock Text (Not Fullscreen)</string>
+    <string name="pref_clocktext_des">Change what will appear on your clock</string>
+    <string name="pref_dialog_clocktext_title">Available Components</string>
+    <string name="pref_dialog_clocktext_components">.z => Line break\n\n.a => Year (2018)\n.b => Year (18)\n\n.c => Quarter (1, 2, 3, 4)\n.d => Quarter (Q1, Q2, Q3, Q4)\n\n.e => Month (1 ~ 12)\n.f => Month (01 ~ 12)\n.g => Month (Jan, Feb&#8230;)\n.h => Month (January, February&#8230;)\n\n.i => Week-of-month (1 ~ 5)\n\n.j => Day (1 ~ 31)\n.k => Day (01 ~ 31)\n\n.l => Day-of-week (Mon, Tue&#8230;)\n.m => Day-of-week (Monday, Tuesday&#8230;)\n\n.n => \"AM\" or \"PM\"\n\n.o => Hour (1 ~ 12)\n.p => Hour (01 ~ 12)\n.q => Hour (0 ~ 23)\n.r => Hour (00 ~ 23)\n\n.s => Minute (0 ~ 59)\n.t => Minute (00 ~ 59)\n\n.u => Second (0 ~ 59)\n.v => Second (00 ~ 59)\n\n.w => Battery (0 ~ 100%&lt;state&gt;)\n&lt;state&gt; => Full: ◎ / Charging: △▲\n/ Discharging (under 15%): ▽▼\n\n.. => .</string>
+    <string name="pref_dialog_clocktext_preview">Preview</string>
+    <string name="pref_clockposition_title">Set Clock Position</string>
+    <string name="pref_clockposition_notfs_title">Set Clock Position (Not Fullscreen)</string>
+    <string-array name="pref_clockposition_list">
+        <item>Top - Left</item>
+        <item>Top - Center</item>
+        <item>Top - Right (Default)</item>
+        <item>Bottom - Left</item>
+        <item>Bottom - Center</item>
+        <item>Bottom - Right</item>
+    </string-array>
+    <string-array name="pref_clockposition_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="pref_toast_clockposition_warning">While using this position, you may not be able to touch the install button on the package installer</string>
+
+    <string name="pref_subject_font">Clock Font &amp; Color</string>
+    <string name="pref_font_title">Font</string>
+    <string-array name="pref_font_list">
+        <item>System Default</item>
+        <item>Serif</item>
+        <item>Monospace</item>
+        <item>Sans-Serif</item>
+    </string-array>
+    <string-array name="pref_font_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="pref_fontsize_title">Font Size</string>
+    <string name="pref_dialog_fontsize_title">Font Size (10 ~ 45)</string>
+    <string name="pref_fontappearance_title">Font Appearance</string>
+    <string-array name="pref_fontappearance_list">
+        <item>Normal</item>
+        <item>Bold</item>
+        <item>Italic</item>
+    </string-array>
+    <string-array name="pref_fontappearance_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="pref_gradient_title">Use A Gradient</string>
+    <string-array name="pref_gradient_list">
+        <item>Not used</item>
+        <item>Use a gradient with 2 colors</item>
+        <item>Use a gradient with 3 colors</item>
+    </string-array>
+    <string-array name="pref_gradient_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="pref_fontcolor_title">Font Color</string>
+    <string name="pref_gradientcolor1_title">Gradient Color 1</string>
+    <string name="pref_gradientcolor2_title">Gradient Color 2</string>
+    <string name="pref_gradientcolor3_title">Gradient Color 3</string>
+    <string name="pref_fontshadow_title">Font Shadow</string>
+    <string name="pref_fontshadow_des">Add a shadow to the text</string>
+    <string name="pref_fontshadowshape_title">Font Shadow Shape</string>
+    <string name="pref_dialog_fontshadowshape_title">Set Font Shadow Value</string>
+    <string name="pref_dialog_fontshadowshape_dx">Horizontal Offset (-10 ~ 10)</string>
+    <string name="pref_dialog_fontshadowshape_dy">Vertical Offset (-10 ~ 10)</string>
+    <string name="pref_dialog_fontshadowshape_radius">Radius (1 ~ 20)</string>
+    <string name="pref_fontshadowcolor_title">Font Shadow Color</string>
+    <string name="pref_clocktransparency_title">Clock Transparency</string>
+    <string name="pref_clocktransparency_current_postfix" translatable="false">\u0020/ 255</string>
+    <string name="pref_dialog_clocktransparency_title">Clock Transparency (0 ~ 255)</string>
+    <string name="pref_background_title">Use Background Color</string>
+    <string name="pref_background_des">Use background with colors instead of transparent background</string>
+    <string name="pref_backgroundcolor_title">Background Color</string>
+
+
+    <string name="pref_subject_function">Function</string>
+    <string name="pref_toast_fsmode_ignored_on_prefactivity">Always display clock on settings screen</string>
+    <string name="pref_hidetheclock_title">Hide by touch</string>
+    <string name="pref_hidetheclock_des">Touch the clock to hide it for a few seconds</string>
+    <string name="pref_hidetheclocktime_title">Hiding Time</string>
+    <string name="pref_dialog_hidetheclocktime_title">Hiding Time (3 ~ 600sec(s))</string>
+    <string name="pref_longtouchtohide_title">Long Touch To Hide Clock</string>
+    <string name="pref_longtouchtohide_des">Long touch the clock to hide it until the clock display condition is satisfied again</string>
+    <string name="pref_toast_hidetheclocktemporary_fsmode">To display the clock again, the screen must be turned off and on or the status bar must be appeared and disappeared</string>
+    <string name="pref_toast_hidetheclocktemporary_notfsmode">To display the clock again, the screen must be turned off and on</string>
+
+    <string name="pref_subject_etc">Etc</string>
+    <string name="pref_english_title" translatable="false">Use English UI</string>
+    <string name="pref_english_deson" translatable="false">Turn off this to use Korean UI</string>
+    <string name="pref_english_desoff" translatable="false">영어 UI를 사용하려면 이 옵션을 켜주세요</string>
+    <string name="pref_toast_english_applied" translatable="false">English UI is applied</string>
+    <string name="pref_toast_korean_applied" translatable="false">한글 UI가 적용되었습니다</string>
+    <string name="pref_reset">Reset All Settings</string>
+    <string name="pref_reset_des">All settings will be reset</string>
+    <string name="pref_dialog_reset_summary">Are you sure you want to\nreset all settings to default?</string>
+    <string name="pref_toast_reset_complete">All settings are reset to default</string>
+
+    <string name="pref_prefix_current">Current:\u0020</string>
+    <string name="pref_suffix_second">sec(s)</string>
+
+    <string name="pref_dialog_btn_default">Default</string>
+
+    <string name="notification_channel_id" translatable="false">COSNoti</string>
+    <string name="notification_channel_title">Clock On Screen Service</string>
+    <string name="notification_channel_des">This notification is used to prevent Android System from killing the Clock On Screen service</string>
+
+</resources>
