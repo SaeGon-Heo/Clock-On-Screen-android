@@ -129,14 +129,19 @@ public final class COSSvc extends Service implements Runnable {
                 // Idle 서비스를 키면 Idle 서비스 내에서 현재 조건이 COSSvc 서비스를
                 // 켜야 하는 상황인지 확인 및 다시 켠다
                 // 즉, COSSvc 서비스 재시작과 같다
-                mCon.startService(new Intent(mCon, COSSvc_Idle.class));
-                stopSelf();
+                startSvc_Idle();
             }
         }
     };
 
     @Override
     public IBinder onBind(Intent arg0) { return null; }
+
+    // Idle 서비스 시작. (Main 상태 탈출)
+    private void startSvc_Idle() {
+        mCon.startService(new Intent(mCon, COSSvc_Idle.class));
+        stopSelf();
+    }
 
     @Override
     public void onDestroy() {
@@ -197,11 +202,15 @@ public final class COSSvc extends Service implements Runnable {
         // PowerManager, SharedPreferences, DisplayManager, Notification 등을 처리
         COSSvcSubFunc _subClass = new COSSvcSubFunc(this);
 
+        // 언어 설정
+        _subClass.setContextLocale(this);
+        // 진행 중 알람 시작
+        startForeground(221, _subClass.getNotification(false));
+
         // 만약 화면이 꺼진 상태거나 DOZE(절전)상태이면
         // Idle 서비스를 켜고 자신을 종료
         if(!_subClass.getIsScreenOnAndNotDOZEState()) {
-            mCon.startService(new Intent(mCon, COSSvc_Idle.class));
-            stopSelf();
+            startSvc_Idle();
             return;
         }
 
@@ -275,9 +284,6 @@ public final class COSSvc extends Service implements Runnable {
         // 여러 설정에 따른 값 및 현재 화면켜짐상태 등을 구하여 Status 값으로 반환받고,
         // TextView, OutBoundLayout 구성 및 화면 최상단에 넣는 작업을 수행.
         cosSvc_Status = _subClass.initSettings(this, cosSvc_TV, cosSvc_TVGradient, (ViewGroup)cosSvc_OutBoundLayout);
-
-        // 진행 중 알람 시작
-        startForeground(221, _subClass.getNotification(false));
 
         // 시계를 터치 시 일정시간 동안 숨기는 기능 사용 시 필요한 설정 처리
         if(_subClass.getHideByTouch()) {
@@ -469,8 +475,7 @@ public final class COSSvc extends Service implements Runnable {
                             public void fsChanged(Context context, boolean bIsFS) {
                                 // 풀스크린 상태가 아닐 경우 Idle 서비스로 진입
                                 if (!bIsFS) {
-                                    mCon.startService(new Intent(mCon, COSSvc_Idle.class));
-                                    stopSelf();
+                                    startSvc_Idle();
                                 }
                             }
                         });
@@ -487,8 +492,7 @@ public final class COSSvc extends Service implements Runnable {
                                 // 위치를 불러오기 위해 COSSvc 서비스 재시작
                                 if (cosSvc_FSSaved != bIsFS) {
                                     new COSSvcSubFunc(mCon).saveFS(bIsFS);
-                                    mCon.startService(new Intent(mCon, COSSvc_Idle.class));
-                                    stopSelf();
+                                    startSvc_Idle();
                                 }
                             }
                         });
@@ -527,8 +531,7 @@ public final class COSSvc extends Service implements Runnable {
         // 롱터치로 시계를 끈 경우 cosSvc_repeater가 null이 된다
         // 따라서 cosSvc_repeater 값이 null이 아닌 경우에만 서비스 재시작
         if(cosSvc_repeater != null) {
-            mCon.startService(new Intent(mCon, COSSvc_Idle.class));
-            stopSelf();
+            startSvc_Idle();
         }
         super.onConfigurationChanged(newConfig);
     }
@@ -620,8 +623,7 @@ public final class COSSvc extends Service implements Runnable {
 
                 // 혹시 cosSvc_formatter가 GC 된 경우 서비스 재시작
                 if(cosSvc_formatter == null) {
-                    mCon.startService(new Intent(mCon, COSSvc_Idle.class));
-                    stopSelf();
+                    startSvc_Idle();
                 }
                 // 초, 배터리를 제외한 모든 요소를 처리한 문자열을 갱신
                 cosSvc_overMinFormat.setLength(0);

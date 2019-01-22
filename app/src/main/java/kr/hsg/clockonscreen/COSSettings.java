@@ -104,8 +104,9 @@ public final class COSSettings extends PreferenceActivity
                 // 설정 창임을 알리는 값을 추가
                 mSvc.putExtra("PreferenceView", true);
                 mCon.startService(mSvc);
-            } else
+            } else {
                 mCon.startService(mSvc_Idle);
+            }
         }
     }
 

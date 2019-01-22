@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.View;
@@ -61,14 +62,14 @@ public final class COSSvc_Idle extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // 필요한 변수 및 Class 로드
         mCon = getApplicationContext();
+
+        // 서비스의 Class import 수를 최소화 하고자 사용하는 SubClass
+        // PowerManager, SharedPreferences, DisplayManager, Notification 등을 처리
         COSSvcSubFunc _subClass = new COSSvcSubFunc(this);
 
         // 언어 설정
         _subClass.setContextLocale(this);
-
         // 진행 중 알람 시작
         startForeground(220, _subClass.getNotification(true));
 

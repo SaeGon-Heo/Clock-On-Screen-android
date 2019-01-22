@@ -6,8 +6,8 @@ android {
         applicationId "kr.hsg.clockonscreen"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 190101001
-        versionName "2.4.0"
+        versionCode 190122001
+        versionName "2.4.1"
     }
     buildTypes {
         release {
@@ -38,5 +38,5 @@ tasks.whenTaskAdded { task ->
 }
 
 dependencies {
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.1'
 }

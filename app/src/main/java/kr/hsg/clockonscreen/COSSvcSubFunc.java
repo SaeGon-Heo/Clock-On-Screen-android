@@ -49,9 +49,6 @@ final class COSSvcSubFunc {
     }
 
     Byte initSettings(Context context, TextView cosSvc_TV, TextView cosSvc_TVGradient, ViewGroup cosSvc_OutBoundLayout) {
-        // 언어 설정
-        setContextLocale(context);
-
         // 폰트 사이즈 설정
         cosSvc_TV.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mPref.getInt(mCon.getString(R.string.pref_fontSize_key_string), 18));
         // Gradient + Shadow 둘다 사용 시에만 cosSvc_TVGradient가 null이 아니도록 코딩.
