@@ -52,6 +52,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public final class COSSvc extends Service implements Runnable {
+    // 반복 사용 될 단순 문자 및 문자열 저장
+    private static final char cosSvc_chPercent = '%';
+    private static final char cosSvc_chBattStateFull = '◎';
+    private static final char cosSvc_chBattStateCharging1 = '△';
+    private static final char cosSvc_chBattStateCharging2 = '▲';
+    private static final char cosSvc_chBattStateDischarging1 = '▽';
+    private static final char cosSvc_chBattStateDischarging2 = '▼';
+    private static final String cosSvc_strEmpty = "";
+    private static final String cosSvc_strSymbolSecond = "\uF002";
+    private static final String cosSvc_strSymbolSecondFillZero = "\uF001";
+    private static final String cosSvc_strSymbolBatt = "\uF000";
+
     private Context mCon;
     //항상 보이게 할 뷰
     private TextView cosSvc_TV;
@@ -62,8 +74,8 @@ public final class COSSvc extends Service implements Runnable {
     private ScheduledFuture<?> cosSvc_repeater;
     private Instant cosSvc_current;
     private DateTimeFormatter cosSvc_formatter;
-    private StringBuilder cosSvc_overMinFormat;
-    private StringBuilder cosSvc_ClockText;
+    private StringBuilder cosSvc_overMinFormat = new StringBuilder();
+    private StringBuilder cosSvc_ClockText = new StringBuilder();
     private StringBuilder cosSvc_strBattLevelBuilder;
     private StringBuilder cosSvc_strBattBuilder;
     private int[] cosSvc_gradientColors;
@@ -120,7 +132,7 @@ public final class COSSvc extends Service implements Runnable {
                     cosSvc_Status &= 0b11110011;
                 }
                 // 마지막 % 추가
-                cosSvc_strBattLevelBuilder.append('%');
+                cosSvc_strBattLevelBuilder.append(cosSvc_chPercent);
             }
             // 시간이 변경되면 서비스를 껏다 켠다. / 화면이 꺼지면 Idle 서비스로 전환.
             else if(action.equals(Intent.ACTION_SCREEN_OFF) || action.equals(Intent.ACTION_DATE_CHANGED) ||
@@ -300,8 +312,8 @@ public final class COSSvc extends Service implements Runnable {
                     // 5th bit check (thereAreOnlyString)
                     if((cosSvc_Status & 0b00010000) == 0) {
                         // 하위 뷰 TextView의 텍스트를 초기화
-                        cosSvc_TV.setText("");
-                        if (cosSvc_TVGradient != null) cosSvc_TVGradient.setText("");
+                        cosSvc_TV.setText(cosSvc_strEmpty);
+                        if (cosSvc_TVGradient != null) cosSvc_TVGradient.setText(cosSvc_strEmpty);
                     }
                     // 시계 숨기기
                     // OutBoundLayout만 사라지게 만들면 알아서 하위 뷰도 사라진다
@@ -340,8 +352,8 @@ public final class COSSvc extends Service implements Runnable {
                         cosSvc_repeater = null;
                     }
                     // 하위 뷰 TextView의 텍스트를 초기화
-                    cosSvc_TV.setText("");
-                    if(cosSvc_TVGradient != null) cosSvc_TVGradient.setText("");
+                    cosSvc_TV.setText(cosSvc_strEmpty);
+                    if(cosSvc_TVGradient != null) cosSvc_TVGradient.setText(cosSvc_strEmpty);
                     // 시계 숨기기
                     ((ViewGroup)cosSvc_OutBoundLayout).setVisibility(View.GONE);
                     return false;
@@ -467,7 +479,7 @@ public final class COSSvc extends Service implements Runnable {
             else if(!cosSvc_FSDetector.hasOnFullScreenListener()) {
                 // FSMode를 알기 위해 SubClass 재호출
                 COSSvcSubFunc _subClass = new COSSvcSubFunc(this);
-                switch(_subClass.getFSMode()) {
+                switch(COSSvcSubFunc.getFSMode(this)) {
                     case 1:
                         // 풀스크린 상태에서만 시계 표시
                         cosSvc_FSDetector.setOnFullScreenListener(new OnFullScreenListener() {
@@ -491,7 +503,7 @@ public final class COSSvc extends Service implements Runnable {
                                 // 바뀐 풀스크린 상태를 저장하고 그에 맞는 시계 구조 및
                                 // 위치를 불러오기 위해 COSSvc 서비스 재시작
                                 if (cosSvc_FSSaved != bIsFS) {
-                                    new COSSvcSubFunc(mCon).saveFS(bIsFS);
+                                    COSSvcSubFunc.saveFS(COSSvc.this, bIsFS);
                                     startSvc_Idle();
                                 }
                             }
@@ -542,9 +554,9 @@ public final class COSSvc extends Service implements Runnable {
         mHandler.sendEmptyMessage(0);
     }
 
-    // 매 초마다 실행. 따라서 힙에서 사라지면 안됨...
+    // 매 초마다 실행.
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             // 1st bit check (onDestroy called)
@@ -565,7 +577,7 @@ public final class COSSvc extends Service implements Runnable {
                     // mHandler 내 Message가 없는 경우에만 setText
                     if(!mHandler.hasMessages(0)) {
                         cosSvc_TV.setText(cosSvc_ClockText);
-                        if (cosSvc_TVGradient != null) cosSvc_TVGradient.setText(cosSvc_ClockText);
+                        if(cosSvc_TVGradient != null) cosSvc_TVGradient.setText(cosSvc_ClockText);
                     }
                     // 시계 내용(cosSvc_ClockText) 업데이트
                     updateClockText();
@@ -620,7 +632,6 @@ public final class COSSvc extends Service implements Runnable {
             if(cosSvc_second == 60) {
                 // 저장해둔 Instant에 60초를 더함
                 cosSvc_current = Instant.ofEpochSecond(cosSvc_current.getEpochSecond() + 60);
-
                 // 혹시 cosSvc_formatter가 GC 된 경우 서비스 재시작
                 if(cosSvc_formatter == null) {
                     startSvc_Idle();
@@ -654,41 +665,41 @@ public final class COSSvc extends Service implements Runnable {
                 // 완충 상태 이거나
                 // 3rd, 4th bit check (isBattery_Charging)(isBattery_Discharging)
                 if((cosSvc_Status & 0b00001100) == 0b00001100) {
-                    cosSvc_strBattBuilder.append('◎');
+                    cosSvc_strBattBuilder.append(cosSvc_chBattStateFull);
                 }
                 // 충전기를 사용중이거나
                 // 3rd bit check (isBattery_Charging)
                 else if((cosSvc_Status & 0b00000100) != 0) {
-                    if((cosSvc_second & 0x1) == 1) cosSvc_strBattBuilder.append('△');
-                    else cosSvc_strBattBuilder.append('▲');
+                    if((cosSvc_second & 0x1) == 1) cosSvc_strBattBuilder.append(cosSvc_chBattStateCharging1);
+                    else cosSvc_strBattBuilder.append(cosSvc_chBattStateCharging2);
                 }
                 // 배터리가 15퍼 미만인 경우.
                 // 4th bit check (isBattery_Discharging)
                 else {
-                    if((cosSvc_second & 0x1) == 1) cosSvc_strBattBuilder.append('▽');
-                    else  cosSvc_strBattBuilder.append('▼');
+                    if((cosSvc_second & 0x1) == 1) cosSvc_strBattBuilder.append(cosSvc_chBattStateDischarging1);
+                    else cosSvc_strBattBuilder.append(cosSvc_chBattStateDischarging2);
                 }
             }
 
             int index;
             // 초(0~59) 처리
-            index = cosSvc_ClockText.indexOf("\uF002");
+            index = cosSvc_ClockText.indexOf(cosSvc_strSymbolSecond);
             while(index != -1) {
                 cosSvc_ClockText.deleteCharAt(index);
                 cosSvc_ClockText.insert(index, cosSvc_second);
-                index = cosSvc_ClockText.indexOf("\uF002");
+                index = cosSvc_ClockText.indexOf(cosSvc_strSymbolSecond);
             }
             // 초(00~59) 처리
-            index = cosSvc_ClockText.indexOf("\uF001");
+            index = cosSvc_ClockText.indexOf(cosSvc_strSymbolSecondFillZero);
             while(index != -1) {
                 cosSvc_ClockText.deleteCharAt(index);
                 if(cosSvc_second < 10) cosSvc_ClockText.insert(index++, 0);
                 cosSvc_ClockText.insert(index, cosSvc_second);
-                index = cosSvc_ClockText.indexOf("\uF001");
+                index = cosSvc_ClockText.indexOf(cosSvc_strSymbolSecondFillZero);
             }
 
             // 배터리 처리
-            index = cosSvc_ClockText.indexOf("\uF000");
+            index = cosSvc_ClockText.indexOf(cosSvc_strSymbolBatt);
             while(index != -1) {
                 cosSvc_ClockText.deleteCharAt(index);
                 // 배터리가 완충, 충전, 방전 상태가 아니면 현재 배터리 잔량을 바로 표기
@@ -697,7 +708,7 @@ public final class COSSvc extends Service implements Runnable {
                     // 완충, 충전, 방전 상태에 따른 처리
                 else
                     cosSvc_ClockText.insert(index, cosSvc_strBattBuilder);
-                index = cosSvc_ClockText.indexOf("\uF000");
+                index = cosSvc_ClockText.indexOf(cosSvc_strSymbolBatt);
             }
         }
     };

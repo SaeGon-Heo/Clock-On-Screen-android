@@ -384,8 +384,9 @@ final class COSSvcSubFunc {
     }
 
     // 풀스크린 모드 값을 반환
-    byte getFSMode() {
-        return (byte)Integer.parseInt(mPref.getString(mCon.getString(R.string.pref_fsmode_list_key_string), "0"));
+    static byte getFSMode(Context context) {
+        Context mCon = context.getApplicationContext();
+        return (byte)Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mCon).getString(mCon.getString(R.string.pref_fsmode_list_key_string), "0"));
     }
 
     // 풀스크린 상태 저장 값을 반환
@@ -394,12 +395,13 @@ final class COSSvcSubFunc {
     boolean getFSSaved() {
         return mPref.getBoolean("fs_saved", false);
     }
+
     // 풀스크린 상태 값을 저장
     // "풀스크린 상태에 따라 시계를 다르게 표시" 옵션에서
     // 실제로 풀스크린 상태를 보니 저장된 값과 다를 때
     // 바뀐 풀스크린 상태 값을 저장할 때 사용하는 함수
-    void saveFS(boolean bIsFS) {
-        mPref.edit().putBoolean("fs_saved", bIsFS).apply();
+    static void saveFS(Context context, boolean bIsFS) {
+        PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).edit().putBoolean("fs_saved", bIsFS).apply();
     }
 
     // Gradient + Shadow 조합 판별을 위해 쓰이는 함수

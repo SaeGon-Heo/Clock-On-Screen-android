@@ -74,7 +74,7 @@ public final class COSSvc_Idle extends Service {
         startForeground(220, _subClass.getNotification(true));
 
         // 풀스크린 모드 값 저장
-        cosSvc_FSMode = _subClass.getFSMode();
+        cosSvc_FSMode = COSSvcSubFunc.getFSMode(this);
         // 풀스크린에서만 시계 표시 모드를 사용하는 경우 풀스크린 디텍터 추가
         if(cosSvc_FSMode == 1) {
             cosSvc_FSDetector_Idle = new FSDetector(this);
