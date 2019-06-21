@@ -18,7 +18,11 @@ package kr.hsg.clockonscreen;
 import java.util.Locale;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Paint;
@@ -428,16 +432,46 @@ final class COSSvcSubFunc {
         Notification.Builder mNotiBuilder;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            // 알람 채널 관리자 생성
+            NotificationManager mNotificationManager = (NotificationManager)mCon.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            // 알림 채널이 존재하는지 확인
+            assert mNotificationManager != null;
+            NotificationChannel mChannelExist = mNotificationManager.getNotificationChannel(mCon.getString(R.string.notification_channel_id));
+
+            // 알림 채널이 존재하지 않으면 생성
+            if(mChannelExist == null) {
+                // Configure the notification channel.
+                NotificationChannel mChannel = new NotificationChannel(mCon.getString(R.string.notification_channel_id),
+                        mCon.getString(R.string.notification_channel_title), NotificationManager.IMPORTANCE_LOW);
+                mChannel.setDescription(mCon.getString(R.string.notification_channel_des));
+                mChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+                // Create channel
+                mNotificationManager.createNotificationChannel(mChannel);
+            }
+            // 알림 빌더 생성
             mNotiBuilder = new Notification.Builder(mCon, mCon.getString(R.string.notification_channel_id));
         } else {
+            // 알림 빌더 생성
             mNotiBuilder = new Notification.Builder(mCon);
             if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
                 mNotiBuilder.setPriority(Notification.PRIORITY_MIN);
         }
 
+        // 알림 터치 시 앱 메인화면 띄우기 위한 PendingIntent
+        PendingIntent mPendingIntent = PendingIntent.getActivity(
+                mCon,
+                0,
+                new Intent(mCon, COSMain.class),
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        // 알림 설정
         mNotiBuilder.setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(mCon.getString(R.string.notification_channel_title))
                 .setContentText(mCon.getString(R.string.text_svc_on))
+                .setContentIntent(mPendingIntent)
                 .setOngoing(true);
         if(isIdle) {
             mNotiBuilder.setContentText(mCon.getString(R.string.text_svc_idle));

@@ -147,20 +147,6 @@ public final class COSMain extends Activity {
             pref.edit().putBoolean(mCon.getString(R.string.pref_english_key_string), true).apply();
         }
 
-        // 안드로이드 오레오 이상이면 Notification channel을 생성
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationManager mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
-            // Configure the notification channel.
-            NotificationChannel mChannel = new NotificationChannel(mCon.getString(R.string.notification_channel_id),
-                    mCon.getString(R.string.notification_channel_title), NotificationManager.IMPORTANCE_LOW);
-            mChannel.setDescription(mCon.getString(R.string.notification_channel_des));
-            mChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-
-            // Create channel
-            mNotificationManager.createNotificationChannel(mChannel);
-        }
-
         if(AppInfoDialog == null) {
             StringBuilder MsgBuilder = new StringBuilder();
 
