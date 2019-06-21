@@ -38,5 +38,5 @@ tasks.whenTaskAdded { task ->
 }
 
 dependencies {
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.0'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 }

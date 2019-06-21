@@ -75,7 +75,7 @@ final class COSSvcSubFunc {
 
         // Shadow 설정 + dx, dy 값에 따른 TextView의 추가 공간 계산을 위한 변수 생성
         int leftPadding = 0, topPadding = 0, rightPadding = 0, bottomPadding = 0;
-        if(mPref.getBoolean(mCon.getString(R.string.pref_fontShadow_key_string), false)) {
+        if(getShadowEnabled()) {
             // 그림자 색상을 저장
             int shadowColor = mPref.getInt(mCon.getString(R.string.pref_fontShadowColor_key_string), 0xff000000);
             // 만약 Gradient + Shadow 조합인데
@@ -278,7 +278,7 @@ final class COSSvcSubFunc {
 
     // Gradient + Shadow 조합 판별을 위해 쓰이는 함수
     boolean getShadowEnabled() {
-        return mPref.getBoolean(mCon.getString(R.string.pref_fontShadow_key_string), false);
+        return mPref.getBoolean(mCon.getString(R.string.pref_fontShadow_key_string), true);
     }
 
     // 터치로 숨기기 기능 활성화 여부 반환
