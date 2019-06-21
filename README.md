@@ -10,7 +10,7 @@ Just download apk file from [here](https://github.com/SaeGon-Heo/Clock-On-Screen
 And install it on android devices.
 
 Min API: 15 (4.0.3 ICS)
-Target API: 28 (9.0 Pie)
+Target API: 29 (9.+ Q)
 
 ## References and License
 Check [here](https://github.com/SaeGon-Heo/Clock-On-Screen-android/blob/master/app/src/main/assets/opensource.txt).
