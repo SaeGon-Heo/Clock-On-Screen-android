@@ -3,7 +3,7 @@
  *
  *  Created by pvyParts
  *
- *  Modified by Saegon Heo (to work on more devices.)
+ *  Modified by Saegon Heo (to work on more devices)
  *
  *  NOTE** May or may-not be a stupid way of doing it but hey it works....
  *

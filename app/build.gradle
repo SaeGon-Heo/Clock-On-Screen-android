@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "kr.hsg.clockonscreen"
         minSdkVersion 15
-        targetSdkVersion 28
-        versionCode 190131001
-        versionName "2.4.1"
+        targetSdkVersion 29
+        versionCode 190530001
+        versionName "2.5.0"
     }
     buildTypes {
         release {
@@ -38,5 +38,5 @@ tasks.whenTaskAdded { task ->
 }
 
 dependencies {
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.1'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.0'
 }
