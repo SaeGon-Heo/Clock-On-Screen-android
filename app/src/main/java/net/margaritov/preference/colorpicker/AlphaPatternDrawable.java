@@ -21,6 +21,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
@@ -33,7 +34,7 @@ import android.graphics.drawable.Drawable;
  */
 public class AlphaPatternDrawable extends Drawable {
 
-    private int mRectangleSize = 10;
+    private int mRectangleSize;
 
     private Paint mPaint = new Paint();
     private Paint mPaintWhite = new Paint();
@@ -47,7 +48,7 @@ public class AlphaPatternDrawable extends Drawable {
      */
     private Bitmap mBitmap;
 
-    public AlphaPatternDrawable(int rectangleSize) {
+    AlphaPatternDrawable(int rectangleSize) {
         mRectangleSize = rectangleSize;
         mPaintWhite.setColor(0xffffffff);
         mPaintGray.setColor(0xffcbcbcb);
@@ -60,7 +61,7 @@ public class AlphaPatternDrawable extends Drawable {
 
     @Override
     public int getOpacity() {
-        return 0;
+        return PixelFormat.UNKNOWN;
     }
 
     @Override
@@ -80,11 +81,10 @@ public class AlphaPatternDrawable extends Drawable {
         int height = bounds.height();
         int width = bounds.width();
 
-        numRectanglesHorizontal = (int) Math.ceil((width / mRectangleSize));
-        numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
+        numRectanglesHorizontal = (int) Math.ceil((double)(width / mRectangleSize));
+        numRectanglesVertical = (int) Math.ceil((double)(height / mRectangleSize));
 
         generatePatternBitmap();
-
     }
 
     /**

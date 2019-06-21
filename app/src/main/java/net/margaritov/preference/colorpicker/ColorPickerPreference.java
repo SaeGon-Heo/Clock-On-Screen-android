@@ -43,8 +43,8 @@ public class ColorPickerPreference
         Preference.OnPreferenceClickListener,
         ColorPickerDialog.OnColorChangedListener {
 
-    View mView;
-    ColorPickerDialog mDialog;
+    private View mView;
+    private ColorPickerDialog mDialog;
     private int mValue = Color.BLACK;
     private float mDensity = 0;
     private boolean mAlphaSliderEnabled = false;
@@ -107,7 +107,7 @@ public class ColorPickerPreference
     private void setPreviewColor() {
         if (mView == null) return;
         ImageView iView = new ImageView(getContext());
-        LinearLayout widgetFrameView = ((LinearLayout) mView.findViewById(android.R.id.widget_frame));
+        LinearLayout widgetFrameView = (mView.findViewById(android.R.id.widget_frame));
         if (widgetFrameView == null) return;
         widgetFrameView.setVisibility(View.VISIBLE);
         widgetFrameView.setPadding(
@@ -133,10 +133,10 @@ public class ColorPickerPreference
         Bitmap bm = Bitmap.createBitmap(d, d, Config.ARGB_8888);
         int w = bm.getWidth();
         int h = bm.getHeight();
-        int c = color;
+        int c;
         for (int i = 0; i < w; i++) {
             for (int j = i; j < h; j++) {
-                c = (i <= 1 || j <= 1 || i >= w - 2 || j >= h - 2) ? Color.GRAY : color;
+                c = i <= 1 || i >= w - 2 || j >= h - 2 ? Color.GRAY : color;
                 bm.setPixel(i, j, c);
                 if (i != j) {
                     bm.setPixel(j, i, c);
@@ -191,8 +191,6 @@ public class ColorPickerPreference
 
     /**
      * Toggle Alpha Slider visibility (by default it's disabled)
-     *
-     * @param enable
      */
     public void setAlphaSliderEnabled(boolean enable) {
         mAlphaSliderEnabled = enable;
@@ -200,8 +198,6 @@ public class ColorPickerPreference
 
     /**
      * Toggle Hex Value visibility (by default it's disabled)
-     *
-     * @param enable
      */
     public void setHexValueEnabled(boolean enable) {
         mHexValueEnabled = enable;
@@ -209,11 +205,8 @@ public class ColorPickerPreference
 
     /**
      * For custom purposes. Not used by ColorPickerPreferrence
-     *
-     * @param color
-     * @author Unknown
      */
-    public static String convertToARGB(int color) {
+    static String convertToARGB(int color) {
         String alpha = Integer.toHexString(Color.alpha(color));
         String red = Integer.toHexString(Color.red(color));
         String green = Integer.toHexString(Color.green(color));
@@ -242,12 +235,11 @@ public class ColorPickerPreference
      * Method currently used by onGetDefaultValue method to
      * convert hex string provided in android:defaultValue to color integer.
      *
-     * @param color
      * @return A string representing the hex value of color,
      * without the alpha value
      * @author Charles Rosaaen
      */
-    public static String convertToRGB(int color) {
+    static String convertToRGB(int color) {
         String red = Integer.toHexString(Color.red(color));
         String green = Integer.toHexString(Color.green(color));
         String blue = Integer.toHexString(Color.blue(color));
@@ -269,13 +261,8 @@ public class ColorPickerPreference
 
     /**
      * For custom purposes. Not used by ColorPickerPreferrence
-     *
-     * @param argb
-     * @throws NumberFormatException
-     * @author Unknown
      */
-    public static int convertToColorInt(String argb) throws IllegalArgumentException {
-
+    static int convertToColorInt(String argb) throws IllegalArgumentException {
         if (!argb.startsWith("#")) {
             argb = "#" + argb;
         }
@@ -297,7 +284,7 @@ public class ColorPickerPreference
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        if (state == null || !(state instanceof SavedState)) {
+        if (!(state instanceof SavedState)) {
             // Didn't save state for us in onSaveInstanceState
             super.onRestoreInstanceState(state);
             return;
@@ -311,9 +298,9 @@ public class ColorPickerPreference
     private static class SavedState extends BaseSavedState {
         Bundle dialogBundle;
 
-        public SavedState(Parcel source) {
+        SavedState(Parcel source) {
             super(source);
-            dialogBundle = source.readBundle();
+            dialogBundle = source.readBundle(getClass().getClassLoader());
         }
 
         @Override
@@ -322,7 +309,7 @@ public class ColorPickerPreference
             dest.writeBundle(dialogBundle);
         }
 
-        public SavedState(Parcelable superState) {
+        SavedState(Parcelable superState) {
             super(superState);
         }
 

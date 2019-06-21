@@ -436,7 +436,6 @@ final class COSSvcSubFunc {
             NotificationManager mNotificationManager = (NotificationManager)mCon.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // 알림 채널이 존재하는지 확인
-            assert mNotificationManager != null;
             NotificationChannel mChannelExist = mNotificationManager.getNotificationChannel(mCon.getString(R.string.notification_channel_id));
 
             // 알림 채널이 존재하지 않으면 생성
