@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package kr.hsg.clockonscreen;
+package net.margaritov.preference.colorpicker;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -36,6 +36,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Locale;
+
+import kr.hsg.clockonscreen.R;
 
 public class ColorPickerDialog
         extends

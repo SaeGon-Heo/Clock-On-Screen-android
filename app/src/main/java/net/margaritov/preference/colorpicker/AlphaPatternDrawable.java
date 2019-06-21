@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kr.hsg.clockonscreen;
+package net.margaritov.preference.colorpicker;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;

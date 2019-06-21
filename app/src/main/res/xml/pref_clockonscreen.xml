@@ -64,22 +64,22 @@
             android:entryValues="@array/pref_gradient_values"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"/>
-        <kr.hsg.clockonscreen.ColorPickerPreference
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:key="mFontColor"
             android:title="@string/pref_fontcolor_title"
             android:defaultValue="#ffffffff"
             hexValue="true" />
-        <kr.hsg.clockonscreen.ColorPickerPreference
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:key="mGradientColor1"
             android:title="@string/pref_gradientcolor1_title"
             android:defaultValue="#ffff6609"
             hexValue="true" />
-        <kr.hsg.clockonscreen.ColorPickerPreference
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:key="mGradientColor2"
             android:title="@string/pref_gradientcolor2_title"
             android:defaultValue="#ff09ffff"
             hexValue="true" />
-        <kr.hsg.clockonscreen.ColorPickerPreference
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:key="mGradientColor3"
             android:title="@string/pref_gradientcolor3_title"
             android:defaultValue="#ff0909ff"
@@ -95,7 +95,7 @@
             android:title="@string/pref_fontshadowshape_title"
             android:key="mFontShadowShape"
             android:dependency="mFontShadow"/>
-        <kr.hsg.clockonscreen.ColorPickerPreference
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:key="mFontShadowColor"
             android:dependency="mFontShadow"
             android:title="@string/pref_fontshadowcolor_title"
@@ -111,7 +111,7 @@
             android:switchTextOn=""
             android:switchTextOff=""
             android:summary="@string/pref_background_des"/>
-        <kr.hsg.clockonscreen.ColorPickerPreference
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:key="mBackgroundColor"
             android:title="@string/pref_backgroundcolor_title"
             android:defaultValue="#1fafafaf"

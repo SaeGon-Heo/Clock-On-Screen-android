@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package kr.hsg.clockonscreen;
+package net.margaritov.preference.colorpicker;
 
 import android.content.Context;
 import android.content.res.TypedArray;
