@@ -87,7 +87,7 @@
         <SwitchPreference
             android:title="@string/pref_fontshadow_title"
             android:key="mFontShadow"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:switchTextOn=""
             android:switchTextOff=""
             android:summary="@string/pref_fontshadow_des"/>
