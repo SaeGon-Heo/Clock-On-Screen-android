@@ -58,5 +58,5 @@
         android:imeOptions="actionDone"
         android:layout_marginLeft="5dp"
 		android:inputType="text"
-        android:maxLength="40"/>
+        android:maxLength="80"/>
 </LinearLayout>
