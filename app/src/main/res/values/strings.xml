@@ -19,7 +19,11 @@
     <string name="action_exit">Exit</string>
 
     <string name="pref_clockText_key_string" translatable="false">mClockText</string>
+    <string name="pref_clockTextFormatted_key_string" translatable="false">mClockTextFormatted</string>
+    <string name="pref_clockTextMax_key_string" translatable="false">mClockTextMax</string>
     <string name="pref_clockText_notfs_key_string" translatable="false">mClockText_NotFS</string>
+    <string name="pref_clockTextFormatted_notfs_key_string" translatable="false">mClockTextFormatted_NotFS</string>
+    <string name="pref_clockTextMax_notfs_key_string" translatable="false">mClockTextMax_NotFS</string>
     <string name="pref_fontSize_key_string" translatable="false">mFontSize</string>
     <string name="pref_fontShadowShape_key_string" translatable="false">mFontShadowShape</string>
     <string name="pref_hideTheClockTime_key_string" translatable="false">mHideTheClockTime</string>
@@ -54,6 +58,7 @@
     <string name="pref_fontShadowShape_radius_key_string" translatable="false">mFontShadowRadius</string>
 
     <string name="pref_clockText_default_string">.o:.t:.v .n</string>
+    <string name="pref_clockText_reset_notify_string">\'Please set \"Clock Text\" again\'</string>
 
     <string name="pref_subject_text_position">Clock Text &amp; Position</string>
     <string name="pref_fsmode_title">FullScreen Mode</string>
@@ -160,8 +165,7 @@
     <string name="pref_dialog_hidetheclocktime_title">Hiding Time (3 ~ 600sec(s))</string>
     <string name="pref_longtouchtohide_title">Long Touch To Hide Clock</string>
     <string name="pref_longtouchtohide_des">Long touch the clock to hide it until the clock display condition is satisfied again</string>
-    <string name="pref_toast_hidetheclocktemporary_fsmode">To display the clock again, the screen must be turned off and on or the status bar must be appeared and disappeared</string>
-    <string name="pref_toast_hidetheclocktemporary_notfsmode">To display the clock again, the screen must be turned off and on</string>
+    <string name="pref_toast_hidetheclocktemporary">To display the clock again, the screen must be turned off and on</string>
 
     <string name="pref_subject_etc">Etc</string>
     <string name="pref_english_title" translatable="false">Use English UI</string>

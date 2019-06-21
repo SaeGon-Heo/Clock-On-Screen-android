@@ -16,6 +16,7 @@
     <string name="action_exit">종료</string>
 
     <string name="pref_clockText_default_string">.n .o:.t:.v</string>
+    <string name="pref_clockText_reset_notify_string">\'\"시계 내용\"을 다시 설정해주세요\'</string>
 
     <string name="pref_subject_text_position">시계 내용 및 위치</string>
     <string name="pref_fsmode_title">풀스크린 모드</string>
@@ -91,8 +92,7 @@
     <string name="pref_dialog_hidetheclocktime_title">시계를 숨기는 시간 (3 ~ 600초)</string>
     <string name="pref_longtouchtohide_title">롱터치 시 임시로 시계를 숨기기</string>
     <string name="pref_longtouchtohide_des">시계를 롱터치하여 시계 표시 조건이 다시 충족 될 때까지 시계를 숨깁니다</string>
-    <string name="pref_toast_hidetheclocktemporary_fsmode">시계를 다시 표시하기 위해 화면이 껐다가 켜지거나 상태 바가 나타났다가 사라져야 합니다</string>
-    <string name="pref_toast_hidetheclocktemporary_notfsmode">시계를 다시 표시하기 위해 화면이 껐다가 켜져야 합니다</string>
+    <string name="pref_toast_hidetheclocktemporary">시계를 다시 표시하기 위해 화면이 껐다가 켜져야 합니다</string>
 
     <string name="pref_subject_etc">기타</string>
     <string name="pref_reset">설정 초기화</string>

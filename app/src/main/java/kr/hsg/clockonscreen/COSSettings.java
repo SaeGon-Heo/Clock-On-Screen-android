@@ -30,6 +30,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,7 +114,7 @@ public final class COSSettings extends PreferenceActivity
     // make Preview and get Modified Line
     // return Modified Line
     // byte를 반환하므로 다른 곳에서 사용 시 주의
-    // 여기서는 최대 40줄을 초과 할 수 없으므로 byte 사용
+    // 여기서는 최대 80줄을 초과 할 수 없으므로 byte 사용
     // * 프로젝트 경로의 COS_structure.txt 파일 참조
     private byte refreshPreview(CharSequence data, int modified_end, StringBuilder SB) {
         char[] array = data.toString().toCharArray();
@@ -251,6 +252,301 @@ public final class COSSettings extends PreferenceActivity
         }
 
         return linecnt;
+    }
+
+    // 시계 구조 설정 값을 DateTimeFormatter에 알맞은 포맷으로 변환
+    // * 프로젝트 경로의 COS_structure.txt 파일 참조
+    static String getClockTextFormatted(String data) {
+        StringBuilder SB = new StringBuilder();
+
+        // 시계 구조 저장
+        char[] array = data.toCharArray();
+
+        // 같은 종류의 값을 이어서 사용하는 경우 또는 택스트와 구성요소 사이 구분을 위한 변수
+        // 0 - 문자열 / 1 - 년 / 2 - 분기 / 3 - 월 / 4 - 주차 / 5 - 일 / 6 - 요일
+        // 7 - 오전,오후 / 8 - 시간1(h) / 9 - 시간2(H) / 10 - 분 / 11 - 초 / 12 - 초기 값
+        byte state = 12;
+        // for loop
+        byte i = 0;
+        byte len = (byte)(array.length - 1);
+        // 변환작업
+        while(i < len) {
+            if(array[i] == '.') {
+                if(array[i + 1] == 'z') {
+                    if(state != 0) { SB.append('\''); state = 0; }
+                    SB.append('\n');
+                    i++;
+                }
+                else if(array[i + 1] == 'a') {
+                    // 1.문자열을 쓰다가 구성요소로 오면 '(문자열 구분자) 추가
+                    // 2.현재 구성요소와 같은 문자를 쓰는 구성요소를 이어서 쓰는 경우
+                    // 사이에 Zero Width Space(유니코드 공식 문자) 추가
+                    // 3.다른 구성요소에서 현재 구성요소를 추가한 경우
+                    // 현재 구성요소 상태로 변환(이 밑으로 같은 형식으로 작성)
+                    if(state == 0) { SB.append('\''); state = 1; }
+                    else if(state == 1) { SB.append('\u200B'); }
+                    else state = 1;
+                    SB.append("uuuu"); // 년 (2018)
+                    i++;
+                }
+                else if(array[i + 1] == 'b') {
+                    if(state == 0) { SB.append('\''); state = 1; }
+                    else if(state == 1) { SB.append('\u200B'); }
+                    else state = 1;
+                    SB.append("uu"); // 년 (18)
+                    i++;
+                }
+                else if(array[i + 1] == 'c') {
+                    if(state == 0) { SB.append('\''); state = 2; }
+                    else if(state == 2) { SB.append('\u200B'); }
+                    else state = 2;
+                    SB.append('Q'); // 분기 (1 ~ 4)
+                    i++;
+                }
+                else if(array[i + 1] == 'd') {
+                    if(state == 0) { SB.append('\''); state = 2; }
+                    else if(state == 2) { SB.append('\u200B'); }
+                    else state = 2;
+                    SB.append("QQQ"); // 분기 (Q1, Q2, Q3, Q4)
+                    i++;
+                }
+                else if(array[i + 1] == 'e') {
+                    if(state == 0) { SB.append('\''); state = 3; }
+                    else if(state == 3) { SB.append('\u200B'); }
+                    else state = 3;
+                    SB.append('M'); // 월 (1 ~ 12)
+                    i++;
+                }
+                else if(array[i + 1] == 'f') {
+                    if(state == 0) { SB.append('\''); state = 3; }
+                    else if(state == 3) { SB.append('\u200B'); }
+                    else state = 3;
+                    SB.append("MM"); // 월 (01 ~ 12)
+                    i++;
+                }
+                else if(array[i + 1] == 'g') {
+                    if(state == 0) { SB.append('\''); state = 3; }
+                    else if(state == 3) { SB.append('\u200B'); }
+                    else state = 3;
+                    SB.append("MMM"); // 월 (Jan, Feb...) (1월, 2월...)
+                    i++;
+                }
+                else if(array[i + 1] == 'h') {
+                    if(state == 0) { SB.append('\''); state = 3; }
+                    else if(state == 3) { SB.append('\u200B'); }
+                    else state = 3;
+                    SB.append("MMMM"); // 월 (January, February...) (1월, 2월...)
+                    i++;
+                }
+                else if(array[i + 1] == 'i') {
+                    if(state == 0) { SB.append('\''); state = 4; }
+                    else if(state == 4) { SB.append('\u200B'); }
+                    else state = 4;
+                    SB.append('W'); // 주차 (1 ~ 5)
+                    i++;
+                }
+                else if(array[i + 1] == 'j') {
+                    if(state == 0) { SB.append('\''); state = 5; }
+                    else if(state == 5) { SB.append('\u200B'); }
+                    else state = 5;
+                    SB.append('d'); // 일 (1 ~ 31)
+                    i++;
+                }
+                else if(array[i + 1] == 'k') {
+                    if(state == 0) { SB.append('\''); state = 5; }
+                    else if(state == 5) { SB.append('\u200B'); }
+                    else state = 5;
+                    SB.append("dd"); // 일 (01 ~ 31)
+                    i++;
+                }
+                else if(array[i + 1] == 'l') {
+                    if(state == 0) { SB.append('\''); state = 6; }
+                    else if(state == 6) { SB.append('\u200B'); }
+                    else state = 6;
+                    SB.append("EE"); // 요일 (Mon, Tus...) (월, 화...)
+                    i++;
+                }
+                else if(array[i + 1] == 'm') {
+                    if(state == 0) { SB.append('\''); state = 6; }
+                    else if(state == 6) { SB.append('\u200B'); }
+                    else state = 6;
+                    SB.append("EEEE"); // 요일 (Monday, Tuesday...) (월요일, 화요일...)
+                    i++;
+                }
+                else if(array[i + 1] == 'n') {
+                    if(state == 0) { SB.append('\''); state = 7; }
+                    else if(state == 7) { SB.append('\u200B'); }
+                    else state = 7;
+                    SB.append('a'); // "AM" or "PM", "오전" 또는 "오후"
+                    i++;
+                }
+                else if(array[i + 1] == 'o') {
+                    if(state == 0) { SB.append('\''); state = 8; }
+                    else if(state == 8) { SB.append('\u200B'); }
+                    else state = 8;
+                    SB.append('h'); // 시간 (1 ~ 12)
+                    i++;
+                }
+                else if(array[i + 1] == 'p') {
+                    if(state == 0) { SB.append('\''); state = 8; }
+                    else if(state == 8) { SB.append('\u200B'); }
+                    else state = 8;
+                    SB.append("hh"); // 시간 (01 ~ 12)
+                    i++;
+                }
+                else if(array[i + 1] == 'q') {
+                    if(state == 0) { SB.append('\''); state = 9; }
+                    else if(state == 9) { SB.append('\u200B'); }
+                    else state = 9;
+                    SB.append('H'); // 시간 (0 ~ 23)
+                    i++;
+                }
+                else if(array[i + 1] == 'r') {
+                    if(state == 0) { SB.append('\''); state = 9; }
+                    else if(state == 9) { SB.append('\u200B'); }
+                    else state = 9;
+                    SB.append("HH"); // 시간 (00 ~ 23)
+                    i++;
+                }
+                else if(array[i + 1] == 's') {
+                    if(state == 0) { SB.append('\''); state = 10; }
+                    else if(state == 10) { SB.append('\u200B'); }
+                    else state = 10;
+                    SB.append('m'); // 분 (0 ~ 59)
+                    i++;
+                }
+                else if(array[i + 1] == 't') {
+                    if(state == 0) { SB.append('\''); state = 10; }
+                    else if(state == 10) { SB.append('\u200B'); }
+                    else state = 10;
+                    SB.append("mm"); // 분 (00 ~ 59)
+                    i++;
+                }
+                else if(array[i + 1] == 'u') {
+                    if(state == 0) { SB.append('\''); state = 11; }
+                    //else if(state == 11) { SB.append('\u200B'); }
+                    else state = 11;
+                    //SB.append('s');
+                    // 초(0~59)에 대한 특수 값
+                    SB.append('\uF002');
+                    i++;
+                }
+                else if(array[i + 1] == 'v') {
+                    if(state == 0) { SB.append('\''); state = 11; }
+                    //else if(state == 11) { SB.append('\u200B'); }
+                    else state = 11;
+                    //SB.append("ss");
+                    // 초(00~59)에 대한 특수 값
+                    SB.append('\uF001');
+                    i++;
+                }
+                else if(array[i + 1] == 'w') {
+                    if(state != 0) { SB.append('\''); state = 0; }
+                    // 배터리에 대한 특수 값
+                    SB.append('\uF000');
+                    i++;
+                }
+                else if(array[i + 1] == '.') {
+                    if(state != 0) { SB.append('\''); state = 0; }
+                    SB.append(".");
+                    i++;
+                }
+            }
+            // '문자는 DateTimeFormatter에서 문자열 구분용으로 쓰이므로
+            // '문자가 입력된 경우 따로 ''로 변환해줘야 정상 출력
+            else if(array[i] == '\'') {
+                if(state != 0) { SB.append('\''); state = 0; }
+                SB.append("\'\'");
+            }
+            // .와 다음줄 문자를 제외한 값을 처리
+            else if(array[i] != '\n' && array[i] != '\r') {
+                if(state != 0) { SB.append('\''); state = 0; }
+                SB.append(array[i]);
+            }
+            i++;
+        }
+        // 마지막 문자 1개가 남았을 시 넣음
+        if(i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
+            if(state != 0) { SB.append('\''); state = 0; }
+            if(array[i] == '\'') SB.append("\'\'");
+            else SB.append(array[i]);
+        }
+        // 마지막에 문자열 입력상태면 문자열 끝을 표시하기 위해 '추가
+        if(state == 0) SB.append('\'');
+
+        return SB.toString();
+    }
+
+    // 시계 구조 설정 값을 기준으로 시계 문자열의 최대 크기를 계산
+    // * 프로젝트 경로의 COS_structure.txt 파일 참조
+    static String getClockTextMax(String data) {
+        StringBuilder SB = new StringBuilder();
+
+        // 시계 구조 저장
+        char[] array = data.toCharArray();
+
+        // for loop
+        byte i = 0;
+        byte len = (byte)(array.length - 1);
+        // 변환작업
+        while(i < len) {
+            if(array[i] == '.') {
+                if(array[i + 1] == 'z') {
+                    SB.append(" \n");
+                    i++;
+                }
+                else if(array[i + 1] == 'a') {
+                    SB.append("0000");
+                    i++;
+                }
+                else if(array[i + 1] == 'b' || array[i + 1] == 'e' || array[i + 1] == 'f' || array[i + 1] == 'j' ||
+                        array[i + 1] == 'k' || array[i + 1] == 'o' || array[i + 1] == 'p' || array[i + 1] == 'q' || array[i + 1] == 'r' ||
+                        array[i + 1] == 's' || array[i + 1] == 't' || array[i + 1] == 'u' || array[i + 1] == 'v') {
+                    SB.append("00");
+                    i++;
+                }
+                else if(array[i + 1] == 'c' || array[i + 1] == 'i') {
+                    SB.append('0');
+                    i++;
+                }
+                else if(array[i + 1] == 'd') {
+                    SB.append("W0");
+                    i++;
+                }
+                else if(array[i + 1] == 'g' || array[i + 1] == 'l') {
+                    SB.append("WWW");
+                    i++;
+                }
+                else if(array[i + 1] == 'h' || array[i + 1] == 'm') {
+                    SB.append("WWWWWWWWW");
+                    i++;
+                }
+                else if(array[i + 1] == 'n') {
+                    SB.append("뷁뷁");
+                    i++;
+                }
+                else if(array[i + 1] == 'w') {
+                    SB.append("100%◎");
+                    i++;
+                }
+                else if(array[i + 1] == '.') {
+                    SB.append('.');
+                    i++;
+                }
+            }
+            // .와 다음줄 문자를 제외한 값을 처리
+            else if(array[i] != '\n' && array[i] != '\r') {
+                SB.append(array[i]);
+            }
+            i++;
+        }
+        // 마지막 문자 1개가 남았을 시 넣음
+        if(i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
+            SB.append(array[i]);
+        }
+        SB.append(' ');
+
+        return SB.toString();
     }
 
     @Override
@@ -550,7 +846,13 @@ public final class COSSettings extends PreferenceActivity
                             etClockText.setSelection(etClockText.length());
                             return;
                         }
-                        mPref.edit().putString(mCon.getString(R.string.pref_clockText_key_string), strClockText).apply();
+
+                        // 시계 구조 값 및 시계 구조를 미리 DateTimeFormatter에 알맞은 포맷으로
+                        // 변환해서 저장하고, 가능한 최대 길이의 문자열도 미리 구해서 저장한다.
+                        mPref.edit().putString(mCon.getString(R.string.pref_clockText_key_string), strClockText)
+                                .putString(mCon.getString(R.string.pref_clockTextFormatted_key_string), getClockTextFormatted(strClockText))
+                                .putString(mCon.getString(R.string.pref_clockTextMax_key_string), getClockTextMax(strClockText)).apply();
+
                         // 변경 내역 적용을 위해 서비스 재시작
                         runService(2, true);
                         ClockTextDialog.dismiss();
@@ -652,7 +954,13 @@ public final class COSSettings extends PreferenceActivity
                             etClockTextNotFS.setSelection(etClockTextNotFS.length());
                             return;
                         }
-                        mPref.edit().putString(mCon.getString(R.string.pref_clockText_notfs_key_string), strClockText).apply();
+
+                        // 시계 구조 값 및 시계 구조를 미리 DateTimeFormatter에 알맞은 포맷으로
+                        // 변환해서 저장하고, 가능한 최대 길이의 문자열도 미리 구해서 저장한다.
+                        mPref.edit().putString(mCon.getString(R.string.pref_clockText_notfs_key_string), strClockText)
+                                .putString(mCon.getString(R.string.pref_clockTextFormatted_notfs_key_string), getClockTextFormatted(strClockText))
+                                .putString(mCon.getString(R.string.pref_clockTextMax_notfs_key_string), getClockTextMax(strClockText)).apply();
+
                         // 변경 내역 적용을 위해 서비스 재시작
                         runService(2, true);
                         ClockTextNotFSDialog.dismiss();
