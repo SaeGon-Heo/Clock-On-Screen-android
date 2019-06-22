@@ -235,6 +235,10 @@ public final class COSSettings extends PreferenceActivity
                     SB.append("50%▲");
                     i++;
                 }
+                else if(array[i + 1] == 'x') {
+                    SB.append('⇅');
+                    i++;
+                }
                 else if(array[i + 1] == '.') {
                     SB.append(".");
                     i++;
@@ -446,6 +450,12 @@ public final class COSSettings extends PreferenceActivity
                     SB.append('\uF000');
                     i++;
                 }
+                else if(array[i + 1] == 'x') {
+                    if(state != 0) { SB.append('\''); state = 0; }
+                    // 네트워크 상태에 대한 특수 값
+                    SB.append('\uF003');
+                    i++;
+                }
                 else if(array[i + 1] == '.') {
                     if(state != 0) { SB.append('\''); state = 0; }
                     SB.append(".");
@@ -526,7 +536,11 @@ public final class COSSettings extends PreferenceActivity
                     i++;
                 }
                 else if(array[i + 1] == 'w') {
-                    SB.append("100%◎");
+                    SB.append("100%◎ ");
+                    i++;
+                }
+                else if(array[i + 1] == 'x') {
+                    SB.append("⌂ ");
                     i++;
                 }
                 else if(array[i + 1] == '.') {

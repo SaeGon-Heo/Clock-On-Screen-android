@@ -22,7 +22,17 @@
 .t		mm			분 (00 ~ 59)\n
 .u		s	    \uF002	초 (0 ~ 59)\n
 .v		ss	    \uF001	초 (00 ~ 59)\n\n
-.w		(none)	    \uF000	배터리 (0 ~ 100%⊙)\n
+.w		(none)	    \uF000	배터리 (0 ~ 100%<state>)\n
+					<state>\n
+					Full: ◎\n
+					Charging: △▲\n
+					Discharging (under 15%): ▽▼\n
+.x		(none)	    \uF003	네트워크 상태\n
+					<state>\n
+					Cellular: ⇅\n
+					Wifi: ≋\n
+					Ethernet: ⌂\n
+					None: ⌀\n
 ..		(string)		.\n
 
 
