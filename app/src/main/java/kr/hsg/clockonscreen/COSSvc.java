@@ -196,18 +196,19 @@ public final class COSSvc extends Service implements Runnable {
                             if (nc == null) continue;
 
                             // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
-                            if (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                                network_count++;
-                                cosSvc_netState = COSSvc.NETSTATE_CELLULAR;
-                            } else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                                network_count++;
-                                cosSvc_netState = COSSvc.NETSTATE_WIFI;
-                            } else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                                network_count++;
-                                cosSvc_netState = COSSvc.NETSTATE_ETHERNET;
+                            if(nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                                if (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                                    network_count++;
+                                    cosSvc_netState = COSSvc.NETSTATE_CELLULAR;
+                                } else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                                    network_count++;
+                                    cosSvc_netState = COSSvc.NETSTATE_WIFI;
+                                } else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                                    network_count++;
+                                    cosSvc_netState = COSSvc.NETSTATE_ETHERNET;
+                                }
                             }
                         }
-
 
                         // 만약 발견된 네트워크가 없다면 네트워크 상태를 없음(-1)으로 변경
                         if (network_count == 0)
@@ -222,13 +223,14 @@ public final class COSSvc extends Service implements Runnable {
                             if (nc == null) return;
 
                             // 활성화된 네트워크 종류 확인 및 저장
-                            if (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
-                                cosSvc_netState = COSSvc.NETSTATE_CELLULAR;
-                            else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
-                                cosSvc_netState = COSSvc.NETSTATE_WIFI;
-                            else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
-                                cosSvc_netState = COSSvc.NETSTATE_ETHERNET;
-
+                            if(nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                                if (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
+                                    cosSvc_netState = COSSvc.NETSTATE_CELLULAR;
+                                else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
+                                    cosSvc_netState = COSSvc.NETSTATE_WIFI;
+                                else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+                                    cosSvc_netState = COSSvc.NETSTATE_ETHERNET;
+                            }
                         } // if(network_count > 1)
                     } // Marshmallow 이상 API
                     // API 23(Marshmallow) 미만에서는 예전 방식인 NetworkInfo를 사용
