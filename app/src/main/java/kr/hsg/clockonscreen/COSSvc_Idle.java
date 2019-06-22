@@ -50,10 +50,10 @@ public final class COSSvc_Idle extends Service {
         cosSvc_BReceiver.clearAbortBroadcast();
         unregisterReceiver(cosSvc_BReceiver);
 
-        if(cosSvc_FSDetector_Idle != null) {
-            cosSvc_FSDetector_Idle.clearAnimation();
-            ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).removeView(cosSvc_FSDetector_Idle);
-        }
+        // FSDetector 비 활성화
+        if(cosSvc_FSDetector_Idle != null)
+            cosSvc_FSDetector_Idle.detach();
+
         // 진행 중 알람 제거
         stopForeground(true);
         super.onDestroy();
@@ -77,30 +77,16 @@ public final class COSSvc_Idle extends Service {
         cosSvc_FSMode = _subClass.getFSMode();
         // 풀스크린에서만 시계 표시 모드를 사용하는 경우 풀스크린 디텍터 추가
         if(cosSvc_FSMode == 1) {
+            // FSDetector 활성화
             cosSvc_FSDetector_Idle = new FSDetector(this);
-            cosSvc_FSDetector_Idle.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            cosSvc_FSDetector_Idle.attach();
 
-            int __type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-            if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                __type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-            }
-
-            // Fix for the cannot click install on sideloaded apps bug
-            // Dont fill width, set to left side with a few pixels wide
-            WindowManager.LayoutParams layout = new WindowManager.LayoutParams(
-                    1, WindowManager.LayoutParams.MATCH_PARENT,
-                    __type,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
-                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSPARENT);
-            layout.gravity = Gravity.LEFT;
-            ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).addView(cosSvc_FSDetector_Idle, layout);
-
+            // 리스너 등록
             cosSvc_FSDetector_Idle.setOnFullScreenListener(new OnFullScreenListener() {
                 @Override
-                public void fsChanged(Context context, boolean bIsFS) {
+                public void fsChanged(Context context, boolean bFSState) {
                     // 풀스크린이고 절전모드(DOZE)도 아니면서 화면이 켜진 상태면 서비스 실행
-                    if (bIsFS && new COSSvcSubFunc(COSSvc_Idle.this).getIsScreenOnAndNotDOZEState())
+                    if (bFSState && new COSSvcSubFunc(COSSvc_Idle.this).getIsScreenOnAndNotDOZEState())
                         startSvc();
                 }
             });

@@ -404,12 +404,11 @@ public final class COSSvc extends Service implements Runnable {
                 cosSvc_TV.removeOnLayoutChangeListener(cosSvc_gradientRefresher);
         }
 
-        // 부착한 뷰 제거
-        if(cosSvc_FSDetector != null) {
-            cosSvc_FSDetector.clearAnimation();
-            ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).removeView(cosSvc_FSDetector);
-        }
+        // FSDetector를 비 활성화
+        if(cosSvc_FSDetector != null)
+            cosSvc_FSDetector.detach();
 
+        // 부착한 뷰 제거
         detachLayout();
 
         // 진행 중 알람 제거
@@ -591,25 +590,8 @@ public final class COSSvc extends Service implements Runnable {
         if(cosSvc_FSMode != 0) {
             // 풀스크린 디텍터를 생성 및 software 레이어로 설정
             cosSvc_FSDetector = new FSDetector(this);
-            cosSvc_FSDetector.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
-            // FSDetector를 최상단에 넣기 위한 layout 설정 값
-            int __type;
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                __type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-            else
-                __type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-            // Fix for the cannot click install on sideloaded apps bug
-            // Dont fill width, set to left side with a few pixels wide
-            WindowManager.LayoutParams layout = new WindowManager.LayoutParams(
-                    1, WindowManager.LayoutParams.MATCH_PARENT,
-                    __type,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
-                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSPARENT);
-            layout.gravity = Gravity.LEFT;
-            // 화면 최상단에 FSDetector를 삽입
-            ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).addView(cosSvc_FSDetector, layout);
+            // FSDetector를 활성화
+            cosSvc_FSDetector.attach();
 
             // onFullScreenListener의 경우 onStartCommand에서 부착
             // cosSvc_FSDetector가 null이 아닐 때 Intent를 확인해서
@@ -704,7 +686,9 @@ public final class COSSvc extends Service implements Runnable {
         if(cosSvc_FSDetector != null) {
             // 설정에서 온 경우
             if(intent != null && intent.getBooleanExtra("PreferenceView", false)) {
-                ((WindowManager)this.getSystemService(Context.WINDOW_SERVICE)).removeView(cosSvc_FSDetector);
+                // FSDetector를 비 활성화
+                cosSvc_FSDetector.detach();
+
                 // 서비스 실행 도중 서비스가 호출 되는 경우 onStartCommand가 실행될 때
                 // cosSvc_FSDetector가 null이 아니면 이곳으로 다시 오는 것도 있고,
                 // 추후 onDestroy에서 removeView를 할지 안할지를 null 값으로 판단하므로
@@ -731,12 +715,12 @@ public final class COSSvc extends Service implements Runnable {
                         // 풀스크린 상태에 따라 다른 시계 표시
                         cosSvc_FSDetector.setOnFullScreenListener(new OnFullScreenListener() {
                             @Override
-                            public void fsChanged(Context context, boolean bIsFS) {
+                            public void fsChanged(Context context, boolean bFSState) {
                                 // 풀스크린 상태가 설정에 저장된 값과 다를 경우
                                 // 바뀐 풀스크린 상태를 저장하고 그에 맞는 시계 구조 및
                                 // 위치를 불러온 뒤 시간을 재설정
-                                if (cosSvc_FSState != bIsFS) {
-                                    cosSvc_FSState = bIsFS;
+                                if (cosSvc_FSState != bFSState) {
+                                    cosSvc_FSState = bFSState;
                                     // 남아있는 Handler 예약 작업 지우기
                                     mHandler.removeMessages(0);
                                     // 1st bit on (InterruptHandler)

@@ -1,77 +1,105 @@
-/*
- *  Dummy Layout for detecting the statusbar vissibility on GB and below
- *
- *  Created by pvyParts
- *
- *  Modified by Saegon Heo (to work on more devices)
- *
- *  NOTE** May or may-not be a stupid way of doing it but hey it works....
- *
- *  ON SDK 11 and above use OnSystemUiVisibilityChangeListener()
- *
- *  FS_Bool True if the StatusBar is hiden eg Fullscreen App is Running
- *
- *	OnFullScreenListener fired if layout size changes by over-riding the onLayout()
- */
+// Original: https://github.com/pvyParts/Android-Helpers/blob/master/FullScreenDetector/Screendetect.java
+//
+// This is a full screen state detector by using LinearLayout
+//
+// --- Require ---
+// Add permission below in manifest
+// <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+// And add it in Activity or Service too
+// <service
+//            android:name=".TestService"
+//            android:exported="false"
+//            android:permission="android.permission.SYSTEM_ALERT_WINDOW">
+// </service>
+//
+// Must initialize using ui thread context
+// Note that "Min Api Level" is 11
 
  /* --- Usage ---
-    <In Class>
 	private FSDetector detector;
     <onCreate>
+    // activate detector
 	detector = new FSDetector(this);
-    detector.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+    detector.attach();
 
-    int __type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-        __type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-    }
-
-    // Fix for the cannot click install on sideloaded apps bug
-    // Dont fill width, set to left side with a few pixels wide
-    WindowManager.LayoutParams layout = new WindowManager.LayoutParams(
-            1, WindowManager.LayoutParams.MATCH_PARENT,
-            __type,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSPARENT);
-    layout.gravity = Gravity.LEFT;
-    ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).addView(detector, layout);
-
+    // set Listener
     detector.setOnFullScreenListener(new OnFullScreenListener() {
         @Override
         public void fsChanged(Context context, boolean bIsFS) {
             if(bIsFS) {
-                // TODO write your code
+                // write your code
             }
         }
     });
 
     <onDestroy>
-    if(detector != null) {
-        detector.clearAnimation();
-        ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).removeView(detector);
-    }
+    // deactivate detector
+    if(detector != null)
+        detector.detach();
 */
+
 package kr.hsg.clockonscreen;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Build;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import java.lang.reflect.InvocationTargetException;
 
 public final class FSDetector extends LinearLayout {
-    //private String FLAG = "FSDetector";
+    //private String FLAG = "FSDetectorLog";
     private OnFullScreenListener OnFullScreenListener;
     private Context mCon;
     private boolean bAttachedOnFullScreenListener;
 
-    public FSDetector(Context context) {
-        super(context);
-        mCon = context.getApplicationContext();
+    public FSDetector(Context uiContext) {
+        super(uiContext);
+        mCon = uiContext.getApplicationContext();
+        this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+    }
+
+    public boolean attach() {
+        // FSDetector를 최상단에 넣기 위한 layout 설정 값
+        int __type;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            __type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        else
+            __type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+        // Fix for the cannot click install on sideloaded apps bug
+        // Dont fill width, set to left side with a few pixels wide
+        WindowManager.LayoutParams layout = new WindowManager.LayoutParams(
+                1, WindowManager.LayoutParams.MATCH_PARENT,
+                __type,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSPARENT);
+        layout.gravity = Gravity.LEFT;
+        // 화면 최상단에 FSDetector를 삽입
+        try {
+            ((WindowManager) mCon.getSystemService(Context.WINDOW_SERVICE)).addView(this, layout);
+        }
+        catch (NullPointerException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean detach() {
+        // FSDetector를 화면 최상단에서 제거
+        this.clearAnimation();
+        try {
+            ((WindowManager) mCon.getSystemService(Context.WINDOW_SERVICE)).removeView(this);
+        }
+        catch (NullPointerException e) {
+            return false;
+        }
+        return true;
     }
 
     // this does the magic
@@ -128,6 +156,6 @@ public final class FSDetector extends LinearLayout {
     }
 
     public interface OnFullScreenListener {
-        void fsChanged(Context context, boolean bIsFS);
+        void fsChanged(Context context, boolean bFSState);
     }
 }
