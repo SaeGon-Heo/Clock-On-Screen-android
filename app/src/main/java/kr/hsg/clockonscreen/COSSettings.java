@@ -236,7 +236,7 @@ public final class COSSettings extends PreferenceActivity
                     i++;
                 }
                 else if(array[i + 1] == 'x') {
-                    SB.append('⇅');
+                    SB.append('⇵');
                     i++;
                 }
                 else if(array[i + 1] == '.') {
@@ -536,11 +536,11 @@ public final class COSSettings extends PreferenceActivity
                     i++;
                 }
                 else if(array[i + 1] == 'w') {
-                    SB.append("100%◎ ");
+                    SB.append("100%△");
                     i++;
                 }
                 else if(array[i + 1] == 'x') {
-                    SB.append("⌂ ");
+                    SB.append("≋⇵⌂");
                     i++;
                 }
                 else if(array[i + 1] == '.') {

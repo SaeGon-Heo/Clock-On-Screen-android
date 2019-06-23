@@ -68,7 +68,7 @@ public final class COSSvc extends Service implements Runnable {
     private static final char CHAR_BATTSTATE_DISCHARGING1 = '▽';
     private static final char CHAR_BATTSTATE_DISCHARGING2 = '▼';
     private static final char CHAR_NETSTATE_NONE = '⌀';
-    private static final char CHAR_NETSTATE_CELLULAR = '⇅';
+    private static final char CHAR_NETSTATE_CELLULAR = '⇵';
     private static final char CHAR_NETSTATE_WIFI = '≋';
     private static final char CHAR_NETSTATE_ETHERNET = '⌂';
     private static final String STR_EMPTY = "";
