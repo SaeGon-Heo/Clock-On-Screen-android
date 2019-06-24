@@ -6,7 +6,7 @@ android {
         applicationId "kr.hsg.clockonscreen"
         minSdkVersion 15
         targetSdkVersion 29
-        versionCode 190623002
+        versionCode 190625001
         versionName "2.5.0"
     }
     buildTypes {

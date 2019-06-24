@@ -175,29 +175,30 @@ final class COSSvcSubFunc {
             structure = mPref.getString(mCon.getString(R.string.pref_clockText_notfs_key_string), mCon.getString(R.string.pref_clockText_default_string));
 
         // COSSvc에서 필요한 설정 값 반환
-        short status = 0b000000000;
+        short status = 0b00_0000_0000;
         // 터치 기능을 하나라도 사용하는 경우 저장
         if (mPref.getBoolean(mCon.getString(R.string.pref_hideTheClock_key_string), false) || getHideTemporaryByLongTouch())
-            status |= 0b010000000; // 8th bit on (bTouchEvent)
+            status |= 0b00_1000_0000; // 8th bit on (bTouchEvent)
         // 서비스에서 TextView 갱신이 필요한지 판단하는 값 중 하나로
         // 순수 문자열만 이루어진 경우를 저장
         // (= 시계 구조 설정 내 .a ~ .y 중 단 하나도 쓰이지 않은 경우)
         // .z는 다음 줄로, ..은 .으로 치환되는 둘 다 단순 문자열이므로 무시
         if(!structure.matches(".*\\.[a-x].*"))
-            status |= 0b000010000; // 5th bit on (thereAreOnlyString)
+            status |= 0b00_0001_0000; // 5th bit on (thereAreOnlyString)
         boolean useBatt = structure.contains(".w");
         boolean useNetState = structure.contains(".x");
+        //boolean useGPSState = structure.contains(".y");
 
         boolean useSec = structure.contains(".u") || structure.contains(".v");
         // Batt 사용
         if(useBatt)
-            status |= 0b000000010; // 2nd bit on (isUsing_Battery)
+            status |= 0b00_0000_0010; // 2nd bit on (isUsing_Battery)
         // Network State 사용
         if(useNetState)
-            status |= 0b100000000; // 9th bit on (isUsing_Network_State)
+            status |= 0b01_0000_0000; // 9th bit on (isUsing_Network_State)
         // 초 단위 요소 사용
         if(useBatt || useNetState || useSec) {
-            status |= 0b000100000; // 6th bit on (isUsing_SecElement)
+            status |= 0b00_0010_0000; // 6th bit on (isUsing_SecElement)
         }
 
         return status;
