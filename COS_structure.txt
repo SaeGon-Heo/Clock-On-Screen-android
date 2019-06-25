@@ -29,7 +29,7 @@
 					Discharging (under 15%): ▽▼\n
 .x		(none)	    \uF003	네트워크 상태\n
 					<state>\n
-					Cellular: ⇅\n
+					Cellular: ⇵\n
 					Wifi: ≋\n
 					Ethernet: ⌂\n
 					None: ⌀\n

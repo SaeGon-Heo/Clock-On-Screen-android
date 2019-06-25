@@ -19,9 +19,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,6 +48,7 @@ public final class COSMain extends Activity {
     private AlertDialog PermissionDialog;
     private AlertDialog AppInfoDialog;
     private AlertDialog OpenSourceDialog;
+    private Uri GitHubLink;
     private boolean bInfo;
 
     // 서비스 실행
@@ -205,10 +203,11 @@ public final class COSMain extends Activity {
             setContentView(R.layout.activity_info);
             setTitle(R.string.action_info);
 
-            // 아래 측 TextView를 버튼으로 활용
-            TextView btn_open_source_library = findViewById(R.id.btn_open_source_library);
-            // 버튼 터치 시 효과
-            btn_open_source_library.setOnTouchListener(new View.OnTouchListener() {
+            // GitHub Uri 미리 생성
+            GitHubLink = Uri.parse("https://github.com/SaeGon-Heo/Clock-On-Screen-android");
+
+            // 버튼 터치 시 효과 (음영)
+            View.OnTouchListener touchEffect = new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent event) {
                     switch(event.getAction()) {
@@ -224,9 +223,30 @@ public final class COSMain extends Activity {
                     }
                     return false;
                 }
+            };
+
+            // 아래 측 TextView를 버튼으로 활용
+            TextView btn_github_link = findViewById(R.id.btn_github_link);
+            TextView btn_open_source_library = findViewById(R.id.btn_open_source_library);
+
+            // 버튼 터치 시 효과
+            btn_github_link.setOnTouchListener(touchEffect);
+            btn_open_source_library.setOnTouchListener(touchEffect);
+
+            // GitHub Link 버튼 클릭 시
+            // GitHub Repo로 연결
+            btn_github_link.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                    intent.setData(GitHubLink);
+                    startActivity(intent);
+                }
             });
 
-            // 버튼 클릭 시 참고한 라이브러리 및 소스 코드를 볼 수 있는 Dialog를 표시
+            // Open Source 버튼 클릭 시
+            // 참고한 라이브러리 및 소스 코드를 볼 수 있는 Dialog를 표시
             btn_open_source_library.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

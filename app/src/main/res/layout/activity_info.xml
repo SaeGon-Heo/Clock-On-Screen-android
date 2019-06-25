@@ -45,8 +45,28 @@
         android:text="@string/app_author"
         android:textSize="16dp" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/btn_github_link"
+        android:background="#ff909090" />
+
+
+    <TextView
+        android:id="@+id/btn_github_link"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_above="@id/line_above_btn_open_source_library"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_margin="3dp"
+        android:gravity="center"
+        android:textColor="#ff515151"
+        android:text="@string/app_github_link_title"
+        android:textSize="16dp" />
 
     <View
+        android:id="@+id/line_above_btn_open_source_library"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@id/btn_open_source_library"
