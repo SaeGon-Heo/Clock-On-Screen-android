@@ -22,12 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PixelFormat;
-import android.os.Build;
 import android.os.IBinder;
-import android.view.Gravity;
-import android.view.View;
-import android.view.WindowManager;
 
 public final class COSSvc_Idle extends Service {
     private Context mCon;

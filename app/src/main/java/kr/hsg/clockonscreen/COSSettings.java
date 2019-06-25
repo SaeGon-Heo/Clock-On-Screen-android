@@ -540,7 +540,7 @@ public final class COSSettings extends PreferenceActivity
                     i++;
                 }
                 else if(array[i + 1] == 'x') {
-                    SB.append("≋⇵⌂");
+                    SB.append("⌂≋⇵");
                     i++;
                 }
                 else if(array[i + 1] == '.') {

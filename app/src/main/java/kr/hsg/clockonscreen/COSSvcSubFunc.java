@@ -181,13 +181,12 @@ final class COSSvcSubFunc {
             status |= 0b00_1000_0000; // 8th bit on (bTouchEvent)
         // 서비스에서 TextView 갱신이 필요한지 판단하는 값 중 하나로
         // 순수 문자열만 이루어진 경우를 저장
-        // (= 시계 구조 설정 내 .a ~ .y 중 단 하나도 쓰이지 않은 경우)
+        // (= 시계 구조 설정 내 .a ~ .x 중 단 하나도 쓰이지 않은 경우)
         // .z는 다음 줄로, ..은 .으로 치환되는 둘 다 단순 문자열이므로 무시
         if(!structure.matches(".*\\.[a-x].*"))
             status |= 0b00_0001_0000; // 5th bit on (thereAreOnlyString)
         boolean useBatt = structure.contains(".w");
         boolean useNetState = structure.contains(".x");
-        //boolean useGPSState = structure.contains(".y");
 
         boolean useSec = structure.contains(".u") || structure.contains(".v");
         // Batt 사용

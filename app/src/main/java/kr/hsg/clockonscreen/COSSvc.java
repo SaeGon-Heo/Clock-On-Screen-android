@@ -112,7 +112,6 @@ public final class COSSvc extends Service implements Runnable {
     private short cosSvc_HidingTimeLength;
     private short cosSvc_HidingTime;
     // Each bit have meaning as below
-    // (10.isUsing_GPS_State)
     // ( 9.isUsing_Network_State)
     // ( 8.bTouchEvent)
     // ( 7.overMin_need_update)
@@ -995,9 +994,8 @@ public final class COSSvc extends Service implements Runnable {
                                     // 5th bit (thereAreOnlyString)
                                     // 6th bit (isUsing_SecElement)
                                     // 9th bit (isUsing_Network_State)
-                                    // 10th bit (isUsing_GPS_State)
-                                    // 5개의 비트는 시계 구조에 따라 변화하므로 재설정
-                                    cosSvc_Status &= 0b00_1100_1101;
+                                    // 4개의 비트는 시계 구조에 따라 변화하므로 재설정
+                                    cosSvc_Status &= 0b10_1100_1101;
                                     if(cosSvc_FSState) {
                                         cosSvc_Status |= cosSvc_InitStatus;
                                     }
