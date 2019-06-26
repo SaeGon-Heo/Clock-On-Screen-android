@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Clock On Screen</string>
-    <string name="app_author" translatable="false">Clock On Screen v2.5.0\nCopyright 2014-2019. SaeGon-Heo All rights reserved.</string>
+    <string name="app_author" translatable="false">Clock On Screen v2.5.0.1\nCopyright 2014-2019. SaeGon-Heo All rights reserved.</string>
     <string name="app_github_link_title" translatable="false">GitHub</string>
     <string name="app_open_source_library_title" translatable="false">Open Source Library</string>
     <string name="app_request_overlay_permission_title">Display over other apps</string>

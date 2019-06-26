@@ -93,6 +93,7 @@ public final class COSSvc extends Service implements Runnable {
     // 풀스크린 상태는 풀스크린 상태에 따라 시계를 다르게 표시할 경우에만
     // 값이 변화하며, 그렇지 않으면 항상 true 이다
     private boolean cosSvc_FSState;
+    private WindowManager cosSvc_winManager;
     private ScheduledFuture<?> cosSvc_repeater;
     private Instant cosSvc_current;
     private DateTimeFormatter cosSvc_formatter;
@@ -430,6 +431,11 @@ public final class COSSvc extends Service implements Runnable {
 
     // cosSvc_FSState 값 기준 작업
     void attachLayout() {
+        // 만약 cosSvc_TV, cosSvc_OutBoundLayout 중 하나라도 null이 된 경우
+        // 서비스 강제 재시작
+        if(cosSvc_TV == null || cosSvc_OutBoundLayout == null)
+            startSvc_Idle();
+
         // 현재 ClockText 설정 값을 기준으로 가능한
         // 최대 길이의 텍스트를 얻어와서 TextView에 집어 넣는다.
         // 추후 텍스트뷰 크기를 계산하여 OutBoundLayout의 고정 크기로 사용
@@ -439,13 +445,17 @@ public final class COSSvc extends Service implements Runnable {
             cosSvc_TV.setText(cosSvc_ClockTextMax_notfs);
 
         // 현재 화면의 가로 길이 측정
-        // 최소 가로 길이는 480 pixels으로 가정
-        Point size = new Point(480, 0);
+        Point size = new Point(0, 0);
         Display dis;
+
+        if(cosSvc_winManager == null)
+            cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
         try {
-            dis = ((WindowManager) mCon.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            dis = cosSvc_winManager.getDefaultDisplay();
             dis.getSize(size);
         } catch (NullPointerException e) {
+            // 최소 가로 길이는 240 pixels으로 가정
+            size.x = 240;
         }
 
         cosSvc_TV.measure(View.MeasureSpec.makeMeasureSpec(size.x, View.MeasureSpec.AT_MOST), 0);
@@ -561,8 +571,11 @@ public final class COSSvc extends Service implements Runnable {
                     ((LinearLayout)cosSvc_OutBoundLayout).setGravity(Gravity.BOTTOM | Gravity.END);
                 break;
         }
+
         // 화면 최상단에 OutBoundLayout부터 삽입
-        ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).addView((ViewGroup)cosSvc_OutBoundLayout, layout);
+        if(cosSvc_winManager == null)
+            cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
+        cosSvc_winManager.addView((ViewGroup)cosSvc_OutBoundLayout, layout);
 
         // TextView는 width, height를 WRAP_CONTENT로 해서 cosSvc_OutBoundLayout 안에 넣음
         layout.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -589,7 +602,10 @@ public final class COSSvc extends Service implements Runnable {
 
         if(cosSvc_OutBoundLayout != null) {
             ((ViewGroup)cosSvc_OutBoundLayout).clearAnimation();
-            ((WindowManager)this.getSystemService(Context.WINDOW_SERVICE)).removeView(((ViewGroup)cosSvc_OutBoundLayout));
+
+            if(cosSvc_winManager == null)
+                cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
+            cosSvc_winManager.removeView(((ViewGroup)cosSvc_OutBoundLayout));
         }
     }
 

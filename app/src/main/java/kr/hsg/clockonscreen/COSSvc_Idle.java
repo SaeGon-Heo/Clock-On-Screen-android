@@ -95,7 +95,7 @@ public final class COSSvc_Idle extends Service {
                 String action = intent.getAction();
                 // 화면 켜짐 action이 들어오고, 풀스크린에서만 시계 표시 모드가 아니면서
                 // 절전모드(DOZE)도 아닌 경우 서비스 실행
-                if(action != null && action.equals("android.intent.action.SCREEN_ON") &&
+                if(action != null && action.equals(Intent.ACTION_SCREEN_ON) &&
                         cosSvc_FSMode != 1 &&
                         new COSSvcSubFunc(COSSvc_Idle.this).getIsScreenOnAndNotDOZEState()) {
                     startSvc();
@@ -103,7 +103,7 @@ public final class COSSvc_Idle extends Service {
             }
         };
         // 화면 켜짐 액션만 분별하는 필터 생성 및 리시버 등록
-        registerReceiver(cosSvc_BReceiver, new IntentFilter("android.intent.action.SCREEN_ON"));
+        registerReceiver(cosSvc_BReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
     }
 
     @Override

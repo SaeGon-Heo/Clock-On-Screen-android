@@ -55,16 +55,24 @@ import java.lang.reflect.InvocationTargetException;
 public final class FSDetector extends LinearLayout {
     //private String FLAG = "FSDetectorLog";
     private OnFullScreenListener OnFullScreenListener;
+    private WindowManager winManager;
     private Context mCon;
+    private boolean bError;
     private boolean bAttachedOnFullScreenListener;
 
-    public FSDetector(Context uiContext) {
-        super(uiContext);
-        mCon = uiContext.getApplicationContext();
+    public FSDetector(Context context) {
+        super(context);
+        mCon = context;
+        if(mCon == null) {
+            bError = true;
+            // Log.e(FLAG, "context error");
+        }
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
     public boolean attach() {
+        if(bError) return false;
+
         // FSDetector를 최상단에 넣기 위한 layout 설정 값
         int __type;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -80,31 +88,32 @@ public final class FSDetector extends LinearLayout {
                         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
         layout.gravity = Gravity.LEFT;
+
         // 화면 최상단에 FSDetector를 삽입
-        try {
-            ((WindowManager) mCon.getSystemService(Context.WINDOW_SERVICE)).addView(this, layout);
-        }
-        catch (NullPointerException e) {
-            return false;
-        }
+        if(winManager == null)
+            winManager = ((WindowManager)mCon.getSystemService(Context.WINDOW_SERVICE));
+        winManager.addView(this, layout);
+
         return true;
     }
 
     public boolean detach() {
+        if(bError) return false;
+
         // FSDetector를 화면 최상단에서 제거
         this.clearAnimation();
-        try {
-            ((WindowManager) mCon.getSystemService(Context.WINDOW_SERVICE)).removeView(this);
-        }
-        catch (NullPointerException e) {
-            return false;
-        }
+
+        if(winManager == null)
+            winManager = ((WindowManager)mCon.getSystemService(Context.WINDOW_SERVICE));
+        winManager.removeView(this);
+
         return true;
     }
 
     // this does the magic
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if(bError) return;
         //this.setBackgroundColor(0xafffffff);
         if (changed) {
             //Log.d(FLAG, "screen - " + r + " x " + b);
@@ -120,12 +129,9 @@ public final class FSDetector extends LinearLayout {
             int height;
 
             // soft key 제외 영역 계산
-            Display dis;
-            try {
-                dis = ((WindowManager) mCon.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-            } catch (NullPointerException e) {
-                return;
-            }
+            if(winManager == null)
+                winManager = ((WindowManager)mCon.getSystemService(Context.WINDOW_SERVICE));
+            Display dis = winManager.getDefaultDisplay();
             dis.getSize(size);
             height = size.y;
 
