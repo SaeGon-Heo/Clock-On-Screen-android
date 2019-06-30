@@ -83,6 +83,12 @@ public final class COSSvc extends Service implements Runnable {
     private static final byte NETSTATE_WIFI = 2;
     private static final byte NETSTATE_ETHERNET = 4;
 
+    // Layout Attach State 상수
+    private static final byte LAYOUT_IS_DETACHED = 0;
+    private static final byte LAYOUT_IS_ATTACHED = 1;
+    private static final byte LAYOUT_IS_DETACHING = 2;
+    private static final byte LAYOUT_IS_ATTACHING = 3;
+
     private Context mCon;
     //항상 보이게 할 뷰
     private TextView cosSvc_TV;
@@ -126,6 +132,7 @@ public final class COSSvc extends Service implements Runnable {
     private short cosSvc_InitStatus;
     private short cosSvc_InitStatus_notfs;
     private byte cosSvc_second;
+    private byte cosSvc_layoutAttachState;
     private byte cosSvc_netState;
     private View.OnLayoutChangeListener cosSvc_gradientRefresher;
     private ConnectivityManager cosSvc_connManager;
@@ -431,10 +438,28 @@ public final class COSSvc extends Service implements Runnable {
 
     // cosSvc_FSState 값 기준 작업
     void attachLayout() {
+        // Layout Attach 상태에 따른 분기
+        switch(cosSvc_layoutAttachState) {
+            // 이미 Attach 된 상태이거나
+            // Attach 진행 중인 경우
+            // 그냥 종료
+            case LAYOUT_IS_ATTACHED:
+            case LAYOUT_IS_ATTACHING:
+                return;
+            // Detach 진행 중인 경우
+            // 완료 될때까지 대기
+            case LAYOUT_IS_DETACHING:
+                while(cosSvc_layoutAttachState == LAYOUT_IS_DETACHING);
+                break;
+        }
+
         // 만약 cosSvc_TV, cosSvc_OutBoundLayout 중 하나라도 null이 된 경우
         // 서비스 강제 재시작
         if(cosSvc_TV == null || cosSvc_OutBoundLayout == null)
             startSvc_Idle();
+
+        // Attach 진행 중 상태로 변경
+        cosSvc_layoutAttachState = LAYOUT_IS_ATTACHING;
 
         // 현재 ClockText 설정 값을 기준으로 가능한
         // 최대 길이의 텍스트를 얻어와서 TextView에 집어 넣는다.
@@ -587,9 +612,35 @@ public final class COSSvc extends Service implements Runnable {
             ((ViewGroup)cosSvc_OutBoundLayout).addView(cosSvc_TVGradient, layout);
         // 텍스트뷰를 화면 위에 추가 한 뒤 최대 크기 계산을 위한 넣어둔 쓰래기값을 지움
         cosSvc_TV.setText("");
+
+        // Attach 완료 상태로 변경
+        cosSvc_layoutAttachState = LAYOUT_IS_ATTACHED;
     }
 
     void detachLayout() {
+        // Layout Attach 상태에 따른 분기
+        switch(cosSvc_layoutAttachState) {
+            // 이미 Detach 된 상태이거나
+            // Detach 진행 중인 경우
+            // 그냥 종료
+            case LAYOUT_IS_DETACHED:
+            case LAYOUT_IS_DETACHING:
+                return;
+            // Attach 진행 중인 경우
+            // 완료 될때까지 대기
+            case LAYOUT_IS_ATTACHING:
+                while(cosSvc_layoutAttachState == LAYOUT_IS_ATTACHING);
+                break;
+        }
+
+        // 만약 cosSvc_TV, cosSvc_OutBoundLayout 중 하나라도 null이 된 경우
+        // 서비스 강제 재시작
+        if(cosSvc_TV == null || cosSvc_OutBoundLayout == null)
+            startSvc_Idle();
+
+        // Detach 진행 중 상태로 변경
+        cosSvc_layoutAttachState = LAYOUT_IS_DETACHING;
+
         if(cosSvc_TV != null) {
             cosSvc_TV.clearAnimation();
             ((ViewGroup)cosSvc_OutBoundLayout).removeView(cosSvc_TV);
@@ -607,6 +658,9 @@ public final class COSSvc extends Service implements Runnable {
                 cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
             cosSvc_winManager.removeView(((ViewGroup)cosSvc_OutBoundLayout));
         }
+
+        // Detach 완료 상태로 변경
+        cosSvc_layoutAttachState = LAYOUT_IS_DETACHED;
     }
 
     @Override
