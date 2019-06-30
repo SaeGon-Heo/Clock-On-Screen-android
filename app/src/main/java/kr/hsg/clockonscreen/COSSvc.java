@@ -119,6 +119,7 @@ public final class COSSvc extends Service implements Runnable {
     private short cosSvc_HidingTimeLength;
     private short cosSvc_HidingTime;
     // Each bit have meaning as below
+    // (10.onDestroy_called)
     // ( 9.isUsing_Network_State)
     // ( 8.bTouchEvent)
     // ( 7.overMin_need_update)
@@ -674,8 +675,12 @@ public final class COSSvc extends Service implements Runnable {
 
     @Override
     public void onDestroy() {
+        // 서비스 종료 시작 후에 기타 작업이
+        // 진행되는 것을 방지
         // 1st bit on (InterruptHandler)
-        cosSvc_Status |= 0b00_0000_0001;
+        // 10th bit on (onDestroy_called)
+        cosSvc_Status |= 0b10_0000_0001;
+
         // 서비스 종료 과정
         if(cosSvc_repeater != null) {
             while(true) {
@@ -1054,6 +1059,9 @@ public final class COSSvc extends Service implements Runnable {
                                 // 그에 맞는 시계 구조 및 위치를 불러온 뒤
                                 // 시간이 지연되었을 가능성이 있으므로 시간을 재설정
                                 if (cosSvc_FSState != bFSState) {
+                                    // 10th bit check (onDestroy_called)
+                                    if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
                                     cosSvc_FSState = bFSState;
                                     // 남아있는 Handler 예약 작업 지우기
                                     mHandler.removeMessages(0);
@@ -1116,6 +1124,9 @@ public final class COSSvc extends Service implements Runnable {
         // 레이아웃 재설정 및 작업 시간이
         // 길어진 경우를 고려하여 시간도 재설정
         if(cosSvc_repeater != null) {
+            // 10th bit check (onDestroy_called)
+            if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
             // 남아있는 Handler 예약 작업 지우기
             mHandler.removeMessages(0);
             // 1st bit on (InterruptHandler)
