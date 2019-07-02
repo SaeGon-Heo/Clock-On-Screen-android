@@ -81,6 +81,7 @@ public final class COSSvc extends Service implements Runnable {
     private static final byte NETSTATE_NONE = 0;
     private static final byte NETSTATE_CELLULAR = 1;
     private static final byte NETSTATE_WIFI = 2;
+    private static final byte NETSTATE_CELLULAR_WIFI = 3;
     private static final byte NETSTATE_ETHERNET = 4;
 
     // Layout Attach State 상수
@@ -134,17 +135,32 @@ public final class COSSvc extends Service implements Runnable {
     private short cosSvc_InitStatus_notfs;
     private byte cosSvc_second;
     private byte cosSvc_layoutAttachState;
-    private byte cosSvc_netState;
     private View.OnLayoutChangeListener cosSvc_gradientRefresher;
     private ConnectivityManager cosSvc_connManager;
     private BroadcastReceiver cosSvc_receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            // action null 여부 확인
             String action = intent.getAction();
-
             if(action == null) return;
-            // 배터리 상태 변경 시 변경 내용을 StringBuilder에 저장
+
             switch (action) {
+                // 화면이 꺼지면 Idle 서비스로 전환.
+                case Intent.ACTION_SCREEN_OFF:
+                    startSvc_Idle();
+                    break;
+                // 시간이 변경되면 시간을 재설정 한다.
+                case Intent.ACTION_DATE_CHANGED:
+                case Intent.ACTION_TIMEZONE_CHANGED:
+                case Intent.ACTION_TIME_CHANGED:
+                    // 문자열만 존재하는 경우를 제외하고 시간을 갱신
+                    // 5th bit check (thereAreOnlyString)
+                    if((cosSvc_Status & 0b00_0001_0000) == 0) {
+                        mHandler.removeMessages(0);
+                        reloadCurrentTime(false);
+                    }
+                    break;
+                // 배터리 상태 변경 시 변경 내용을 StringBuilder에 저장
                 case Intent.ACTION_BATTERY_CHANGED:
                     cosSvc_strBattLevelBuilder.setLength(0);
                     // 배터리 level 저장 및 StringBuiler에 입력
@@ -179,21 +195,6 @@ public final class COSSvc extends Service implements Runnable {
                     // 마지막 % 추가
                     cosSvc_strBattLevelBuilder.append(CHAR_PERCENT);
                     break;
-                // 화면이 꺼지면 Idle 서비스로 전환.
-                case Intent.ACTION_SCREEN_OFF:
-                    startSvc_Idle();
-                    break;
-                // 시간이 변경되면 시간을 재설정 한다.
-                case Intent.ACTION_DATE_CHANGED:
-                case Intent.ACTION_TIMEZONE_CHANGED:
-                case Intent.ACTION_TIME_CHANGED:
-                    // 문자열만 존재하는 경우를 제외하고 시간을 갱신
-                    // 5th bit check (thereAreOnlyString)
-                    if((cosSvc_Status & 0b00_0001_0000) == 0) {
-                        mHandler.removeMessages(0);
-                        reloadCurrentTime(false);
-                    }
-                    break;
                 // 네트워크 상태가 변경 될 때 마다
                 // 전체 네트워크를 검사하여 현재 활성화된 네트워크를 탐색
                 case ConnectivityManager.CONNECTIVITY_ACTION:
@@ -208,9 +209,8 @@ public final class COSSvc extends Service implements Runnable {
                     // 만약 사용자가 VPN 사용 시 getActiveNetwork()는
                     // VPN 네트워크를 반환하므로 아래와 같은 방법을 사용
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        // 2개 이상의 네트워크에 연결된 경우를 판단하기 위해 사용
+                        // * 삼성의 다운로드 부스터 및 band LTE WiFi 탐지하기 위해 사용
                         boolean network_valid_cellular = false;
-                        boolean network_valid_wifi = false;
 
                         // 현재 존재하는 모든 네트워크를 먼저 검사
                         for (Network net : cosSvc_connManager.getAllNetworks()) {
@@ -228,10 +228,6 @@ public final class COSSvc extends Service implements Runnable {
                                     netState += COSSvc.NETSTATE_CELLULAR;
                                 } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                                     network_count++;
-                                    // 2개 이상의 네트워크에 연결된 경우를 판단하기 위해 저장
-                                    // * 삼성의 다운로드 부스터 및 band LTE WiFi 탐지
-                                    if (netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED))
-                                        network_valid_wifi = true;
                                     netState += COSSvc.NETSTATE_WIFI;
                                 } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
                                     network_count++;
@@ -241,11 +237,8 @@ public final class COSSvc extends Service implements Runnable {
                         }
 
                         // 만약 발견된 네트워크가 없다면 netState의 초기 값인
-                        // 네트워크 없음 상태 값을 저장하고 return;
-                        if (network_count == 0) {
-                            cosSvc_netState = netState;
-                            return;
-                        }
+                        // 네트워크 없음 상태값이 유지되고
+                        // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
 
                         // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
                         if (network_count > 1) {
@@ -257,47 +250,52 @@ public final class COSSvc extends Service implements Runnable {
                             // 특정 네트워크 값보다 큰 경우 현제 활성화된 네트워크는
                             // 특정 네트워크라고 볼 수 있다
                             //
-                            // 그러나 삼성의 다운로드 부스터 및 band LTE WiFi를 사용 중인 경우
                             // 기본적으로 활성화 된 네트워크의 Capability를 조사하면
                             // 인터넷에 직접 연결 가능한 네트워크에 한해
-                            // NET_CAPABILITY_INTERNET / NET_CAPABILITY_VALIDATED 2개의 값을 가지는데
-                            // 다운로드 부스터 기능 테스트 결과 삼성이 꼼수를 써서
-                            // Cellular 네트워크의 NET_CAPABILITY_VALIDATED Capability를 꺼버리고
-                            // 3G/LTE/5G + WiFi 를 동시에 사용하다가 사용이 끝나면
-                            // Cellular 네트워크의 NET_CAPABILITY_VALIDATED Capability를 다시 켜는
-                            // 방식으로 구현을 해놓은 듯 하다
-                            // SystemUI에 해당 값을 기준으로 사용 여부를 표시하는 것으로 보인다
+                            // NET_CAPABILITY_INTERNET / NET_CAPABILITY_VALIDATED 2개의 값을 가진다
                             //
-                            // 따라서 network_valid_cellular 값을 활용하여
-                            // 다운로드 부스터 및 band LTE WiFi 사용 여부를 탐지한다
+                            // NET_CAPABILITY_VALIDATED 값은 구글 자사의 인터넷 연결 확인을 위한
+                            // 내부 서버에 연결이 되면 활성화 되는 값이라고 하며
+                            // 해당 서버는 HTTPS를 사용하는 것이라고 가정한다
                             //
-                            // 추후 이더넷 연결 시 이더넷과 WiFi 및 Cellular 중
-                            // 2개 이상을 사용 할 때도 같은 꼼수를 사용 할 수 있다고 보고
-                            // 이더넷에 연결된 경우에도 똑같이 처리했다
+                            // 그런데 삼성의 다운로드 부스터 및 band LTE WiFi의 경우
+                            // 삼성 공식 사이트 내용에 따르면 HTTP 1.1 만 지원하고
+                            // HTTPS나 FTP등 다른 프로토콜은 지원하지 않는 다고 한다
+                            // (https://www.samsungsvc.co.kr/online/faqView.do?domainId=NODE0000033866&node_Id=NODE0000124880&faqId=KNOW0000027925)
+                            //
+                            // 따라서 다운로드 부스터 및 band LTE WiFi가 활성화 된 경우
+                            // HTTP 1.1를 제외한 프로토콜을 차단하여
+                            // Cellular 네트워크의 NET_CAPABILITY_VALIDATED 값은 비활성화 되어버리며
+                            // 다운로드 부스터 및 band LTE WiFi가 비활성화 된 경우
+                            // 다시 HTTPS 등의 프로토콜이 활성화 되어
+                            // Cellular 네트워크의 NET_CAPABILITY_VALIDATED 값이 켜지는 상황이
+                            // 나타나는 것으로 추측하고 있다
+                            //
+                            // 문제는 HTTPS 프로토콜이 다시 활성화 되더라도
+                            // 안드로이드 자체에서 바로 연결을 시도하지는 않는 것으로 보여서
+                            // 제때에 네트워크 상태 값이 갱신되지 않는 경우도 많다
+                            //
+                            // 하지만 여기서는 위의 추측에 따라 network_valid_cellular 값을 활용하여
+                            // 다운로드 부스터 및 band LTE WiFi 사용 여부를 탐지 및 사용한다
+
+                            // 만약 ethernet + 기타 네트워크가 활성화된 경우
+                            // ethernet 사용 상태로 처리
                             if (netState > COSSvc.NETSTATE_ETHERNET) {
-                                if ((netState & COSSvc.NETSTATE_WIFI) != 0 && network_valid_wifi) {
-                                    netState &= ~COSSvc.NETSTATE_WIFI;
-                                }
-                                if ((netState & COSSvc.NETSTATE_CELLULAR) != 0 && network_valid_cellular) {
-                                    netState &= ~COSSvc.NETSTATE_CELLULAR;
-                                }
+                                netState = COSSvc.NETSTATE_ETHERNET;
                             }
-                            // 만약 NET_CAPABILITY_INTERNET가 켜진 네트워크가 Wifi + Cellular 인 경우
+                            // 만약 wifi + Cellular 네트워크가 활성화된 경우
                             else if (netState > COSSvc.NETSTATE_WIFI) {
-                                // Cellular가 탐지 + Cellular가 NET_CAPABILITY_VALIDATED 값을 가진 경우
-                                if ((netState & COSSvc.NETSTATE_CELLULAR) != 0 && network_valid_cellular) {
-                                    // 다운로드 부스터 및 band LTE WiFi 미사용 상태이므로
-                                    // NETSTATE_CELLULAR bit를 0으로 바꾼다
-                                    netState &= ~COSSvc.NETSTATE_CELLULAR;
+                                netState = COSSvc.NETSTATE_WIFI;
+                                // Cellular가 NET_CAPABILITY_VALIDATED 값을 가지지 않은 경우
+                                if (!network_valid_cellular) {
+                                    // 다운로드 부스터 및 band LTE WiFi 사용 상태
+                                    netState = COSSvc.NETSTATE_CELLULAR_WIFI;
                                 }
                             }
                         } // if(network_count > 1)
-                        // 최종 획득한 상태 값을 저장
-                        // 시계 갱신 시 NETSTATE_ETHERNET / WIFI / CELLULAR 각 bit를 검사하여
-                        // 2개이상 bit가 1인 경우 해당 네트워크들을 동시에 쓴다고 판단한다
-                        cosSvc_netState = netState;
                     } // LOLLIPOP 이상 API
                     // API 21(LOLLIPOP) 미만에서는 예전 방식인 NetworkInfo를 사용
+                    // + 다운로드 부스터 및 band LTE WiFi 사용 가능성을 고려하지 않음
                     else {
                         // 현재 존재하는 모든 네트워크 조사
                         for (NetworkInfo netinfo : cosSvc_connManager.getAllNetworkInfo()) {
@@ -319,9 +317,8 @@ public final class COSSvc extends Service implements Runnable {
                         }
 
                         // 만약 발견된 네트워크가 없다면 netState의 초기 값인
-                        // 네트워크 없음 상태 값을 저장하고 return;
-                        if (network_count == 0)
-                            cosSvc_netState = netState;
+                        // 네트워크 없음 상태값이 유지되고
+                        // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
 
                         // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
                         if (network_count > 1) {
@@ -341,25 +338,37 @@ public final class COSSvc extends Service implements Runnable {
                                 // VPN 등을 사용 중일 수 있으므로
                                 // netState에 저장된 값을 활용하여 유추
                                 else {
-                                    // (NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4))
+                                    // NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4)
                                     // 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
-                                    // 특정 네트워크 값보다 큰 경우 현제 활성화된 네트워크는
-                                    // 특정 네트워크라고 볼 수 있다
+                                    // 특정 네트워크 x의 값보다 큰 경우
+                                    // 현재 활성화된 네트워크는 x라고 볼 수 있다
                                     if (netState > COSSvc.NETSTATE_ETHERNET)
                                         netState = COSSvc.NETSTATE_ETHERNET;
                                     else if (netState > COSSvc.NETSTATE_WIFI)
                                         netState = COSSvc.NETSTATE_WIFI;
-                                    // 2개 이상 네트워크가 탐지 된 가능한 경우의 수에서
-                                    // Cellular와 다른 네트워크가 존재하는 경우
-                                    // Cellular는 가장 낮은 우선순위를 가지므로
-                                    // 항상 다른 네트워크 쪽이 선택되기 때문에
-                                    // 따로 처리하지 않는다
                                 }
                             }
                         } // if(network_count > 1)
-                        // 최종 획득한 상태 값을 저장
-                        cosSvc_netState = netState;
                     } // LOLLIPOP 미만 API
+
+                    // 최종 획득한 상태 값을 기준으로 최종 문자열을 미리 저장
+                    cosSvc_strNetStateBuilder.setLength(0);
+
+                    switch(netState) {
+                        case COSSvc.NETSTATE_NONE:
+                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_NONE);
+                            break;
+                        case COSSvc.NETSTATE_CELLULAR_WIFI:
+                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
+                        case COSSvc.NETSTATE_CELLULAR:
+                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_CELLULAR);
+                            break;
+                        case COSSvc.NETSTATE_WIFI:
+                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
+                            break;
+                        case COSSvc.NETSTATE_ETHERNET:
+                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_ETHERNET);
+                    }
                     break;
             }
         }
@@ -611,6 +620,7 @@ public final class COSSvc extends Service implements Runnable {
         ((ViewGroup)cosSvc_OutBoundLayout).addView(cosSvc_TV, layout);
         if(cosSvc_TVGradient != null)
             ((ViewGroup)cosSvc_OutBoundLayout).addView(cosSvc_TVGradient, layout);
+
         // 텍스트뷰를 화면 위에 추가 한 뒤 최대 크기 계산을 위한 넣어둔 쓰래기값을 지움
         cosSvc_TV.setText("");
 
@@ -763,6 +773,9 @@ public final class COSSvc extends Service implements Runnable {
                 cosSvc_gradientRefresher = new View.OnLayoutChangeListener() {
                     @Override
                     public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                        // 10th bit check (onDestroy_called)
+                        if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
                         // 텍스트 뷰 크기가 변경 되었는지 확인
                         if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
                             cosSvc_TVGradient.getPaint().setShader(new LinearGradient(0, 0,
@@ -783,6 +796,9 @@ public final class COSSvc extends Service implements Runnable {
                 cosSvc_gradientRefresher = new View.OnLayoutChangeListener() {
                     @Override
                     public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                        // 10th bit check (onDestroy_called)
+                        if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
                         // 텍스트 뷰 크기가 변경 되었는지 확인
                         if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
                             cosSvc_TV.getPaint().setShader(new LinearGradient(0, 0,
@@ -836,6 +852,9 @@ public final class COSSvc extends Service implements Runnable {
             // 가장 뷰 크기가 큰 cosSvc_OutBoundLayout에서 처리
             ((ViewGroup)cosSvc_OutBoundLayout).setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    // 10th bit check (onDestroy_called)
+                    if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
                     // 하위 뷰 TextView의 텍스트를 초기화
                     cosSvc_TV.setText(STR_EMPTY);
                     if (cosSvc_TVGradient != null) cosSvc_TVGradient.setText(STR_EMPTY);
@@ -856,6 +875,9 @@ public final class COSSvc extends Service implements Runnable {
             ((ViewGroup)cosSvc_OutBoundLayout).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
+                    // 10th bit check (onDestroy_called)
+                    if((cosSvc_Status & 0b10_0000_0000) != 0) return false;
+
                     // 화면을 끄고 켜는 경우에만 서비스 재시작한다고 토스트 메시지를 띄운다
                     Toast.makeText(COSSvc.this, R.string.pref_toast_hidetheclocktemporary, Toast.LENGTH_LONG).show();
 
@@ -1042,6 +1064,9 @@ public final class COSSvc extends Service implements Runnable {
                         cosSvc_FSDetector.setOnFullScreenListener(new OnFullScreenListener() {
                             @Override
                             public void fsChanged(Context context, boolean bIsFS) {
+                                // 10th bit check (onDestroy_called)
+                                if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
                                 // 풀스크린 상태가 아닐 경우 Idle 서비스로 진입
                                 if (!bIsFS) {
                                     startSvc_Idle();
@@ -1054,14 +1079,14 @@ public final class COSSvc extends Service implements Runnable {
                         cosSvc_FSDetector.setOnFullScreenListener(new OnFullScreenListener() {
                             @Override
                             public void fsChanged(Context context, boolean bFSState) {
+                                // 10th bit check (onDestroy_called)
+                                if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
                                 // 풀스크린 상태가 설정에 저장된 값과 다를 경우
                                 // 바뀐 풀스크린 상태를 저장하고
                                 // 그에 맞는 시계 구조 및 위치를 불러온 뒤
                                 // 시간이 지연되었을 가능성이 있으므로 시간을 재설정
                                 if (cosSvc_FSState != bFSState) {
-                                    // 10th bit check (onDestroy_called)
-                                    if((cosSvc_Status & 0b10_0000_0000) != 0) return;
-
                                     cosSvc_FSState = bFSState;
                                     // 남아있는 Handler 예약 작업 지우기
                                     mHandler.removeMessages(0);
@@ -1119,14 +1144,14 @@ public final class COSSvc extends Service implements Runnable {
     // android:configChanges="orientation|screenSize"
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        // 10th bit check (onDestroy_called)
+        if((cosSvc_Status & 0b10_0000_0000) != 0) return;
+
         // 롱터치로 시계를 끈 경우 cosSvc_repeater가 null이 된다
         // 따라서 cosSvc_repeater 값이 null이 아닌 경우에만
         // 레이아웃 재설정 및 작업 시간이
         // 길어진 경우를 고려하여 시간도 재설정
         if(cosSvc_repeater != null) {
-            // 10th bit check (onDestroy_called)
-            if((cosSvc_Status & 0b10_0000_0000) != 0) return;
-
             // 남아있는 Handler 예약 작업 지우기
             mHandler.removeMessages(0);
             // 1st bit on (InterruptHandler)
@@ -1152,9 +1177,9 @@ public final class COSSvc extends Service implements Runnable {
         @Override
         public void handleMessage(Message msg) {
             // 1st bit check (InterruptHandler)
-            if((cosSvc_Status & 0b00_0000_0001) != 0) return;
+            // 10th bit check (onDestroy_called)
             // msg null 검사
-            if(msg == null) return;
+            if((cosSvc_Status & 0b10_0000_0001) != 0 || msg == null) return;
 
             // cosSvc_HidingTime 값이 0이면 시계 내용 업데이트
             if (cosSvc_HidingTime == 0) {
@@ -1228,27 +1253,8 @@ public final class COSSvc extends Service implements Runnable {
 
                     // Network State를 사용하는지 확인
                     // 9th bit check (isUsing_Network_State)
-                    if((cosSvc_InitStatus & 0b01_0000_0000) != 0) {
-                        // 최종 문자열을 미리 저장
-                        cosSvc_strNetStateBuilder.setLength(0);
-
-                        if(cosSvc_netState == COSSvc.NETSTATE_NONE) {
-                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_NONE);
-                        }
-                        else {
-                            if ((cosSvc_netState & COSSvc.NETSTATE_ETHERNET) != 0) {
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_ETHERNET);
-                            }
-                            if ((cosSvc_netState & COSSvc.NETSTATE_WIFI) != 0) {
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
-                            }
-                            if ((cosSvc_netState & COSSvc.NETSTATE_CELLULAR) != 0) {
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_CELLULAR);
-                            }
-                        }
-
-                        // Network State 처리
-                        // 최종 문자열을 알맞은 위치에 삽입
+                    if((cosSvc_Status & 0b01_0000_0000) != 0) {
+                        // Network State 문자열을 알맞은 위치에 삽입
                         index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_NETWORKSTATE);
                         while (index != -1) {
                             cosSvc_FinalClockText.deleteCharAt(index);
