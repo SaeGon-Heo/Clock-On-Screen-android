@@ -200,156 +200,145 @@ public final class COSSvc extends Service implements Runnable {
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     // 총 발견된 네트워크 수를 저장
                     byte network_count = 0;
+                    // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
+                    boolean bCellularHipri = false;
 
                     // 초기 값 지정
                     byte netState = COSSvc.NETSTATE_NONE;
 
-                    // API 21(LOLLIPOP) 이상에서는 NetworkCapabilities를 사용
-                    // getActiveNetwork() 함수를 쓸수도 있지만
-                    // 만약 사용자가 VPN 사용 시 getActiveNetwork()는
-                    // VPN 네트워크를 반환하므로 아래와 같은 방법을 사용
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        // * 삼성의 다운로드 부스터 및 band LTE WiFi 탐지하기 위해 사용
-                        boolean network_valid_cellular = false;
+                    // EXTRA_NO_CONNECTIVITY 값 확인 후 false 인 경우 상세 정보 확인
+                    if(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+                        // API 21(LOLLIPOP) 이상에서는 NetworkCapabilities를 사용
+                        // getActiveNetwork() 함수를 쓸수도 있지만
+                        // 만약 사용자가 VPN 사용 시 getActiveNetwork()는
+                        // VPN 네트워크를 반환하므로 아래와 같은 방법을 사용
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            // 현재 존재하는 모든 네트워크를 먼저 검사
+                            for (Network net : cosSvc_connManager.getAllNetworks()) {
+                                NetworkCapabilities netCap = cosSvc_connManager.getNetworkCapabilities(net);
+                                if (netCap == null) continue;
 
-                        // 현재 존재하는 모든 네트워크를 먼저 검사
-                        for (Network net : cosSvc_connManager.getAllNetworks()) {
-                            NetworkCapabilities netCap = cosSvc_connManager.getNetworkCapabilities(net);
-                            if (netCap == null) continue;
-
-                            // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
-                            if (netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-                                if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                                    network_count++;
-                                    // 2개 이상의 네트워크에 연결된 경우를 판단하기 위해 저장
-                                    // * 삼성의 다운로드 부스터 및 band LTE WiFi 탐지
-                                    if (netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED))
-                                        network_valid_cellular = true;
-                                    netState += COSSvc.NETSTATE_CELLULAR;
-                                } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                                    network_count++;
-                                    netState += COSSvc.NETSTATE_WIFI;
-                                } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                                    network_count++;
-                                    netState += COSSvc.NETSTATE_ETHERNET;
+                                // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
+                                if (netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                                    if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                                        network_count++;
+                                        // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
+                                        NetworkInfo cellularNetInfo = cosSvc_connManager.getNetworkInfo(net);
+                                        if(cellularNetInfo != null && cellularNetInfo.getType() == ConnectivityManager.TYPE_MOBILE_HIPRI &&
+                                                cellularNetInfo.isConnected()) {
+                                            bCellularHipri = true;
+                                        }
+                                        netState += COSSvc.NETSTATE_CELLULAR;
+                                    } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                                        network_count++;
+                                        netState += COSSvc.NETSTATE_WIFI;
+                                    } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                                        network_count++;
+                                        netState += COSSvc.NETSTATE_ETHERNET;
+                                    }
                                 }
                             }
-                        }
 
-                        // 만약 발견된 네트워크가 없다면 netState의 초기 값인
-                        // 네트워크 없음 상태값이 유지되고
-                        // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
+                            // 만약 발견된 네트워크가 없다면 netState의 초기 값인
+                            // 네트워크 없음 상태값이 유지되고
+                            // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
 
-                        // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
-                        if (network_count > 1) {
-                            // 기본적으로 2개 이상이 탐지되면
-                            // netState에 저장된 값은 1 / 2 / 4 중 하나가 되지 않는다
-                            // (NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4))
-                            //
-                            // 그리고 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
-                            // 특정 네트워크 값보다 큰 경우 현제 활성화된 네트워크는
-                            // 특정 네트워크라고 볼 수 있다
-                            //
-                            // 기본적으로 활성화 된 네트워크의 Capability를 조사하면
-                            // 인터넷에 직접 연결 가능한 네트워크에 한해
-                            // NET_CAPABILITY_INTERNET / NET_CAPABILITY_VALIDATED 2개의 값을 가진다
-                            //
-                            // NET_CAPABILITY_VALIDATED 값은 구글 자사의 인터넷 연결 확인을 위한
-                            // 내부 서버에 연결이 되면 활성화 되는 값이라고 하며
-                            // 해당 서버는 HTTPS를 사용하는 것이라고 가정한다
-                            //
-                            // 그런데 삼성의 다운로드 부스터 및 band LTE WiFi의 경우
-                            // 삼성 공식 사이트 내용에 따르면 HTTP 1.1 만 지원하고
-                            // HTTPS나 FTP등 다른 프로토콜은 지원하지 않는 다고 한다
-                            // (https://www.samsungsvc.co.kr/online/faqView.do?domainId=NODE0000033866&node_Id=NODE0000124880&faqId=KNOW0000027925)
-                            //
-                            // 따라서 다운로드 부스터 및 band LTE WiFi가 활성화 된 경우
-                            // HTTP 1.1를 제외한 프로토콜을 차단하여
-                            // Cellular 네트워크의 NET_CAPABILITY_VALIDATED 값은 비활성화 되어버리며
-                            // 다운로드 부스터 및 band LTE WiFi가 비활성화 된 경우
-                            // 다시 HTTPS 등의 프로토콜이 활성화 되어
-                            // Cellular 네트워크의 NET_CAPABILITY_VALIDATED 값이 켜지는 상황이
-                            // 나타나는 것으로 추측하고 있다
-                            //
-                            // 문제는 HTTPS 프로토콜이 다시 활성화 되더라도
-                            // 안드로이드 자체에서 바로 연결을 시도하지는 않는 것으로 보여서
-                            // 제때에 네트워크 상태 값이 갱신되지 않는 경우도 많다
-                            //
-                            // 하지만 여기서는 위의 추측에 따라 network_valid_cellular 값을 활용하여
-                            // 다운로드 부스터 및 band LTE WiFi 사용 여부를 탐지 및 사용한다
+                            // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
+                            if (network_count > 1) {
+                                // 기본적으로 2개 이상이 탐지되면
+                                // netState에 저장된 값은 1 / 2 / 4 중 하나가 되지 않는다
+                                // (NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4))
+                                //
+                                // 그리고 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
+                                // 특정 네트워크 x의 값보다 큰 경우
+                                // 현재 활성화된 네트워크는 x라고 볼 수 있다
+                                //
+                                // NetworkInfo에서 Type 값이 TYPE_MOBILE_HIPRI로 나타나면
+                                // 셀룰러 네트워크의 우선순위가 높아지지만
+                                // Mobile DNS servers 로만 접속이 가능해진다고 한다
+                                //
+                                // 그런데 삼성의 다운로드 부스터 및 band LTE WiFi 사용 시
+                                // 기존의 셀룰러 네트워크 NetworkInfo의 Type 값이
+                                // TYPE_MOBILE_HIPRI로 변화한다
+                                //
+                                // 따라서 셀룰러 네트워크에 한해 NetworkInfo의 Type 값을 확인하여
+                                // TYPE_MOBILE_HIPRI 여부를 저장한 bCellularHipri 값을 활용하여
+                                // 다운로드 부스터 및 band LTE WiFi의 활성화 여부를 출력한다
 
-                            // 만약 ethernet + 기타 네트워크가 활성화된 경우
-                            // ethernet 사용 상태로 처리
-                            if (netState > COSSvc.NETSTATE_ETHERNET) {
-                                netState = COSSvc.NETSTATE_ETHERNET;
-                            }
-                            // 만약 wifi + Cellular 네트워크가 활성화된 경우
-                            else if (netState > COSSvc.NETSTATE_WIFI) {
-                                netState = COSSvc.NETSTATE_WIFI;
-                                // Cellular가 NET_CAPABILITY_VALIDATED 값을 가지지 않은 경우
-                                if (!network_valid_cellular) {
-                                    // 다운로드 부스터 및 band LTE WiFi 사용 상태
-                                    netState = COSSvc.NETSTATE_CELLULAR_WIFI;
-                                }
-                            }
-                        } // if(network_count > 1)
-                    } // LOLLIPOP 이상 API
-                    // API 21(LOLLIPOP) 미만에서는 예전 방식인 NetworkInfo를 사용
-                    // + 다운로드 부스터 및 band LTE WiFi 사용 가능성을 고려하지 않음
-                    else {
-                        // 현재 존재하는 모든 네트워크 조사
-                        for (NetworkInfo netinfo : cosSvc_connManager.getAllNetworkInfo()) {
-                            if (netinfo == null) continue;
-
-                            // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
-                            if (netinfo.isConnected()) {
-                                if (netinfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                                    network_count++;
-                                    netState += COSSvc.NETSTATE_CELLULAR;
-                                } else if (netinfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                                    network_count++;
-                                    netState += COSSvc.NETSTATE_WIFI;
-                                } else if (netinfo.getType() == ConnectivityManager.TYPE_ETHERNET) {
-                                    network_count++;
-                                    netState += COSSvc.NETSTATE_ETHERNET;
-                                }
-                            }
-                        }
-
-                        // 만약 발견된 네트워크가 없다면 netState의 초기 값인
-                        // 네트워크 없음 상태값이 유지되고
-                        // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
-
-                        // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
-                        if (network_count > 1) {
-                            NetworkInfo active = cosSvc_connManager.getActiveNetworkInfo();
-                            if (active == null) return;
-
-                            // 해당 네트워크가 활성화된 상태인지 확인한 뒤 종류를 확인
-                            if (active.isConnected()) {
-                                if (active.getType() == ConnectivityManager.TYPE_MOBILE) {
-                                    netState = COSSvc.NETSTATE_CELLULAR;
-                                } else if (active.getType() == ConnectivityManager.TYPE_WIFI) {
-                                    netState = COSSvc.NETSTATE_WIFI;
-                                } else if (active.getType() == ConnectivityManager.TYPE_ETHERNET) {
+                                // 만약 ethernet + 기타 네트워크가 활성화된 경우
+                                // ethernet 사용 상태로 처리
+                                if (netState > COSSvc.NETSTATE_ETHERNET) {
                                     netState = COSSvc.NETSTATE_ETHERNET;
                                 }
-                                // MOBILE / WIFI / ETHERNET 중 하나도 아닌 경우
-                                // VPN 등을 사용 중일 수 있으므로
-                                // netState에 저장된 값을 활용하여 유추
-                                else {
-                                    // NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4)
-                                    // 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
-                                    // 특정 네트워크 x의 값보다 큰 경우
-                                    // 현재 활성화된 네트워크는 x라고 볼 수 있다
-                                    if (netState > COSSvc.NETSTATE_ETHERNET)
-                                        netState = COSSvc.NETSTATE_ETHERNET;
-                                    else if (netState > COSSvc.NETSTATE_WIFI)
-                                        netState = COSSvc.NETSTATE_WIFI;
+                                // 만약 wifi + Cellular 네트워크가 활성화된 경우
+                                else if (netState > COSSvc.NETSTATE_WIFI) {
+                                    netState = COSSvc.NETSTATE_WIFI;
+                                    // 셀룰러 네트워크 NetworkInfo Type 값이 TYPE_MOBILE_HIPRI이면
+                                    if (bCellularHipri) {
+                                        // 다운로드 부스터 및 band LTE WiFi 사용 상태
+                                        netState = COSSvc.NETSTATE_CELLULAR_WIFI;
+                                    }
+                                }
+                            } // if(network_count > 1)
+                        } // LOLLIPOP 이상 API
+                        // API 21(LOLLIPOP) 미만에서는 예전 방식인 NetworkInfo를 사용
+                        else {
+                            // 현재 존재하는 모든 네트워크 조사
+                            for (NetworkInfo netinfo : cosSvc_connManager.getAllNetworkInfo()) {
+                                if (netinfo == null) continue;
+
+                                // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
+                                if (netinfo.isConnected()) {
+                                    switch(netinfo.getType()) {
+                                        case ConnectivityManager.TYPE_MOBILE_HIPRI:
+                                            bCellularHipri = true;
+                                        case ConnectivityManager.TYPE_MOBILE:
+                                            network_count++;
+                                            netState += COSSvc.NETSTATE_CELLULAR;
+                                            break;
+                                        case ConnectivityManager.TYPE_WIFI:
+                                            network_count++;
+                                            netState += COSSvc.NETSTATE_WIFI;
+                                            break;
+                                        case ConnectivityManager.TYPE_ETHERNET:
+                                            network_count++;
+                                            netState += COSSvc.NETSTATE_ETHERNET;
+                                            break;
+                                    }
                                 }
                             }
-                        } // if(network_count > 1)
-                    } // LOLLIPOP 미만 API
+
+                            // 만약 발견된 네트워크가 없다면 netState의 초기 값인
+                            // 네트워크 없음 상태값이 유지되고
+                            // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
+
+                            // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
+                            if (network_count > 1) {
+                                // 기본적으로 2개 이상이 탐지되면
+                                // netState에 저장된 값은 1 / 2 / 4 중 하나가 되지 않는다
+                                // (NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4))
+                                //
+                                // 그리고 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
+                                // 특정 네트워크 x의 값보다 큰 경우
+                                // 현재 활성화된 네트워크는 x라고 볼 수 있다
+
+                                // 만약 ethernet + 기타 네트워크가 활성화된 경우
+                                // ethernet 사용 상태로 처리
+                                if (netState > COSSvc.NETSTATE_ETHERNET) {
+                                    netState = COSSvc.NETSTATE_ETHERNET;
+                                }
+                                // 만약 wifi + Cellular 네트워크가 활성화된 경우
+                                else if (netState > COSSvc.NETSTATE_WIFI) {
+                                    netState = COSSvc.NETSTATE_WIFI;
+                                    // 셀룰러 네트워크 NetworkInfo Type 값이 TYPE_MOBILE_HIPRI이면
+                                    if (bCellularHipri) {
+                                        // 다운로드 부스터 및 band LTE WiFi 사용 상태
+                                        netState = COSSvc.NETSTATE_CELLULAR_WIFI;
+                                    }
+                                }
+                            } // if(network_count > 1)
+                        } // LOLLIPOP 미만 API
+                    } // EXTRA_NO_CONNECTIVITY check
 
                     // 최종 획득한 상태 값을 기준으로 최종 문자열을 미리 저장
                     cosSvc_strNetStateBuilder.setLength(0);
@@ -480,18 +469,11 @@ public final class COSSvc extends Service implements Runnable {
             cosSvc_TV.setText(cosSvc_ClockTextMax_notfs);
 
         // 현재 화면의 가로 길이 측정
-        Point size = new Point(0, 0);
+        // 최소 가로 길이는 240 pixels으로 가정
+        Point size = new Point(240, 0);
         Display dis;
-
-        if(cosSvc_winManager == null)
-            cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
-        try {
-            dis = cosSvc_winManager.getDefaultDisplay();
-            dis.getSize(size);
-        } catch (NullPointerException e) {
-            // 최소 가로 길이는 240 pixels으로 가정
-            size.x = 240;
-        }
+        dis = cosSvc_winManager.getDefaultDisplay();
+        dis.getSize(size);
 
         cosSvc_TV.measure(View.MeasureSpec.makeMeasureSpec(size.x, View.MeasureSpec.AT_MOST), 0);
 
@@ -502,6 +484,7 @@ public final class COSSvc extends Service implements Runnable {
         // 터치 기능 사용 시
         // 8th bit check (bTouchEvent)
         if((cosSvc_Status & 0b00_1000_0000) != 0) {
+            __flags |= WindowManager.LayoutParams.FLAG_SPLIT_TOUCH;
             __type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
         }
         else {
@@ -608,8 +591,6 @@ public final class COSSvc extends Service implements Runnable {
         }
 
         // 화면 최상단에 OutBoundLayout부터 삽입
-        if(cosSvc_winManager == null)
-            cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
         cosSvc_winManager.addView((ViewGroup)cosSvc_OutBoundLayout, layout);
 
         // TextView는 width, height를 WRAP_CONTENT로 해서 cosSvc_OutBoundLayout 안에 넣음
@@ -623,6 +604,9 @@ public final class COSSvc extends Service implements Runnable {
 
         // 텍스트뷰를 화면 위에 추가 한 뒤 최대 크기 계산을 위한 넣어둔 쓰래기값을 지움
         cosSvc_TV.setText("");
+
+        ((ViewGroup) cosSvc_OutBoundLayout).setSelected(false);
+        ((ViewGroup) cosSvc_OutBoundLayout).dispatchSetSelected(false);
 
         // Attach 완료 상태로 변경
         cosSvc_layoutAttachState = LAYOUT_IS_ATTACHED;
@@ -665,8 +649,6 @@ public final class COSSvc extends Service implements Runnable {
         if(cosSvc_OutBoundLayout != null) {
             ((ViewGroup)cosSvc_OutBoundLayout).clearAnimation();
 
-            if(cosSvc_winManager == null)
-                cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
             cosSvc_winManager.removeView(((ViewGroup)cosSvc_OutBoundLayout));
         }
 
@@ -839,6 +821,9 @@ public final class COSSvc extends Service implements Runnable {
         cosSvc_InitStatus = _subClass.getConfigStatus(true);
         cosSvc_InitStatus_notfs = _subClass.getConfigStatus(false);
 
+        // Get Window Manager
+        cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
+        if(cosSvc_winManager == null) startSvc_Idle();
 
         // 레이아웃 화면 최상단에 넣는 작업
         attachLayout();

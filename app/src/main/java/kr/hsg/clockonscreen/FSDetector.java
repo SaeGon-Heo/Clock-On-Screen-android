@@ -63,7 +63,8 @@ public final class FSDetector extends LinearLayout {
     public FSDetector(Context context) {
         super(context);
         mCon = context;
-        if(mCon == null) {
+        winManager = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
+        if(mCon == null || winManager == null) {
             bError = true;
             // Log.e(FLAG, "context error");
         }
@@ -90,9 +91,9 @@ public final class FSDetector extends LinearLayout {
         layout.gravity = Gravity.LEFT;
 
         // 화면 최상단에 FSDetector를 삽입
-        if(winManager == null)
-            winManager = ((WindowManager)mCon.getSystemService(Context.WINDOW_SERVICE));
         winManager.addView(this, layout);
+
+        this.setSelected(false);
 
         return true;
     }
@@ -103,8 +104,6 @@ public final class FSDetector extends LinearLayout {
         // FSDetector를 화면 최상단에서 제거
         this.clearAnimation();
 
-        if(winManager == null)
-            winManager = ((WindowManager)mCon.getSystemService(Context.WINDOW_SERVICE));
         winManager.removeView(this);
 
         return true;
@@ -129,8 +128,6 @@ public final class FSDetector extends LinearLayout {
             int height;
 
             // soft key 제외 영역 계산
-            if(winManager == null)
-                winManager = ((WindowManager)mCon.getSystemService(Context.WINDOW_SERVICE));
             Display dis = winManager.getDefaultDisplay();
             dis.getSize(size);
             height = size.y;
