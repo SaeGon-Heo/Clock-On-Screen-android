@@ -6,14 +6,14 @@
 .d		QQQ			분기 (Q1, Q2, Q3, Q4)\n\n
 .e		M			월 (1 ~ 12)\n
 .f		MM			월 (01 ~ 12)\n
-.g		MMM			월 (Jan, Feb...)\n
-.h		MMMM			월 (January, February...)\n
+.g		MMM			월 (Jan, Feb…) / (1월, 2월…)\n
+.h		MMMM			월 (January, February…) / (1월, 2월…)\n
 ,i		W			주차 (1 ~ 5)\n\n
 .j		d			일 (1 ~ 31)\n
 .k		dd			일 (01 ~ 31)\n
-.l		EE			요일 (Mon, Tus...)\n
-.m		EEEE			요일 (Monday, Tuesday...)\n\n
-.n		a			"AM" 또는 "PM"\n
+.l		EE			요일 (Mon, Tus…) / (월, 화…)\n
+.m		EEEE			요일 (Monday, Tuesday…) / (월요일, 화요일…)\n\n
+.n		a			"AM" 또는 "PM" / "오전" 또는 "오후"\n
 .o		h			시간 (1 ~ 12)\n
 .p		hh			시간 (01 ~ 12)\n
 .q		H			시간 (0 ~ 23)\n
@@ -25,12 +25,12 @@
 .w		(none)	    \uF000	배터리 (0 ~ 100%<state>)\n
 					<state>\n
 					Full: ◎\n
-					Charging: △▲\n
-					Discharging (under 15%): ▽▼\n
+					Charging: △or▲\n
+					Discharging (under 15%): ▽or▼\n
 .x		(none)	    \uF003	네트워크 상태\n
 					<state>\n
 					Cellular: ⇵\n
-					Wifi: ≋\n
+					WiFi: ≋\n
 					Ethernet: ⌂\n
 					None: ⌀\n
 ..		(string)		.\n

@@ -489,7 +489,7 @@ public final class COSSettings extends PreferenceActivity
 
     // 시계 구조 설정 값을 기준으로 시계 문자열의 최대 크기를 계산
     // * 프로젝트 경로의 COS_structure.txt 파일 참조
-    static String getClockTextMax(String data) {
+    static String getClockTextMax(String data, boolean mEnglish) {
         StringBuilder SB = new StringBuilder();
 
         // 시계 구조 저장
@@ -509,9 +509,11 @@ public final class COSSettings extends PreferenceActivity
                     SB.append("0000");
                     i++;
                 }
-                else if(array[i + 1] == 'b' || array[i + 1] == 'e' || array[i + 1] == 'f' || array[i + 1] == 'j' ||
-                        array[i + 1] == 'k' || array[i + 1] == 'o' || array[i + 1] == 'p' || array[i + 1] == 'q' || array[i + 1] == 'r' ||
-                        array[i + 1] == 's' || array[i + 1] == 't' || array[i + 1] == 'u' || array[i + 1] == 'v') {
+                else if(array[i + 1] == 'b' || array[i + 1] == 'e' || array[i + 1] == 'f' ||
+                        array[i + 1] == 'j' || array[i + 1] == 'k' || array[i + 1] == 'o' ||
+                        array[i + 1] == 'p' || array[i + 1] == 'q' || array[i + 1] == 'r' ||
+                        array[i + 1] == 's' || array[i + 1] == 't' || array[i + 1] == 'u' ||
+                        array[i + 1] == 'v') {
                     SB.append("00");
                     i++;
                 }
@@ -520,19 +522,32 @@ public final class COSSettings extends PreferenceActivity
                     i++;
                 }
                 else if(array[i + 1] == 'd') {
-                    SB.append("W0");
+                    SB.append("Q0");
                     i++;
                 }
-                else if(array[i + 1] == 'g' || array[i + 1] == 'l') {
-                    SB.append("WWW");
+                else if(array[i + 1] == 'g') {
+                    if(mEnglish) SB.append("Www");
+                    else SB.append("00월");
                     i++;
                 }
-                else if(array[i + 1] == 'h' || array[i + 1] == 'm') {
-                    SB.append("WWWWWWWWW");
+                else if(array[i + 1] == 'h') {
+                    if(mEnglish) SB.append("Wwwwwwwww");
+                    else SB.append("00월");
+                    i++;
+                }
+                else if(array[i + 1] == 'l') {
+                    if(mEnglish) SB.append("Www");
+                    else SB.append("뷁");
+                    i++;
+                }
+                else if(array[i + 1] == 'm') {
+                    if(mEnglish) SB.append("Wwwwwwwww");
+                    else SB.append("뷁요일");
                     i++;
                 }
                 else if(array[i + 1] == 'n') {
-                    SB.append("뷁뷁");
+                    if(mEnglish) SB.append("WM");
+                    else SB.append("오뷁");
                     i++;
                 }
                 else if(array[i + 1] == 'w') {
@@ -863,9 +878,12 @@ public final class COSSettings extends PreferenceActivity
 
                         // 시계 구조 값 및 시계 구조를 미리 DateTimeFormatter에 알맞은 포맷으로
                         // 변환해서 저장하고, 가능한 최대 길이의 문자열도 미리 구해서 저장한다.
-                        mPref.edit().putString(mCon.getString(R.string.pref_clockText_key_string), strClockText)
-                                .putString(mCon.getString(R.string.pref_clockTextFormatted_key_string), getClockTextFormatted(strClockText))
-                                .putString(mCon.getString(R.string.pref_clockTextMax_key_string), getClockTextMax(strClockText)).apply();
+                        mPref.edit()
+                                .putString(mCon.getString(R.string.pref_clockText_key_string), strClockText)
+                                .putString(mCon.getString(R.string.pref_clockTextFormatted_key_string),
+                                        getClockTextFormatted(strClockText))
+                                .putString(mCon.getString(R.string.pref_clockTextMax_key_string),
+                                        getClockTextMax(strClockText, mPref.getBoolean(mCon.getString(R.string.pref_english_key_string), true))).apply();
 
                         // 변경 내역 적용을 위해 서비스 재시작
                         runService(2, true);
@@ -971,9 +989,12 @@ public final class COSSettings extends PreferenceActivity
 
                         // 시계 구조 값 및 시계 구조를 미리 DateTimeFormatter에 알맞은 포맷으로
                         // 변환해서 저장하고, 가능한 최대 길이의 문자열도 미리 구해서 저장한다.
-                        mPref.edit().putString(mCon.getString(R.string.pref_clockText_notfs_key_string), strClockText)
-                                .putString(mCon.getString(R.string.pref_clockTextFormatted_notfs_key_string), getClockTextFormatted(strClockText))
-                                .putString(mCon.getString(R.string.pref_clockTextMax_notfs_key_string), getClockTextMax(strClockText)).apply();
+                        mPref.edit()
+                                .putString(mCon.getString(R.string.pref_clockText_notfs_key_string), strClockText)
+                                .putString(mCon.getString(R.string.pref_clockTextFormatted_notfs_key_string),
+                                        getClockTextFormatted(strClockText))
+                                .putString(mCon.getString(R.string.pref_clockTextMax_notfs_key_string),
+                                        getClockTextMax(strClockText, mPref.getBoolean(mCon.getString(R.string.pref_english_key_string), true))).apply();
 
                         // 변경 내역 적용을 위해 서비스 재시작
                         runService(2, true);
@@ -1175,7 +1196,8 @@ public final class COSSettings extends PreferenceActivity
                         if(valueFixed > 0) return;
 
                         // 변경된 값들을 문자열로 변환하여 저장
-                        mPref.edit().putFloat(mCon.getString(R.string.pref_fontShadowShape_dx_key_string), valDx)
+                        mPref.edit()
+                                .putFloat(mCon.getString(R.string.pref_fontShadowShape_dx_key_string), valDx)
                                 .putFloat(mCon.getString(R.string.pref_fontShadowShape_dy_key_string), valDy)
                                 .putFloat(mCon.getString(R.string.pref_fontShadowShape_radius_key_string), valRadius).apply();
 
@@ -1530,6 +1552,14 @@ public final class COSSettings extends PreferenceActivity
             } else {
                 Toast.makeText(COSSettings.this, R.string.pref_toast_korean_applied, Toast.LENGTH_SHORT).show();
             }
+
+            // 바뀐 언어에 맞는 현재 시계 구조로 가능한 최대 크기의 문자열 저장
+            mPref.edit()
+                    .putString(mCon.getString(R.string.pref_clockTextMax_key_string),
+                            getClockTextMax(mPref.getString(mCon.getString(R.string.pref_clockText_key_string), mCon.getString(R.string.pref_clockText_default_string)), (boolean)newValue))
+                    .putString(mCon.getString(R.string.pref_clockTextMax_notfs_key_string),
+                            getClockTextMax(mPref.getString(mCon.getString(R.string.pref_clockText_notfs_key_string), mCon.getString(R.string.pref_clockText_default_string)), (boolean)newValue)).apply();
+
             // 지금까지의 액티비티 모두 제거 및 메인 액티비티 실행
             // FLAG_ACTIVITY_NEW_TASK 때문에 ApplicationContext에서도 실행
             mCon.startActivity(new Intent(mCon, COSMain.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));

@@ -137,23 +137,33 @@ public final class COSMain extends Activity {
     private void initSettings() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mCon);
 
-        // 사용중인 언어 저장
+        // 사용중인 언어 확인
         String currentLocale = Locale.getDefault().toString();
+
+        // 사용중인 언어 값 및 사용중인 언어에 따라
+        // 기본 시계 구조로 가능한 최대 크기의 문자열 저장
         if(currentLocale.equals("ko_KR") || currentLocale.equals("ko")) {
-            pref.edit().putBoolean(mCon.getString(R.string.pref_english_key_string), false).apply();
+            pref.edit()
+                    .putBoolean(mCon.getString(R.string.pref_english_key_string), false)
+                    .putString(mCon.getString(R.string.pref_clockTextMax_key_string),
+                            COSSettings.getClockTextMax(mCon.getString(R.string.pref_clockText_default_string), false))
+                    .putString(mCon.getString(R.string.pref_clockTextMax_notfs_key_string),
+                            COSSettings.getClockTextMax(mCon.getString(R.string.pref_clockText_default_string), false)).apply();
         }
         else {
-            pref.edit().putBoolean(mCon.getString(R.string.pref_english_key_string), true).apply();
+            pref.edit()
+                    .putBoolean(mCon.getString(R.string.pref_english_key_string), true)
+                    .putString(mCon.getString(R.string.pref_clockTextMax_key_string),
+                            COSSettings.getClockTextMax(mCon.getString(R.string.pref_clockText_default_string), true))
+                    .putString(mCon.getString(R.string.pref_clockTextMax_notfs_key_string),
+                            COSSettings.getClockTextMax(mCon.getString(R.string.pref_clockText_default_string), true)).apply();
         }
-        // 기본 시계 구조에 따라 포맷 문자열 및 최대 크기의 문자열 저장
-        pref.edit().putString(mCon.getString(R.string.pref_clockTextFormatted_key_string),
-                COSSettings.getClockTextFormatted(mCon.getString(R.string.pref_clockText_default_string)))
-                .putString(mCon.getString(R.string.pref_clockTextMax_key_string),
-                        COSSettings.getClockTextMax(mCon.getString(R.string.pref_clockText_default_string)))
-                .putString(mCon.getString(R.string.pref_clockTextFormatted_notfs_key_string),
+        // 기본 시계 구조에 따라 포맷 문자열 저장
+        pref.edit()
+                .putString(mCon.getString(R.string.pref_clockTextFormatted_key_string),
                         COSSettings.getClockTextFormatted(mCon.getString(R.string.pref_clockText_default_string)))
-                .putString(mCon.getString(R.string.pref_clockTextMax_notfs_key_string),
-                        COSSettings.getClockTextMax(mCon.getString(R.string.pref_clockText_default_string))).apply();
+                .putString(mCon.getString(R.string.pref_clockTextFormatted_notfs_key_string),
+                        COSSettings.getClockTextFormatted(mCon.getString(R.string.pref_clockText_default_string))).apply();
 
         if(AppInfoDialog == null) {
             StringBuilder MsgBuilder = new StringBuilder();

@@ -264,12 +264,12 @@ public final class COSSvc extends Service implements Runnable {
                                 // isConnected 상태를 저장한 bCellularHipri 값을 활용하여
                                 // 다운로드 부스터 및 band LTE WiFi 사용 여부를 출력한다
 
-                                // 만약 ethernet + 기타 네트워크가 활성화된 경우
-                                // ethernet 사용 상태로 처리
+                                // 만약 Ethernet + 기타 네트워크가 활성화된 경우
+                                // Ethernet 사용 상태로 처리
                                 if (netState > COSSvc.NETSTATE_ETHERNET) {
                                     netState = COSSvc.NETSTATE_ETHERNET;
                                 }
-                                // 만약 wifi + Cellular 네트워크가 활성화된 경우
+                                // 만약 WiFi + Cellular 네트워크가 활성화된 경우
                                 else if (netState > COSSvc.NETSTATE_WIFI) {
                                     // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
                                     if (bCellularHipri) {
@@ -277,7 +277,7 @@ public final class COSSvc extends Service implements Runnable {
                                         netState = COSSvc.NETSTATE_CELLULAR_WIFI;
                                     }
                                     else {
-                                        // Wifi 사용 상태
+                                        // WiFi 사용 상태
                                         netState = COSSvc.NETSTATE_WIFI;
                                     }
                                 }
@@ -333,12 +333,12 @@ public final class COSSvc extends Service implements Runnable {
                                 // 특정 네트워크 x의 값보다 큰 경우
                                 // 현재 활성화된 네트워크는 x라고 볼 수 있다
 
-                                // 만약 ethernet + 기타 네트워크가 활성화된 경우
-                                // ethernet 사용 상태로 처리
+                                // 만약 Ethernet + 기타 네트워크가 활성화된 경우
+                                // Ethernet 사용 상태로 처리
                                 if (netState > COSSvc.NETSTATE_ETHERNET) {
                                     netState = COSSvc.NETSTATE_ETHERNET;
                                 }
-                                // 만약 wifi + Cellular 네트워크가 활성화된 경우
+                                // 만약 WiFi + Cellular 네트워크가 활성화된 경우
                                 else if (netState > COSSvc.NETSTATE_WIFI) {
                                     // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
                                     if (bCellularHipri) {
@@ -346,11 +346,11 @@ public final class COSSvc extends Service implements Runnable {
                                         netState = COSSvc.NETSTATE_CELLULAR_WIFI;
                                     }
                                     else {
-                                        // Wifi 사용 상태
+                                        // WiFi 사용 상태
                                         netState = COSSvc.NETSTATE_WIFI;
                                     }
                                 }
-                                // 만약 다운로드 부스터 및 band LTE WiFi 사용 중 Wifi를 꺼버리면
+                                // 만약 다운로드 부스터 및 band LTE WiFi 사용 중 WiFi를 꺼버리면
                                 // 0/5 Type(둘 다 Cellular)의 NetworkInfo는
                                 // 여전히 isConnected: true 상태를 가지므로
                                 // 총 네트워크 수 2개 + 네트워크 상태 2(Cellular 2번)로 나타난다
@@ -951,7 +951,7 @@ public final class COSSvc extends Service implements Runnable {
             cosSvc_strNetStateBuilder = new StringBuilder();
 
             // Api 21(LOLLIPOP) 부터 Callback을 지원하지만
-            // Callback이 network가 확정되기 전에(특히 wifi 연결 시)
+            // Callback이 network가 확정되기 전에(특히 WiFi 연결 시)
             // 먼저 호출되어 버려서 네트워크 상태를 재대로 갱신하지 못한다
             // 따라서 BroadcastReceiver만 사용
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
