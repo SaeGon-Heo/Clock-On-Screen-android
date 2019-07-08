@@ -605,9 +605,6 @@ public final class COSSvc extends Service implements Runnable {
         // 텍스트뷰를 화면 위에 추가 한 뒤 최대 크기 계산을 위한 넣어둔 쓰래기값을 지움
         cosSvc_TV.setText("");
 
-        ((ViewGroup) cosSvc_OutBoundLayout).setSelected(false);
-        ((ViewGroup) cosSvc_OutBoundLayout).dispatchSetSelected(false);
-
         // Attach 완료 상태로 변경
         cosSvc_layoutAttachState = LAYOUT_IS_ATTACHED;
     }

@@ -93,8 +93,6 @@ public final class FSDetector extends LinearLayout {
         // 화면 최상단에 FSDetector를 삽입
         winManager.addView(this, layout);
 
-        this.setSelected(false);
-
         return true;
     }
 
