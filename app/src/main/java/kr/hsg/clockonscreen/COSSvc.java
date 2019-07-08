@@ -223,9 +223,8 @@ public final class COSSvc extends Service implements Runnable {
                                     if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
                                         network_count++;
                                         // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
-                                        NetworkInfo cellularNetInfo = cosSvc_connManager.getNetworkInfo(net);
-                                        if(cellularNetInfo != null && cellularNetInfo.getType() == ConnectivityManager.TYPE_MOBILE_HIPRI &&
-                                                cellularNetInfo.isConnected()) {
+                                        NetworkInfo hipriNetInfo = cosSvc_connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE_HIPRI);
+                                        if(hipriNetInfo != null && hipriNetInfo.isConnected()) {
                                             bCellularHipri = true;
                                         }
                                         netState += COSSvc.NETSTATE_CELLULAR;
@@ -258,12 +257,12 @@ public final class COSSvc extends Service implements Runnable {
                                 // Mobile DNS servers 로만 접속이 가능해진다고 한다
                                 //
                                 // 그런데 삼성의 다운로드 부스터 및 band LTE WiFi 사용 시
-                                // 기존의 셀룰러 네트워크 NetworkInfo의 Type 값이
-                                // TYPE_MOBILE_HIPRI로 변화한다
+                                // Type 값이 TYPE_MOBILE_HIPRI인 NetworkInfo의
+                                // isConnected 값이 true로 변화한다
                                 //
-                                // 따라서 셀룰러 네트워크에 한해 NetworkInfo의 Type 값을 확인하여
-                                // TYPE_MOBILE_HIPRI 여부를 저장한 bCellularHipri 값을 활용하여
-                                // 다운로드 부스터 및 band LTE WiFi의 활성화 여부를 출력한다
+                                // 따라서 TYPE_MOBILE_HIPRI NetworkInfo의
+                                // isConnected 상태를 저장한 bCellularHipri 값을 활용하여
+                                // 다운로드 부스터 및 band LTE WiFi 사용 여부를 출력한다
 
                                 // 만약 ethernet + 기타 네트워크가 활성화된 경우
                                 // ethernet 사용 상태로 처리
@@ -272,12 +271,20 @@ public final class COSSvc extends Service implements Runnable {
                                 }
                                 // 만약 wifi + Cellular 네트워크가 활성화된 경우
                                 else if (netState > COSSvc.NETSTATE_WIFI) {
-                                    netState = COSSvc.NETSTATE_WIFI;
-                                    // 셀룰러 네트워크 NetworkInfo Type 값이 TYPE_MOBILE_HIPRI이면
+                                    // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
                                     if (bCellularHipri) {
                                         // 다운로드 부스터 및 band LTE WiFi 사용 상태
                                         netState = COSSvc.NETSTATE_CELLULAR_WIFI;
                                     }
+                                    else {
+                                        // Wifi 사용 상태
+                                        netState = COSSvc.NETSTATE_WIFI;
+                                    }
+                                }
+                                // 총 네트워크 수 2개 + 네트워크 상태 2(Cellular 2번)으로
+                                // 나타나는 경우 네트워크 상태를 1(Cellular)로 변경한다
+                                else {
+                                    netState = COSSvc.NETSTATE_CELLULAR;
                                 }
                             } // if(network_count > 1)
                         } // LOLLIPOP 이상 API
@@ -290,6 +297,10 @@ public final class COSSvc extends Service implements Runnable {
                                 // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
                                 if (netinfo.isConnected()) {
                                     switch(netinfo.getType()) {
+                                        // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
+                                        // - TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true
+                                        // TYPE_MOBILE과 네트워크를 공유하므로 break;를 쓰지 않고
+                                        // TYPE_MOBILE_HIPRI는 TYPE_MOBILE를 탐지한 것으로 처리
                                         case ConnectivityManager.TYPE_MOBILE_HIPRI:
                                             bCellularHipri = true;
                                         case ConnectivityManager.TYPE_MOBILE:
@@ -329,12 +340,23 @@ public final class COSSvc extends Service implements Runnable {
                                 }
                                 // 만약 wifi + Cellular 네트워크가 활성화된 경우
                                 else if (netState > COSSvc.NETSTATE_WIFI) {
-                                    netState = COSSvc.NETSTATE_WIFI;
-                                    // 셀룰러 네트워크 NetworkInfo Type 값이 TYPE_MOBILE_HIPRI이면
+                                    // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
                                     if (bCellularHipri) {
                                         // 다운로드 부스터 및 band LTE WiFi 사용 상태
                                         netState = COSSvc.NETSTATE_CELLULAR_WIFI;
                                     }
+                                    else {
+                                        // Wifi 사용 상태
+                                        netState = COSSvc.NETSTATE_WIFI;
+                                    }
+                                }
+                                // 만약 다운로드 부스터 및 band LTE WiFi 사용 중 Wifi를 꺼버리면
+                                // 0/5 Type(둘 다 Cellular)의 NetworkInfo는
+                                // 여전히 isConnected: true 상태를 가지므로
+                                // 총 네트워크 수 2개 + 네트워크 상태 2(Cellular 2번)로 나타난다
+                                // 이 경우 네트워크 상태를 1(Cellular)로 변경한다
+                                else {
+                                    netState = COSSvc.NETSTATE_CELLULAR;
                                 }
                             } // if(network_count > 1)
                         } // LOLLIPOP 미만 API
