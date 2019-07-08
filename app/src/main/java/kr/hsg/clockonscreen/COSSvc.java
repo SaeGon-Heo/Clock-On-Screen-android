@@ -522,14 +522,9 @@ public final class COSSvc extends Service implements Runnable {
 
         // OutBoundLayout를 최상단에 넣기 위한 layout 설정 값
         // 여기서 텍스트뷰 크기를 계산하여 고정된 크기를 사용
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            layout = new WindowManager.LayoutParams(
-                    cosSvc_TV.getMeasuredWidth(), cosSvc_TV.getMeasuredHeight(),
-                    __type, __flags, PixelFormat.TRANSLUCENT);
-        else
-            layout = new WindowManager.LayoutParams(
-                    cosSvc_TV.getMeasuredWidth(), cosSvc_TV.getMeasuredHeight(),
-                    __type, __flags, PixelFormat.TRANSLUCENT);
+        layout = new WindowManager.LayoutParams(
+                cosSvc_TV.getMeasuredWidth(), cosSvc_TV.getMeasuredHeight(),
+                __type, __flags, PixelFormat.TRANSLUCENT);
 
         // 시계위치 저장
         byte iClockPosition;
