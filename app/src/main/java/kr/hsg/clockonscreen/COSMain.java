@@ -204,10 +204,7 @@ public final class COSMain extends Activity {
         super.onCreate(savedInstanceState);
 
         mCon = getApplicationContext();
-
-        try {
-            bInfo = getIntent().getExtras().getBoolean("Info", false);
-        } catch (NullPointerException e) {}
+        bInfo = getIntent().getBooleanExtra("Info", false);
 
         if(bInfo) {
             setContentView(R.layout.activity_info);

@@ -19,6 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
@@ -31,7 +32,7 @@ public final class COSKeepSvc extends BroadcastReceiver {
         // 서비스가 실행 중 상태로 저장되어 있는지 확인
         if (pref.getBoolean("service_running", false)) {
             // 오버레이 권한 확인
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                     && !Settings.canDrawOverlays(mCon)) {
                 pref.edit().putBoolean("service_running", false).apply();
 				return;
@@ -46,7 +47,7 @@ public final class COSKeepSvc extends BroadcastReceiver {
             if(strAction.equals(Intent.ACTION_BOOT_COMPLETED) || strAction.equals(Intent.ACTION_MY_PACKAGE_REPLACED) ||
             strAction.equals("android.intent.action.QUICKBOOT_POWERON") || strAction.equals("com.htc.intent.action.QUICKBOOT_POWERON")) {
                 Intent mSvc_Idle = new Intent(mCon, COSSvc_Idle.class);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     mCon.startForegroundService(mSvc_Idle);
                 else
                     mCon.startService(mSvc_Idle);
