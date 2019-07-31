@@ -611,6 +611,7 @@ public final class COSSettings extends PreferenceActivity
         findPreference(mCon.getString(R.string.pref_longTouchToHide_key_string)).setOnPreferenceChangeListener(this);
         findPreference(mCon.getString(R.string.pref_background_key_string)).setOnPreferenceChangeListener(this);
         findPreference(mCon.getString(R.string.pref_backgroundColor_key_string)).setOnPreferenceChangeListener(this);
+        findPreference(mCon.getString(R.string.pref_fixNotRefresh_key_string)).setOnPreferenceChangeListener(this);
 
         // 따로 처리해야 하는 설정
         findPreference(mCon.getString(R.string.pref_clockPosition_key_string)).setOnPreferenceChangeListener(this);
@@ -1567,7 +1568,7 @@ public final class COSSettings extends PreferenceActivity
         } else if(prefKey.equals(mCon.getString(R.string.pref_fontColor_key_string)) || prefKey.equals(mCon.getString(R.string.pref_fontShadowColor_key_string)) || prefKey.equals(mCon.getString(R.string.pref_fontShadow_key_string)) ||
                 prefKey.equals(mCon.getString(R.string.pref_hideTheClock_key_string)) || prefKey.equals(mCon.getString(R.string.pref_background_key_string)) || prefKey.equals(mCon.getString(R.string.pref_backgroundColor_key_string)) ||
                 prefKey.equals(mCon.getString(R.string.pref_gradientColor1_key_string)) || prefKey.equals(mCon.getString(R.string.pref_gradientColor2_key_string)) || prefKey.equals(mCon.getString(R.string.pref_gradientColor3_key_string)) ||
-                prefKey.equals(mCon.getString(R.string.pref_longTouchToHide_key_string))) {
+                prefKey.equals(mCon.getString(R.string.pref_longTouchToHide_key_string)) || prefKey.equals(mCon.getString(R.string.pref_fixNotRefresh_key_string))) {
             // 기타 서비스 재시작만 필요한 설정이 변동된 경우
             // 변경 내역 적용을 위해 서비스 재시작
             runService(2, true);

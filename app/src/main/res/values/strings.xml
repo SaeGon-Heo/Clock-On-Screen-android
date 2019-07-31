@@ -22,16 +22,15 @@
     <string name="pref_clockText_key_string" translatable="false">mClockText</string>
     <string name="pref_clockTextFormatted_key_string" translatable="false">mClockTextFormatted</string>
     <string name="pref_clockTextMax_key_string" translatable="false">mClockTextMax</string>
+    <string name="pref_clockPosition_key_string" translatable="false">mClockPosition</string>
+    <string name="pref_fsmode_list_key_string" translatable="false">mFSMode_List</string>
     <string name="pref_clockText_notfs_key_string" translatable="false">mClockText_NotFS</string>
     <string name="pref_clockTextFormatted_notfs_key_string" translatable="false">mClockTextFormatted_NotFS</string>
     <string name="pref_clockTextMax_notfs_key_string" translatable="false">mClockTextMax_NotFS</string>
-    <string name="pref_fontSize_key_string" translatable="false">mFontSize</string>
-    <string name="pref_fontShadowShape_key_string" translatable="false">mFontShadowShape</string>
-    <string name="pref_hideTheClockTime_key_string" translatable="false">mHideTheClockTime</string>
-    <string name="pref_resetSettings_key_string" translatable="false">mResetSettings</string>
+    <string name="pref_clockPosition_notfs_key_string" translatable="false">mClockPosition_NotFS</string>
 
-    <string name="pref_fsmode_list_key_string" translatable="false">mFSMode_List</string>
     <string name="pref_font_key_string" translatable="false">mFont</string>
+    <string name="pref_fontSize_key_string" translatable="false">mFontSize</string>
     <string name="pref_fontAppearance_key_string" translatable="false">mFontAppearance</string>
     <string name="pref_gradient_key_string" translatable="false">mGradient</string>
     <string name="pref_fontColor_key_string" translatable="false">mFontColor</string>
@@ -39,16 +38,19 @@
     <string name="pref_gradientColor2_key_string" translatable="false">mGradientColor2</string>
     <string name="pref_gradientColor3_key_string" translatable="false">mGradientColor3</string>
     <string name="pref_fontShadow_key_string" translatable="false">mFontShadow</string>
+    <string name="pref_fontShadowShape_key_string" translatable="false">mFontShadowShape</string>
     <string name="pref_fontShadowColor_key_string" translatable="false">mFontShadowColor</string>
     <string name="pref_clockTransparency_key_string" translatable="false">mClockTransparency</string>
-    <string name="pref_hideTheClock_key_string" translatable="false">mHideTheClock</string>
-    <string name="pref_longTouchToHide_key_string" translatable="false">mLongTouchToHide</string>
     <string name="pref_background_key_string" translatable="false">mBackground</string>
     <string name="pref_backgroundColor_key_string" translatable="false">mBackgroundColor</string>
 
-    <string name="pref_clockPosition_key_string" translatable="false">mClockPosition</string>
-    <string name="pref_clockPosition_notfs_key_string" translatable="false">mClockPosition_NotFS</string>
+    <string name="pref_hideTheClock_key_string" translatable="false">mHideTheClock</string>
+    <string name="pref_hideTheClockTime_key_string" translatable="false">mHideTheClockTime</string>
+    <string name="pref_longTouchToHide_key_string" translatable="false">mLongTouchToHide</string>
+
     <string name="pref_english_key_string" translatable="false">mEnglish</string>
+    <string name="pref_fixNotRefresh_key_string" translatable="false">mFixNotRefresh</string>
+    <string name="pref_resetSettings_key_string" translatable="false">mResetSettings</string>
 
     <string name="pref_font_serif_string" translatable="false">Serif</string>
     <string name="pref_font_monospace_string" translatable="false">Monospace</string>
@@ -58,10 +60,14 @@
     <string name="pref_fontShadowShape_dy_key_string" translatable="false">mFontShadowDy</string>
     <string name="pref_fontShadowShape_radius_key_string" translatable="false">mFontShadowRadius</string>
 
+
+    <string name="pref_fsState_string" translatable="false">fsState</string>
+
     <string name="pref_clockText_default_string">.o:.t:.v .n</string>
     <string name="pref_clockText_reset_notify_string">\'Please set \"Clock Text\" again\'</string>
 
     <string name="pref_subject_text_position">Clock Text &amp; Position</string>
+
     <string name="pref_fsmode_title">FullScreen Mode</string>
     <string name="pref_fsmode_summary_postfix">\n* This may not work on some devices</string>
     <string-array name="pref_fsmode_list">
@@ -101,6 +107,7 @@
     <string name="pref_toast_clockposition_warning">While using this position, you may not be able to touch the install button on the package installer</string>
 
     <string name="pref_subject_font">Clock Font &amp; Color</string>
+
     <string name="pref_font_title">Font</string>
     <string-array name="pref_font_list">
         <item>System Default</item>
@@ -159,8 +166,9 @@
 
 
     <string name="pref_subject_function">Function</string>
+
     <string name="pref_toast_fsmode_ignored_on_prefactivity">Always display clock on settings screen</string>
-    <string name="pref_hidetheclock_title">Hide by touch</string>
+    <string name="pref_hidetheclock_title">Hide By Touch</string>
     <string name="pref_hidetheclock_des">Touch the clock to hide it for a few seconds</string>
     <string name="pref_hidetheclocktime_title">Hiding Time</string>
     <string name="pref_dialog_hidetheclocktime_title">Hiding Time (3 ~ 600sec(s))</string>
@@ -169,11 +177,16 @@
     <string name="pref_toast_hidetheclocktemporary">To display the clock again, the screen must be turned off and on</string>
 
     <string name="pref_subject_etc">Etc</string>
+
     <string name="pref_english_title" translatable="false">Use English UI</string>
     <string name="pref_english_deson" translatable="false">Turn off this to use Korean UI</string>
     <string name="pref_english_desoff" translatable="false">영어 UI를 사용하려면 이 옵션을 켜주세요</string>
     <string name="pref_toast_english_applied" translatable="false">English UI is applied</string>
     <string name="pref_toast_korean_applied" translatable="false">한글 UI가 적용되었습니다</string>
+
+    <string name="pref_fixNotRefresh_title">Fix Bug 1</string>
+    <string name="pref_fixNotRefresh_des">Use this only when the clock is not refreshed when screen is rotated or fullscreen status is changed</string>
+
     <string name="pref_reset">Reset All Settings</string>
     <string name="pref_reset_des">All settings will be reset</string>
     <string name="pref_dialog_reset_summary">Are you sure you want to\nreset all settings to default?</string>

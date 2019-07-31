@@ -147,6 +147,13 @@
             android:switchTextOff=""
             android:summaryOn="@string/pref_english_deson"
             android:summaryOff="@string/pref_english_desoff" />
+        <SwitchPreference
+            android:title="@string/pref_fixNotRefresh_title"
+            android:key="mFixNotRefresh"
+            android:switchTextOn=""
+            android:switchTextOff=""
+            android:summaryOn="@string/pref_fixNotRefresh_des"
+            android:summaryOff="@string/pref_fixNotRefresh_des" />
         <Preference
             android:title="@string/pref_reset"
             android:summary="@string/pref_reset_des"

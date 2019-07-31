@@ -19,6 +19,7 @@
     <string name="pref_clockText_reset_notify_string">\'\"시계 내용\"을 다시 설정해주세요\'</string>
 
     <string name="pref_subject_text_position">시계 내용 및 위치</string>
+
     <string name="pref_fsmode_title">풀스크린 모드</string>
     <string name="pref_fsmode_summary_postfix">\n* 일부 기기에서 정상적으로 작동하지 않을 수 있습니다</string>
     <string-array name="pref_fsmode_list">
@@ -45,6 +46,7 @@
     <string name="pref_toast_clockposition_warning">이 위치를 사용하는 동안 시계가 패키지 설치 관리자의 설치 버튼을 터치 못 할 수도 있습니다</string>
 
     <string name="pref_subject_font">시계 폰트 및 색상</string>
+
     <string name="pref_font_title">폰트</string>
     <string-array name="pref_font_list">
         <item>시스템 기본</item>
@@ -85,6 +87,7 @@
     <string name="pref_backgroundcolor_title">배경 색상</string>
 
     <string name="pref_subject_function">기능</string>
+
     <string name="pref_toast_fsmode_ignored_on_prefactivity">설정 창에서는 항상 시계를 표시합니다</string>
     <string name="pref_hidetheclock_title">터치로 숨기기</string>
     <string name="pref_hidetheclock_des">시계를 터치하여 몇초간 시계를 숨깁니다</string>
@@ -95,6 +98,10 @@
     <string name="pref_toast_hidetheclocktemporary">시계를 다시 표시하기 위해 화면이 껐다가 켜져야 합니다</string>
 
     <string name="pref_subject_etc">기타</string>
+
+    <string name="pref_fixNotRefresh_title">버그 수정 1</string>
+    <string name="pref_fixNotRefresh_des">화면 회전 또는 풀스크린 상태 변경 후 시계 내용이 변하지 않는 경우에만 사용하세요</string>
+
     <string name="pref_reset">설정 초기화</string>
     <string name="pref_reset_des">모든 설정을 초기화합니다</string>
     <string name="pref_dialog_reset_summary">정말로 모든 설정을\n기본값으로 초기화 하시겠습니까?</string>
