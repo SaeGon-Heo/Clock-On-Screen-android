@@ -129,6 +129,7 @@ public final class COSSvc extends Service implements Runnable {
     private short cosSvc_HidingTimeLength;
     private short cosSvc_HidingTime;
     // Each bit have meaning as below
+    // (12.isUsing_Network_State_Alter)
     // (11.isUsing_FixBug1)
     // (10.onDestroy_called)
     // ( 9.isUsing_Network_State)
@@ -165,7 +166,7 @@ public final class COSSvc extends Service implements Runnable {
                 case Intent.ACTION_TIME_CHANGED:
                     // 문자열만 존재하는 경우를 제외하고 시간을 갱신
                     // 5th bit check (thereAreOnlyString)
-                    if((cosSvc_Status & 0b000_0001_0000) == 0) {
+                    if((cosSvc_Status & 0b0000_0001_0000) == 0) {
                         mHandler.removeMessages(0);
                         reloadCurrentTime(false);
                     }
@@ -185,22 +186,22 @@ public final class COSSvc extends Service implements Runnable {
                     // 배터리 충, 방전 상태 갱신
                     if (intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0) {
                         // 3rd, 4th bit reset
-                        cosSvc_Status &= 0b111_1111_0011;
+                        cosSvc_Status &= 0b1111_1111_0011;
                         // 3rd bit on (isBattery_Charging)
-                        cosSvc_Status |= 0b000_0000_0100;
+                        cosSvc_Status |= 0b0000_0000_0100;
                         if (level == 100) {
                             // 4th bit on (isBattery_Discharging)
                             // 3,4 bit 둘다 켜져있으면 풀충전 상태로 간주
-                            cosSvc_Status |= 0b000_0000_1000;
+                            cosSvc_Status |= 0b0000_0000_1000;
                         }
                     } else if (level < 16) {
                         // 3rd, 4th bit reset
-                        cosSvc_Status &= 0b111_1111_0011;
+                        cosSvc_Status &= 0b1111_1111_0011;
                         // 4th bit on (isBattery_Discharging)
-                        cosSvc_Status |= 0b000_0000_1000;
+                        cosSvc_Status |= 0b0000_0000_1000;
                     } else {
                         // 3rd, 4th bit reset
-                        cosSvc_Status &= 0b111_1111_0011;
+                        cosSvc_Status &= 0b1111_1111_0011;
                     }
                     // 마지막 % 추가
                     cosSvc_strBattLevelBuilder.append(CHAR_PERCENT);
@@ -431,9 +432,9 @@ public final class COSSvc extends Service implements Runnable {
         // 시간 재설정 이후 초 단위 요소가 안 쓰인 경우
         // 바로 한번 시계 갱신을 위한 추가 처리
         // 6th bit check (isUsing_SecElement)
-        if ((cosSvc_Status & 0b000_0010_0000) == 0)
+        if ((cosSvc_Status & 0b0000_0010_0000) == 0)
             // 7th bit on (overMin_need_update)
-            cosSvc_Status |= 0b000_0100_0000;
+            cosSvc_Status |= 0b0000_0100_0000;
 
 
         // cosSvc_repeater는 이미 실행중인 상태이므로
@@ -515,7 +516,7 @@ public final class COSSvc extends Service implements Runnable {
         int __type;
         // 터치 기능 사용 시
         // 8th bit check (bTouchEvent)
-        if((cosSvc_Status & 0b000_1000_0000) != 0) {
+        if((cosSvc_Status & 0b0000_1000_0000) != 0) {
             __flags |= WindowManager.LayoutParams.FLAG_SPLIT_TOUCH;
             __type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
         }
@@ -695,7 +696,7 @@ public final class COSSvc extends Service implements Runnable {
         // 진행되는 것을 방지
         // 1st bit on (InterruptHandler)
         // 10th bit on (onDestroy_called)
-        cosSvc_Status |= 0b010_0000_0001;
+        cosSvc_Status |= 0b0010_0000_0001;
 
         // 서비스 종료 과정
         if(cosSvc_repeater != null) {
@@ -780,7 +781,7 @@ public final class COSSvc extends Service implements Runnable {
                     @Override
                     public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                         // 10th bit check (onDestroy_called)
-                        if((cosSvc_Status & 0b010_0000_0000) != 0) return;
+                        if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
                         // 텍스트 뷰 크기가 변경 되었는지 확인
                         if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
@@ -803,7 +804,7 @@ public final class COSSvc extends Service implements Runnable {
                     @Override
                     public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                         // 10th bit check (onDestroy_called)
-                        if((cosSvc_Status & 0b010_0000_0000) != 0) return;
+                        if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
                         // 텍스트 뷰 크기가 변경 되었는지 확인
                         if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
@@ -855,7 +856,7 @@ public final class COSSvc extends Service implements Runnable {
         //    백업된 FSState 값을 불러옴
         //    버그 내용은 최상단 주석 참조
         // 11st bit check (isUsing_FixBug1)
-        if(cosSvc_FSMode != 2 || ((cosSvc_Status & 0b100_0000_0000) != 0 && _subClass.getFSState())) {
+        if(cosSvc_FSMode != 2 || ((cosSvc_Status & 0b0100_0000_0000) != 0 && _subClass.getFSState())) {
             cosSvc_FSState = true;
             cosSvc_Status = cosSvc_InitStatus;
         }
@@ -874,7 +875,7 @@ public final class COSSvc extends Service implements Runnable {
             ((ViewGroup)cosSvc_OutBoundLayout).setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     // 10th bit check (onDestroy_called)
-                    if((cosSvc_Status & 0b010_0000_0000) != 0) return;
+                    if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
                     // 하위 뷰 TextView의 텍스트를 초기화
                     cosSvc_TV.setText(STR_EMPTY);
@@ -897,7 +898,7 @@ public final class COSSvc extends Service implements Runnable {
                 @Override
                 public boolean onLongClick(View view) {
                     // 10th bit check (onDestroy_called)
-                    if((cosSvc_Status & 0b010_0000_0000) != 0) return false;
+                    if((cosSvc_Status & 0b0010_0000_0000) != 0) return false;
 
                     // 화면을 끄고 켜는 경우에만 서비스 재시작한다고 토스트 메시지를 띄운다
                     Toast.makeText(COSSvc.this, R.string.pref_toast_hidetheclocktemporary, Toast.LENGTH_LONG).show();
@@ -946,8 +947,8 @@ public final class COSSvc extends Service implements Runnable {
         // 배터리 값을 사용하면 배터리 상태 액션을 분별하는 필터 추가
         // 풀스크린 상태에 따라 시계를 다르게 표시하는 경우 notfs 전용 Status 값도 확인
         // 2nd bit check (isUsing_Battery)
-        if((cosSvc_InitStatus & 0b00_0000_0010) != 0 ||
-                (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b00_0000_0010) != 0)) {
+        if((cosSvc_InitStatus & 0b0000_0000_0010) != 0 ||
+                (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b0000_0000_0010) != 0)) {
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
             // 배터리에서 사용할 StringBuilder
             cosSvc_strBattLevelBuilder = new StringBuilder();
@@ -958,8 +959,8 @@ public final class COSSvc extends Service implements Runnable {
         // 분별하는 필터를 추가하거나 NetworkCallback을 등록
         // 풀스크린 상태에 따라 시계를 다르게 표시하는 경우 notfs 전용 Status 값도 확인
         // 9th bit check (isUsing_Network_State)
-        if((cosSvc_InitStatus & 0b01_0000_0000) != 0 ||
-                (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b01_0000_0000) != 0)) {
+        if((cosSvc_InitStatus & 0b0001_0000_0000) != 0 ||
+                (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b0001_0000_0000) != 0)) {
             // ConnectivityManager 생성
             cosSvc_connManager = (ConnectivityManager)mCon
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -987,9 +988,9 @@ public final class COSSvc extends Service implements Runnable {
         // 초 단위 요소가 안쓰인 경우 처음에 시계가 출력되지 않으므로
         // 초기 한번 업데이트를 위해 7비트를 켜준다.
         // 6th bit check (isUsing_SecElement)
-        if((cosSvc_Status & 0b000_0010_0000) == 0)
+        if((cosSvc_Status & 0b0000_0010_0000) == 0)
             // 7th bit on (overMin_need_update)
-            cosSvc_Status |= 0b000_0100_0000;
+            cosSvc_Status |= 0b0000_0100_0000;
 
         // 시계 구조 formatter 정의
         if(cosSvc_FSState) {
@@ -1086,7 +1087,7 @@ public final class COSSvc extends Service implements Runnable {
                             @Override
                             public void fsChanged(Context context, boolean bFSState) {
                                 // 10th bit check (onDestroy_called)
-                                if((cosSvc_Status & 0b010_0000_0000) != 0) return;
+                                if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
                                 // 풀스크린 상태가 아닐 경우 Idle 서비스로 진입
                                 if (!bFSState) {
@@ -1101,7 +1102,7 @@ public final class COSSvc extends Service implements Runnable {
                             @Override
                             public void fsChanged(Context context, boolean bFSState) {
                                 // 10th bit check (onDestroy_called)
-                                if((cosSvc_Status & 0b010_0000_0000) != 0) return;
+                                if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
                                 // 풀스크린 상태가 저장된 값과 다를 경우
                                 // 바뀐 풀스크린 상태를 저장하고
@@ -1112,7 +1113,7 @@ public final class COSSvc extends Service implements Runnable {
                                     // 서비스를 재시작하여 버그를 처리
                                     // 버그 내용은 최상단 주석 참조
                                     // 11st bit check (isUsing_FixBug1)
-                                    if((cosSvc_Status & 0b100_0000_0000) != 0) {
+                                    if((cosSvc_Status & 0b0100_0000_0000) != 0) {
                                         COSSvcSubFunc.setFSState(COSSvc.this, bFSState);
                                         startSvc_Idle();
                                         return;
@@ -1121,14 +1122,15 @@ public final class COSSvc extends Service implements Runnable {
                                     // 남아있는 Handler 예약 작업 지우기
                                     mHandler.removeMessages(0);
                                     // 1st bit on (InterruptHandler)
-                                    cosSvc_Status |= 0b000_0000_0001;
+                                    cosSvc_Status |= 0b0000_0000_0001;
                                     detachLayout();
                                     // 2nd bit (isUsing_Battery)
                                     // 5th bit (thereAreOnlyString)
                                     // 6th bit (isUsing_SecElement)
                                     // 9th bit (isUsing_Network_State)
-                                    // 4개의 비트는 시계 구조에 따라 변화하므로 재설정
-                                    cosSvc_Status &= 0b110_1100_1101;
+                                    // 12nd bit(isUsing_Network_State_Alter)
+                                    // 5개의 비트는 시계 구조에 따라 변화하므로 재설정
+                                    cosSvc_Status &= 0b0110_1100_1101;
                                     if(cosSvc_FSState) {
                                         cosSvc_Status |= cosSvc_InitStatus;
                                     }
@@ -1137,7 +1139,7 @@ public final class COSSvc extends Service implements Runnable {
                                     }
                                     attachLayout();
                                     // 1st bit off (InterruptHandler)
-                                    cosSvc_Status &= 0b111_1111_1110;
+                                    cosSvc_Status &= 0b1111_1111_1110;
                                     reloadCurrentTime(true);
                                 }
                             }
@@ -1175,7 +1177,7 @@ public final class COSSvc extends Service implements Runnable {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         // 10th bit check (onDestroy_called)
-        if((cosSvc_Status & 0b010_0000_0000) != 0) return;
+        if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
         // 롱터치로 시계를 끈 경우 cosSvc_repeater가 null이 된다
         // 따라서 cosSvc_repeater 값이 null이 아닌 경우에만
@@ -1186,18 +1188,18 @@ public final class COSSvc extends Service implements Runnable {
             // 서비스를 재시작하여 버그를 처리
             // 버그 내용은 최상단 주석 참조
             // 11st bit check (isUsing_FixBug1)
-            if((cosSvc_Status & 0b100_0000_0000) != 0) {
+            if((cosSvc_Status & 0b0100_0000_0000) != 0) {
                 startSvc_Idle();
                 return;
             }
             // 남아있는 Handler 예약 작업 지우기
             mHandler.removeMessages(0);
             // 1st bit on (InterruptHandler)
-            cosSvc_Status |= 0b000_0000_0001;
+            cosSvc_Status |= 0b0000_0000_0001;
             detachLayout();
             attachLayout();
             // 1st bit off (InterruptHandler)
-            cosSvc_Status &= 0b111_1111_1110;
+            cosSvc_Status &= 0b1111_1111_1110;
             reloadCurrentTime(false);
         }
         super.onConfigurationChanged(newConfig);
@@ -1217,7 +1219,7 @@ public final class COSSvc extends Service implements Runnable {
             // 1st bit check (InterruptHandler)
             // 10th bit check (onDestroy_called)
             // msg null 검사
-            if((cosSvc_Status & 0b010_0000_0001) != 0 || msg == null) return;
+            if((cosSvc_Status & 0b0010_0000_0001) != 0 || msg == null) return;
 
             // cosSvc_HidingTime 값이 0이면 시계 내용 업데이트
             if (cosSvc_HidingTime == 0) {
@@ -1225,7 +1227,7 @@ public final class COSSvc extends Service implements Runnable {
                 // 초 단위가 쓰인경우 초, 배터리, 네트워크 상태
                 // 문자열을 처리하고 시계를 갱신
                 // 6th bit check (isUsing_SecElement)
-                if((cosSvc_Status & 0b000_0010_0000) != 0) {
+                if((cosSvc_Status & 0b0000_0010_0000) != 0) {
                     // 각 초 단위 요소의 심볼 위치를 저장할 변수
                     int index;
 
@@ -1247,22 +1249,22 @@ public final class COSSvc extends Service implements Runnable {
 
                     // 배터리 요소를 사용하는지 확인
                     // 2nd bit check (isUsing_Battery)
-                    if((cosSvc_Status & 0b000_0000_0010) != 0) {
+                    if((cosSvc_Status & 0b0000_0000_0010) != 0) {
                         // 배터리가 완충/충전/방전 상태 중 하나라도 해당하면 문자열 미리 생성
                         // 3rd, 4th bit check (isBattery_Charging)(isBattery_Discharging)
-                        if((cosSvc_Status & 0b000_0000_1100) != 0) {
+                        if((cosSvc_Status & 0b0000_0000_1100) != 0) {
                             // 처음에 배터리 잔량(XX%) 부터 복사
                             cosSvc_strBattBuilder.setLength(0);
                             cosSvc_strBattBuilder.append(cosSvc_strBattLevelBuilder);
 
                             // 완충 상태 처리
                             // 3rd, 4th bit check (isBattery_Charging)(isBattery_Discharging)
-                            if((cosSvc_Status & 0b000_0000_1100) == 0b000_0000_1100) {
+                            if((cosSvc_Status & 0b0000_0000_1100) == 0b0000_0000_1100) {
                                 cosSvc_strBattBuilder.append(CHAR_BATTSTATE_FULL);
                             }
                             // 충전 중 상태 처리
                             // 3rd bit check (isBattery_Charging)
-                            else if((cosSvc_Status & 0b000_0000_0100) != 0) {
+                            else if((cosSvc_Status & 0b0000_0000_0100) != 0) {
                                 if((cosSvc_second & 0x1) == 1) cosSvc_strBattBuilder.append(CHAR_BATTSTATE_CHARGING1);
                                 else cosSvc_strBattBuilder.append(CHAR_BATTSTATE_CHARGING2);
                             }
@@ -1280,7 +1282,7 @@ public final class COSSvc extends Service implements Runnable {
                         while (index != -1) {
                             cosSvc_FinalClockText.deleteCharAt(index);
                             // 배터리가 완충, 충전, 방전 상태가 아니면 현재 배터리 잔량을 바로 표기
-                            if ((cosSvc_Status & 0b000_0000_1100) == 0)
+                            if ((cosSvc_Status & 0b0000_0000_1100) == 0)
                                 cosSvc_FinalClockText.insert(index, cosSvc_strBattLevelBuilder);
                             // 완충, 충전, 방전 상태에 따른 처리
                             else
@@ -1291,7 +1293,7 @@ public final class COSSvc extends Service implements Runnable {
 
                     // Network State를 사용하는지 확인
                     // 9th bit check (isUsing_Network_State)
-                    if((cosSvc_Status & 0b001_0000_0000) != 0) {
+                    if((cosSvc_Status & 0b0001_0000_0000) != 0) {
                         // Network State 문자열을 알맞은 위치에 삽입
                         index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_NETWORKSTATE);
                         while (index != -1) {
@@ -1322,11 +1324,11 @@ public final class COSSvc extends Service implements Runnable {
                 // 이미 cosSvc_FinalClockTextExceptSecond안에
                 // 저장되어 있으므로 바로 시계를 갱신한다
                 // 7th bit check (overMin_need_update)
-                else if((cosSvc_Status & 0b000_0100_0000) != 0 && !mHandler.hasMessages(0)) {
+                else if((cosSvc_Status & 0b0000_0100_0000) != 0 && !mHandler.hasMessages(0)) {
                     cosSvc_TV.setText(cosSvc_FinalClockTextExceptSecond);
                     if(cosSvc_TVGradient != null) cosSvc_TVGradient.setText(cosSvc_FinalClockTextExceptSecond);
                     // 7th bit off (overMin_need_update)
-                    cosSvc_Status &= 0b111_1011_1111;
+                    cosSvc_Status &= 0b1111_1011_1111;
                 }
             }
             // cosSvc_HidingTime 값이 0이 아니면 터치로 숨기기 상태
@@ -1353,15 +1355,15 @@ public final class COSSvc extends Service implements Runnable {
                     // overMin_need_update를 켜서 숨기는 시간이 끝나자 마자 업데이트 하도록 한다
                     // 따라서 isUsing_SecElement가 false 이면 갱신하도록 한다
                     // 6th bit check (isUsing_SecElement)
-                    if((cosSvc_Status & 0b000_0010_0000) == 0)
+                    if((cosSvc_Status & 0b0000_0010_0000) == 0)
                         // 7th bit on (overMin_need_update)
-                        cosSvc_Status |= 0b000_0100_0000;
+                        cosSvc_Status |= 0b0000_0100_0000;
                 }
             }
 
             // 시계 요소가 하나도 안쓰였다면 1초를 더할 필요가 없다
             // 5th bit check (thereAreOnlyString)
-            if((cosSvc_Status & 0b000_0001_0000) != 0) {
+            if((cosSvc_Status & 0b0000_0001_0000) != 0) {
                 return;
             }
 
@@ -1401,9 +1403,9 @@ public final class COSSvc extends Service implements Runnable {
 
                 // 초 단위 요소가 안쓰인 경우에만 분 단위 이상 업데이트
                 // 6th bit check (isUsing_SecElement)
-                if ((cosSvc_Status & 0b000_0010_0000) == 0)
+                if ((cosSvc_Status & 0b0000_0010_0000) == 0)
                     // 7th bit on (overMin_need_update)
-                    cosSvc_Status |= 0b000_0100_0000;
+                    cosSvc_Status |= 0b0000_0100_0000;
             }
         }
     };

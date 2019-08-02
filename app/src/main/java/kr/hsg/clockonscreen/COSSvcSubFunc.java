@@ -175,22 +175,22 @@ final class COSSvcSubFunc {
             structure = mPref.getString(mCon.getString(R.string.pref_clockText_notfs_key_string), mCon.getString(R.string.pref_clockText_default_string));
 
         // COSSvc에서 필요한 설정 값 반환
-        short status = 0b000_0000_0000;
+        short status = 0b0000_0000_0000;
 
         // 버그 수정 1 사용하는 경우 저장
         if (mPref.getBoolean(mCon.getString(R.string.pref_fixNotRefresh_key_string), false))
-            status |= 0b100_0000_0000; // 11st bit on (isUsing_FixBug1)
+            status |= 0b0100_0000_0000; // 11st bit on (isUsing_FixBug1)
 
         // 터치 기능을 하나라도 사용하는 경우 저장
         if (mPref.getBoolean(mCon.getString(R.string.pref_hideTheClock_key_string), false) || getHideTemporaryByLongTouch())
-            status |= 0b000_1000_0000; // 8th bit on (bTouchEvent)
+            status |= 0b0000_1000_0000; // 8th bit on (bTouchEvent)
 
         // 서비스에서 TextView 갱신이 필요한지 판단하는 값 중 하나로
         // 순수 문자열만 이루어진 경우를 저장
         // (= 시계 구조 설정 내 .a ~ .x 중 단 하나도 쓰이지 않은 경우)
         // .z는 다음 줄로, ..은 .으로 치환되는 둘 다 단순 문자열이므로 무시
         if(!structure.matches(".*\\.[a-x].*"))
-            status |= 0b000_0001_0000; // 5th bit on (thereAreOnlyString)
+            status |= 0b0000_0001_0000; // 5th bit on (thereAreOnlyString)
 
         boolean useBatt = structure.contains(".w");
         boolean useNetState = structure.contains(".x");
@@ -198,13 +198,13 @@ final class COSSvcSubFunc {
 
         // Batt 사용
         if(useBatt)
-            status |= 0b000_0000_0010; // 2nd bit on (isUsing_Battery)
+            status |= 0b0000_0000_0010; // 2nd bit on (isUsing_Battery)
         // Network State 사용
         if(useNetState)
-            status |= 0b001_0000_0000; // 9th bit on (isUsing_Network_State)
+            status |= 0b0001_0000_0000; // 9th bit on (isUsing_Network_State)
         // 초 단위 요소 사용
         if(useBatt || useNetState || useSec) {
-            status |= 0b000_0010_0000; // 6th bit on (isUsing_SecElement)
+            status |= 0b0000_0010_0000; // 6th bit on (isUsing_SecElement)
         }
 
         return status;
