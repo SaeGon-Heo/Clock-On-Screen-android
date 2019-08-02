@@ -29,10 +29,12 @@
 					Discharging (under 15%): ▽or▼\n
 .x		(none)	    \uF003	네트워크 상태\n
 					<state>\n
-					Cellular: ⇵\n
-					WiFi: ≋\n
-					Ethernet: ⌂\n
-					None: ⌀\n
+					Mobile: ⇵ / WiFi: ≋\n
+					Ethernet: ⌂ / None: ⌀\n
+.y		(none)	    \uF004	네트워크 상태(문자)\n
+					<state>\n
+					Mobile: M / WiFi: W\n
+					Ethernet: E / None: N\n
 ..		(string)		.\n
 
 

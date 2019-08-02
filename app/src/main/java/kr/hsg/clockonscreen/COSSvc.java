@@ -46,7 +46,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -77,20 +76,26 @@ public final class COSSvc extends Service implements Runnable {
     private static final char CHAR_BATTSTATE_DISCHARGING1 = '▽';
     private static final char CHAR_BATTSTATE_DISCHARGING2 = '▼';
     private static final char CHAR_NETSTATE_NONE = '⌀';
-    private static final char CHAR_NETSTATE_CELLULAR = '⇵';
+    private static final char CHAR_NETSTATE_MOBILE = '⇵';
     private static final char CHAR_NETSTATE_WIFI = '≋';
     private static final char CHAR_NETSTATE_ETHERNET = '⌂';
+    private static final char CHAR_NETSTATE_ALTER_NONE = 'N';
+    private static final char CHAR_NETSTATE_ALTER_MOBILE = 'M';
+    private static final char CHAR_NETSTATE_ALTER_WIFI = 'W';
+    private static final char CHAR_NETSTATE_ALTER_ETHERNET = 'E';
+    private static final String STR_NETSTATE_ALTER_WIFI_MOBILE = "W+M";
     private static final String STR_EMPTY = "";
     private static final String STR_SYMBOL_SECOND = "\uF002";
     private static final String STR_SYMBOL_SECOND_FILLZERO = "\uF001";
     private static final String STR_SYMBOL_BATT = "\uF000";
     private static final String STR_SYMBOL_NETWORKSTATE = "\uF003";
+    private static final String STR_SYMBOL_NETWORKSTATE_ALTER = "\uF004";
 
     // Network State 상수
     private static final byte NETSTATE_NONE = 0;
-    private static final byte NETSTATE_CELLULAR = 1;
+    private static final byte NETSTATE_MOBILE = 1;
     private static final byte NETSTATE_WIFI = 2;
-    private static final byte NETSTATE_CELLULAR_WIFI = 3;
+    private static final byte NETSTATE_WIFI_MOBILE = 3;
     private static final byte NETSTATE_ETHERNET = 4;
 
     // Layout Attach State 상수
@@ -119,6 +124,7 @@ public final class COSSvc extends Service implements Runnable {
     private StringBuilder cosSvc_strBattLevelBuilder;
     private StringBuilder cosSvc_strBattBuilder;
     private StringBuilder cosSvc_strNetStateBuilder;
+    private StringBuilder cosSvc_strNetStateAlterBuilder;
     private String cosSvc_ClockTextFormatted;
     private String cosSvc_ClockTextMax;
     private String cosSvc_ClockTextFormatted_notfs;
@@ -212,7 +218,7 @@ public final class COSSvc extends Service implements Runnable {
                     // 총 발견된 네트워크 수를 저장
                     byte network_count = 0;
                     // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
-                    boolean bCellularHipri = false;
+                    boolean bMobileHipri = false;
 
                     // 초기 값 지정
                     byte netState = COSSvc.NETSTATE_NONE;
@@ -236,9 +242,9 @@ public final class COSSvc extends Service implements Runnable {
                                         // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
                                         NetworkInfo hipriNetInfo = cosSvc_connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE_HIPRI);
                                         if(hipriNetInfo != null && hipriNetInfo.isConnected()) {
-                                            bCellularHipri = true;
+                                            bMobileHipri = true;
                                         }
-                                        netState += COSSvc.NETSTATE_CELLULAR;
+                                        netState += COSSvc.NETSTATE_MOBILE;
                                     } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                                         network_count++;
                                         netState += COSSvc.NETSTATE_WIFI;
@@ -257,7 +263,7 @@ public final class COSSvc extends Service implements Runnable {
                             if (network_count > 1) {
                                 // 기본적으로 2개 이상이 탐지되면
                                 // netState에 저장된 값은 1 / 2 / 4 중 하나가 되지 않는다
-                                // (NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4))
+                                // (NETSTATE_MOBILE(1) / WIFI(2) / ETHERNET(4))
                                 //
                                 // 그리고 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
                                 // 특정 네트워크 x의 값보다 큰 경우
@@ -272,7 +278,7 @@ public final class COSSvc extends Service implements Runnable {
                                 // isConnected 값이 true로 변화한다
                                 //
                                 // 따라서 TYPE_MOBILE_HIPRI NetworkInfo의
-                                // isConnected 상태를 저장한 bCellularHipri 값을 활용하여
+                                // isConnected 상태를 저장한 bMobileHipri 값을 활용하여
                                 // 다운로드 부스터 및 band LTE WiFi 사용 여부를 출력한다
 
                                 // 만약 Ethernet + 기타 네트워크가 활성화된 경우
@@ -280,22 +286,22 @@ public final class COSSvc extends Service implements Runnable {
                                 if (netState > COSSvc.NETSTATE_ETHERNET) {
                                     netState = COSSvc.NETSTATE_ETHERNET;
                                 }
-                                // 만약 WiFi + Cellular 네트워크가 활성화된 경우
+                                // 만약 WiFi + Mobile 네트워크가 활성화된 경우
                                 else if (netState > COSSvc.NETSTATE_WIFI) {
                                     // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
-                                    if (bCellularHipri) {
+                                    if (bMobileHipri) {
                                         // 다운로드 부스터 및 band LTE WiFi 사용 상태
-                                        netState = COSSvc.NETSTATE_CELLULAR_WIFI;
+                                        netState = COSSvc.NETSTATE_WIFI_MOBILE;
                                     }
                                     else {
                                         // WiFi 사용 상태
                                         netState = COSSvc.NETSTATE_WIFI;
                                     }
                                 }
-                                // 총 네트워크 수 2개 + 네트워크 상태 2(Cellular 2번)으로
-                                // 나타나는 경우 네트워크 상태를 1(Cellular)로 변경한다
+                                // 총 네트워크 수 2개 + 네트워크 상태 2(Mobile 2번)으로
+                                // 나타나는 경우 네트워크 상태를 1(Mobile)로 변경한다
                                 else {
-                                    netState = COSSvc.NETSTATE_CELLULAR;
+                                    netState = COSSvc.NETSTATE_MOBILE;
                                 }
                             } // if(network_count > 1)
                         } // LOLLIPOP 이상 API
@@ -313,10 +319,10 @@ public final class COSSvc extends Service implements Runnable {
                                         // TYPE_MOBILE과 네트워크를 공유하므로 break;를 쓰지 않고
                                         // TYPE_MOBILE_HIPRI는 TYPE_MOBILE를 탐지한 것으로 처리
                                         case ConnectivityManager.TYPE_MOBILE_HIPRI:
-                                            bCellularHipri = true;
+                                            bMobileHipri = true;
                                         case ConnectivityManager.TYPE_MOBILE:
                                             network_count++;
-                                            netState += COSSvc.NETSTATE_CELLULAR;
+                                            netState += COSSvc.NETSTATE_MOBILE;
                                             break;
                                         case ConnectivityManager.TYPE_WIFI:
                                             network_count++;
@@ -338,7 +344,7 @@ public final class COSSvc extends Service implements Runnable {
                             if (network_count > 1) {
                                 // 기본적으로 2개 이상이 탐지되면
                                 // netState에 저장된 값은 1 / 2 / 4 중 하나가 되지 않는다
-                                // (NETSTATE_CELLULAR(1) / WIFI(2) / ETHERNET(4))
+                                // (NETSTATE_MOBILE(1) / WIFI(2) / ETHERNET(4))
                                 //
                                 // 그리고 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
                                 // 특정 네트워크 x의 값보다 큰 경우
@@ -349,12 +355,12 @@ public final class COSSvc extends Service implements Runnable {
                                 if (netState > COSSvc.NETSTATE_ETHERNET) {
                                     netState = COSSvc.NETSTATE_ETHERNET;
                                 }
-                                // 만약 WiFi + Cellular 네트워크가 활성화된 경우
+                                // 만약 WiFi + Mobile 네트워크가 활성화된 경우
                                 else if (netState > COSSvc.NETSTATE_WIFI) {
                                     // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
-                                    if (bCellularHipri) {
+                                    if (bMobileHipri) {
                                         // 다운로드 부스터 및 band LTE WiFi 사용 상태
-                                        netState = COSSvc.NETSTATE_CELLULAR_WIFI;
+                                        netState = COSSvc.NETSTATE_WIFI_MOBILE;
                                     }
                                     else {
                                         // WiFi 사용 상태
@@ -362,34 +368,60 @@ public final class COSSvc extends Service implements Runnable {
                                     }
                                 }
                                 // 만약 다운로드 부스터 및 band LTE WiFi 사용 중 WiFi를 꺼버리면
-                                // 0/5 Type(둘 다 Cellular)의 NetworkInfo는
+                                // 0/5 Type(둘 다 Mobile)의 NetworkInfo는
                                 // 여전히 isConnected: true 상태를 가지므로
-                                // 총 네트워크 수 2개 + 네트워크 상태 2(Cellular 2번)로 나타난다
-                                // 이 경우 네트워크 상태를 1(Cellular)로 변경한다
+                                // 총 네트워크 수 2개 + 네트워크 상태 2(Mobile 2번)로 나타난다
+                                // 이 경우 네트워크 상태를 1(Mobile)로 변경한다
                                 else {
-                                    netState = COSSvc.NETSTATE_CELLULAR;
+                                    netState = COSSvc.NETSTATE_MOBILE;
                                 }
                             } // if(network_count > 1)
                         } // LOLLIPOP 미만 API
                     } // EXTRA_NO_CONNECTIVITY check
 
                     // 최종 획득한 상태 값을 기준으로 최종 문자열을 미리 저장
-                    cosSvc_strNetStateBuilder.setLength(0);
+                    // 9th bit check (isUsing_Network_State)
+                    if((cosSvc_Status & 0b0001_0000_0000) != 0) {
+                        cosSvc_strNetStateBuilder.setLength(0);
 
-                    switch(netState) {
-                        case COSSvc.NETSTATE_NONE:
-                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_NONE);
-                            break;
-                        case COSSvc.NETSTATE_CELLULAR_WIFI:
-                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
-                        case COSSvc.NETSTATE_CELLULAR:
-                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_CELLULAR);
-                            break;
-                        case COSSvc.NETSTATE_WIFI:
-                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
-                            break;
-                        case COSSvc.NETSTATE_ETHERNET:
-                            cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_ETHERNET);
+                        switch (netState) {
+                            case COSSvc.NETSTATE_NONE:
+                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_NONE);
+                                break;
+                            case COSSvc.NETSTATE_WIFI_MOBILE:
+                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
+                            case COSSvc.NETSTATE_MOBILE:
+                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_MOBILE);
+                                break;
+                            case COSSvc.NETSTATE_WIFI:
+                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
+                                break;
+                            case COSSvc.NETSTATE_ETHERNET:
+                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_ETHERNET);
+                                break;
+                        }
+                    }
+                    // 12nd bit check (isUsing_Network_State_Alter)
+                    if((cosSvc_Status & 0b1000_0000_0000) != 0) {
+                        cosSvc_strNetStateAlterBuilder.setLength(0);
+
+                        switch (netState) {
+                            case COSSvc.NETSTATE_NONE:
+                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_NONE);
+                                break;
+                            case COSSvc.NETSTATE_WIFI_MOBILE:
+                                cosSvc_strNetStateAlterBuilder.append(STR_NETSTATE_ALTER_WIFI_MOBILE);
+                                break;
+                            case COSSvc.NETSTATE_MOBILE:
+                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_MOBILE);
+                                break;
+                            case COSSvc.NETSTATE_WIFI:
+                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_WIFI);
+                                break;
+                            case COSSvc.NETSTATE_ETHERNET:
+                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_ETHERNET);
+                                break;
+                        }
                     }
                     break;
             }
@@ -955,18 +987,27 @@ public final class COSSvc extends Service implements Runnable {
             cosSvc_strBattBuilder = new StringBuilder();
         }
 
-        // 네트워크 상태 값을 사용하면 네트워크 상태 변경 액션을
-        // 분별하는 필터를 추가하거나 NetworkCallback을 등록
+        // 네트워크 상태 값을 사용하면 네트워크 상태 변경 액션을 분별하는 필터를 추가
         // 풀스크린 상태에 따라 시계를 다르게 표시하는 경우 notfs 전용 Status 값도 확인
         // 9th bit check (isUsing_Network_State)
-        if((cosSvc_InitStatus & 0b0001_0000_0000) != 0 ||
-                (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b0001_0000_0000) != 0)) {
+        // 12nd bit check (isUsing_Network_State_Alter)
+        if((cosSvc_InitStatus & 0b1001_0000_0000) != 0 ||
+                (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b1001_0000_0000) != 0)) {
             // ConnectivityManager 생성
             cosSvc_connManager = (ConnectivityManager)mCon
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
 
             // StringBuilder 생성
-            cosSvc_strNetStateBuilder = new StringBuilder();
+            // 9th bit check (isUsing_Network_State)
+            if((cosSvc_InitStatus & 0b0001_0000_0000) != 0 ||
+                    (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b0001_0000_0000) != 0)) {
+                cosSvc_strNetStateBuilder = new StringBuilder();
+            }
+            // 12nd bit check (isUsing_Network_State_Alter)
+            if((cosSvc_InitStatus & 0b1000_0000_0000) != 0 ||
+                    (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b1000_0000_0000) != 0)) {
+                cosSvc_strNetStateAlterBuilder = new StringBuilder();
+            }
 
             // Api 21(LOLLIPOP) 부터 Callback을 지원하지만
             // Callback이 network가 확정되기 전에(특히 WiFi 연결 시)
@@ -1300,6 +1341,17 @@ public final class COSSvc extends Service implements Runnable {
                             cosSvc_FinalClockText.deleteCharAt(index);
                             cosSvc_FinalClockText.insert(index, cosSvc_strNetStateBuilder);
                             index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_NETWORKSTATE);
+                        }
+                    }
+
+                    // 12nd bit check (isUsing_Network_State_Alter)
+                    if((cosSvc_Status & 0b1000_0000_0000) != 0) {
+                        // Network State 문자열을 알맞은 위치에 삽입
+                        index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_NETWORKSTATE_ALTER);
+                        while (index != -1) {
+                            cosSvc_FinalClockText.deleteCharAt(index);
+                            cosSvc_FinalClockText.insert(index, cosSvc_strNetStateAlterBuilder);
+                            index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_NETWORKSTATE_ALTER);
                         }
                     }
 

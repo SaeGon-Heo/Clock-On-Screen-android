@@ -239,6 +239,10 @@ public final class COSSettings extends PreferenceActivity
                     SB.append('⇵');
                     i++;
                 }
+                else if(array[i + 1] == 'y') {
+                    SB.append('M');
+                    i++;
+                }
                 else if(array[i + 1] == '.') {
                     SB.append(".");
                     i++;
@@ -456,6 +460,12 @@ public final class COSSettings extends PreferenceActivity
                     SB.append('\uF003');
                     i++;
                 }
+                else if(array[i + 1] == 'y') {
+                    if(state != 0) { SB.append('\''); state = 0; }
+                    // 네트워크 상태(문자)에 대한 특수 값
+                    SB.append('\uF004');
+                    i++;
+                }
                 else if(array[i + 1] == '.') {
                     if(state != 0) { SB.append('\''); state = 0; }
                     SB.append(".");
@@ -556,6 +566,10 @@ public final class COSSettings extends PreferenceActivity
                 }
                 else if(array[i + 1] == 'x') {
                     SB.append("≋⇵");
+                    i++;
+                }
+                else if(array[i + 1] == 'y') {
+                    SB.append("W+M");
                     i++;
                 }
                 else if(array[i + 1] == '.') {
