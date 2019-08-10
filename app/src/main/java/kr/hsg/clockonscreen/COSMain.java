@@ -308,7 +308,6 @@ public final class COSMain extends Activity {
             });
         } // Info Activity
         else {
-            Context mCon = getApplicationContext();
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mCon);
 
             // 현재 Context의 언어 설정
