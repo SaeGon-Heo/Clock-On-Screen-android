@@ -930,7 +930,7 @@ public final class COSSvc extends Service implements Runnable {
                 @Override
                 public boolean onLongClick(View view) {
                     // 10th bit check (onDestroy_called)
-                    if((cosSvc_Status & 0b0010_0000_0000) != 0) return false;
+                    if((cosSvc_Status & 0b0010_0000_0000) != 0) return true;
 
                     // 화면을 끄고 켜는 경우에만 서비스 재시작한다고 토스트 메시지를 띄운다
                     Toast.makeText(COSSvc.this, R.string.pref_toast_hidetheclocktemporary, Toast.LENGTH_LONG).show();
@@ -953,7 +953,7 @@ public final class COSSvc extends Service implements Runnable {
                     // 시계 숨기기
                     ((ViewGroup)cosSvc_OutBoundLayout).setVisibility(View.GONE);
 
-                    return false;
+                    return true;
                 }
             });
         }
