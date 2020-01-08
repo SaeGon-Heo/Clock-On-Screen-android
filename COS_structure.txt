@@ -1,4 +1,4 @@
-﻿사용 가능한 구성요소
+사용 가능한 구성요소
 .z		(string)		Line break (줄바꿈)\n
 .a		uuuu			년 (2018)\n
 .b		uu			년 (18)\n
@@ -27,6 +27,7 @@
 					Full: ◎\n
 					Charging: △or▲\n
 					Discharging (under 15%): ▽or▼\n
+.ww		(none)	    \uF005	배터리 전압(Hidden option)\n
 .x		(none)	    \uF003	네트워크 상태\n
 					<state>\n
 					Mobile: ⇵ / WiFi: ≋\n
@@ -38,7 +39,7 @@
 ..		(string)		.\n
 
 
-\uF00X = 유니코드 내 Private Use Area
+\uF0XX = 유니코드 내 Private Use Area
 
 (삭제된 요소)
 %m	1	6	베터리(0~100)\n

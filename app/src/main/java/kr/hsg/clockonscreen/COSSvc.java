@@ -88,6 +88,7 @@ public final class COSSvc extends Service implements Runnable {
     private static final String STR_SYMBOL_SECOND = "\uF002";
     private static final String STR_SYMBOL_SECOND_FILLZERO = "\uF001";
     private static final String STR_SYMBOL_BATT = "\uF000";
+    private static final String STR_SYMBOL_BATTVOLTAGE = "\uF005";
     private static final String STR_SYMBOL_NETWORKSTATE = "\uF003";
     private static final String STR_SYMBOL_NETWORKSTATE_ALTER = "\uF004";
 
@@ -132,6 +133,7 @@ public final class COSSvc extends Service implements Runnable {
     private byte cosSvc_ClockPosition;
     private byte cosSvc_ClockPosition_notfs;
     private int[] cosSvc_gradientColors;
+    private int cosSvc_battVoltage;
     private short cosSvc_HidingTimeLength;
     private short cosSvc_HidingTime;
     // Each bit have meaning as below
@@ -180,7 +182,7 @@ public final class COSSvc extends Service implements Runnable {
                 // 배터리 상태 변경 시 변경 내용을 StringBuilder에 저장
                 case Intent.ACTION_BATTERY_CHANGED:
                     cosSvc_strBattLevelBuilder.setLength(0);
-                    // 배터리 level 저장 및 StringBuiler에 입력
+                    // 배터리 level을 계산 후 StringBuiler에 입력
                     int level;
                     try {
                         level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0) * 100 /
@@ -189,6 +191,10 @@ public final class COSSvc extends Service implements Runnable {
                         level = -1;
                     }
                     cosSvc_strBattLevelBuilder.append(level);
+                    // level 뒤 % 추가
+                    cosSvc_strBattLevelBuilder.append(CHAR_PERCENT);
+                    // 배터리 voltage를 전역변수에 저장
+                    cosSvc_battVoltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);
                     // 배터리 충, 방전 상태 갱신
                     if (intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0) {
                         // 3rd, 4th bit reset
@@ -209,8 +215,6 @@ public final class COSSvc extends Service implements Runnable {
                         // 3rd, 4th bit reset
                         cosSvc_Status &= 0b1111_1111_0011;
                     }
-                    // 마지막 % 추가
-                    cosSvc_strBattLevelBuilder.append(CHAR_PERCENT);
                     break;
                 // 네트워크 상태가 변경 될 때 마다
                 // 전체 네트워크를 검사하여 현재 활성화된 네트워크를 탐색
@@ -1329,6 +1333,15 @@ public final class COSSvc extends Service implements Runnable {
                             else
                                 cosSvc_FinalClockText.insert(index, cosSvc_strBattBuilder);
                             index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_BATT);
+                        }
+
+                        // 최종 문자열을 알맞은 위치에 삽입
+                        index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_BATTVOLTAGE);
+                        while (index != -1) {
+                            cosSvc_FinalClockText.deleteCharAt(index);
+                            // 배터리 전압 표기
+                            cosSvc_FinalClockText.insert(index, cosSvc_battVoltage);
+                            index = cosSvc_FinalClockText.indexOf(STR_SYMBOL_BATTVOLTAGE);
                         }
                     }
 
