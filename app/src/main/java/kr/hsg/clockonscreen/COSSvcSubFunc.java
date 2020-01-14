@@ -192,7 +192,7 @@ final class COSSvcSubFunc {
         if(!structure.matches(".*\\.[a-y].*"))
             status |= 0b0000_0001_0000; // 5th bit on (thereAreOnlyString)
 
-        boolean useBatt = structure.contains(".w");
+        boolean useBatt = structure.contains(".w") || structure.contains(".W");
         boolean useNetState = structure.contains(".x");
         boolean useNetStateAlter = structure.contains(".y");
         boolean useSec = structure.contains(".u") || structure.contains(".v");

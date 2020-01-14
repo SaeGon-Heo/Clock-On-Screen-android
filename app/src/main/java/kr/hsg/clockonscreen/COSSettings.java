@@ -448,11 +448,11 @@ public final class COSSettings extends PreferenceActivity
                     SB.append('\uF001');
                     i++;
                 }
-                else if(i < (len - 1) && array[i + 1] == 'w' && array[i + 2] == 'w') {
+                else if(array[i + 1] == 'W') {
                     if(state != 0) { SB.append('\''); state = 0; }
                     // 배터리 전압(히든)에 대한 특수 값
                     SB.append('\uF005');
-                    i += 2;
+                    i++;
                 }
                 else if(array[i + 1] == 'w') {
                     if(state != 0) { SB.append('\''); state = 0; }
@@ -566,9 +566,9 @@ public final class COSSettings extends PreferenceActivity
                     else SB.append("오뷁");
                     i++;
                 }
-                else if(i < (len - 1) && array[i + 1] == 'w' && array[i + 2] == 'w') {
+                else if(array[i + 1] == 'W') {
                     SB.append("8888");
-                    i += 2;
+                    i++;
                 }
                 else if(array[i + 1] == 'w') {
                     SB.append("100%△");
