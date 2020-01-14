@@ -2,7 +2,7 @@
 <resources>
     <string name="app_request_overlay_permission_title">다른 앱 위에 그리기/표시되는 앱</string>
     <string name="app_request_overlay_permission_content">Clock On Screen은 시계 표시를 위해 \"다른 앱 위에 그리기/표시되는 앱\" 권한이 필요합니다.\n확인 버튼을 누르고 뜨는 팝업 창에서 \"~ 허용\"을 활성화 해주세요.\n만약 활성화 하지 않으면 Clock On Screen을 사용 할 수 없습니다.</string>
-    <string name="app_info_content">Clock On Screen은 설정에 따라 날짜, 시간 및 배터리 잔량을 화면위에 표시하는 어플입니다.</string>
+    <string name="app_info_content">Clock On Screen은 날짜, 시간, 배터리 상태 및 네트워크 상태를 문자로 화면 위에 표시하는 어플입니다.</string>
     <string name="app_info_content_oreo_suffix">\n\n안드로이드 오레오(8.0)부터 \"Clock On Screen이(가) 다른 앱 위에 표시됨\"과 같은 알림이 나타납니다.\n해당 알림을 길게 누르면 나타나는 옵션을 비활성화 해주시고 \"완료\" 버튼을 누르시면 해당 알림은 사라집니다.\n이 옵션은 어플 마다 별도로 적용되므로 다른 어플의 이러한 알림은 정상적으로 보실 수 있습니다.</string>
 
     <string name="press_color_to_apply">사용할 색을 눌러주세요</string>
@@ -43,7 +43,7 @@
         <item>밑 - 가운데</item>
         <item>밑 - 오른쪽</item>
     </string-array>
-    <string name="pref_toast_clockposition_warning">이 위치를 사용하는 동안 시계가 패키지 설치 관리자의 설치 버튼을 터치 못 할 수도 있습니다</string>
+    <string name="pref_toast_clockposition_warning">이 위치를 사용하는 동안 패키지 설치 화면에서 설치 버튼을 터치 못 할 수도 있습니다</string>
 
     <string name="pref_subject_font">시계 폰트 및 색상</string>
 
@@ -100,7 +100,7 @@
     <string name="pref_subject_etc">기타</string>
 
     <string name="pref_fixNotRefresh_title">버그 수정 1</string>
-    <string name="pref_fixNotRefresh_des">화면 회전 또는 풀스크린 상태 변경 후 시계 내용이 변하지 않는 경우에만 사용하세요</string>
+    <string name="pref_fixNotRefresh_des">화면 회전 또는 풀스크린 상태 변경이 일어나도 시계 내용이 변하지 않는 경우에만 사용하세요</string>
 
     <string name="pref_reset">설정 초기화</string>
     <string name="pref_reset_des">모든 설정을 초기화합니다</string>

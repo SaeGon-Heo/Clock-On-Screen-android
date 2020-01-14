@@ -6,7 +6,7 @@
     <string name="app_open_source_library_title" translatable="false">Open Source Library</string>
     <string name="app_request_overlay_permission_title">Display over other apps</string>
     <string name="app_request_overlay_permission_content">Clock On Screen need \"Display over other apps\" to display the clock.\nPlease, press the OK button and activate \"Allow display over other apps\" in the popup window.\nIf you don\'t activate it, you can\'t use Clock On Screen.</string>
-    <string name="app_info_content">Clock On Screen is an app that displays the date, time and battery level on the screen according to the settings.</string>
+    <string name="app_info_content">Clock On Screen is an android app that displays the date, time, battery level and network state as text on the screen.</string>
     <string name="app_info_content_oreo_suffix">\n\nFrom Android Oreo(8.0), you will see a notification such as \"Clock On Screen is displaying over other apps\".\nPlease, press and hold the corresponding notification, disable the option that appears and press the \"DONE\" button to disable the notification.\nThis option is applied to each application separately, so you can see such notification from other applications normally.</string>
 
     <string name="press_color_to_apply">Press color to use</string>
@@ -73,7 +73,7 @@
     <string-array name="pref_fsmode_list">
         <item>Not use (Always display clock)</item>
         <item>Display clock only in full screen</item>
-        <item>Display clock differently\ndepending on full screen status</item>
+        <item>Display clock differently\ndepending on full screen state</item>
     </string-array>
     <string-array name="pref_fsmode_values" translatable="false">
         <item>0</item>
@@ -104,7 +104,7 @@
         <item>4</item>
         <item>5</item>
     </string-array>
-    <string name="pref_toast_clockposition_warning">While using this position, you may not be able to touch the install button on the package installer</string>
+    <string name="pref_toast_clockposition_warning">You may not be able to touch the install button on the package installer screen while using this position</string>
 
     <string name="pref_subject_font">Clock Font &amp; Color</string>
 
@@ -185,7 +185,7 @@
     <string name="pref_toast_korean_applied" translatable="false">한글 UI가 적용되었습니다</string>
 
     <string name="pref_fixNotRefresh_title">Fix Bug 1</string>
-    <string name="pref_fixNotRefresh_des">Use this only when the clock is not refreshed when screen is rotated or fullscreen status is changed</string>
+    <string name="pref_fixNotRefresh_des">Use this only when the clock is not refreshed while screen is rotated or fullscreen state is changed</string>
 
     <string name="pref_reset">Reset All Settings</string>
     <string name="pref_reset_des">All settings will be reset</string>
