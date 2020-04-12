@@ -20,3 +20,17 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# Note that code/simplification/arithmetic must be also disabled if you target lower then Android 2.0
+# -optimizations !code/simplification/arithmetic,!code/simplification/cast,!code/simplification/advanced,!field/*,!class/merging/*,!method/removal/parameter,!method/propagation/parameter
+# if you are not using "proguard-android-optimize.txt" make below line as comment
+-optimizations !code/simplification/cast,!code/simplification/advanced,!field/*,!class/merging/*,!method/removal/parameter,!method/propagation/parameter
+
+# Specifies to repackage all class files that are renamed, by moving them into the single given package.
+# Without argument or with an empty string (''), the package is removed completely.
+# This option overrides the -flattenpackagehierarchy option.
+-repackageclasses ''
+
+# use this to keep a sourcefile's linenumber for debug
+# This will keep the line numbers but replace the filename in the stacktrace with "SourceFile".
+#-renamesourcefileattribute SourceFile
+#-keepattributes SourceFile,LineNumberTable
