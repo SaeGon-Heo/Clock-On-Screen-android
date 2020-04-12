@@ -725,7 +725,7 @@ public final class COSSettings extends PreferenceActivity
                 String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_dy_key_string), 2.0f)) + "y " +
                 String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_radius_key_string), 3.0f)) + "r");
         findPreference(mCon.getString(R.string.pref_clockTransparency_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(mPref.getInt(mCon.getString(R.string.pref_clockTransparency_key_string), 255)) + mCon.getString(R.string.pref_clocktransparency_current_postfix));
-        findPreference(mCon.getString(R.string.pref_hideTheClockTime_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string),10)) + mCon.getString(R.string.pref_suffix_second));
+        findPreference(mCon.getString(R.string.pref_hideTheClockTime_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string),30)) + mCon.getString(R.string.pref_suffix_second));
     } //onCreate
 
     @Override
@@ -1376,7 +1376,7 @@ public final class COSSettings extends PreferenceActivity
 
                 // 레이아웃에서 edittext 불러와 내용을 기존 설정값으로 변경
                 etHideTheClockTime = HideTheClockTimeLayout.findViewById(R.id.edittext_hidetheclocktime);
-                etHideTheClockTime.setText(String.format(Locale.US, "%d", mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string), 10)));
+                etHideTheClockTime.setText(String.format(Locale.US, "%d", mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string), 30)));
                 etHideTheClockTime.setSelection(etHideTheClockTime.length());
 
                 // 다이얼로그 빌드
@@ -1394,7 +1394,7 @@ public final class COSSettings extends PreferenceActivity
                 HideTheClockTimeDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        etHideTheClockTime.setText("10");
+                        etHideTheClockTime.setText("30");
                         etHideTheClockTime.setSelection(2);
                     }
                 });
@@ -1407,7 +1407,7 @@ public final class COSSettings extends PreferenceActivity
                             valInt = Integer.parseInt(etHideTheClockTime.getText().toString());
                         } catch (NumberFormatException e) {
                             // 빈값이 입력된경우 기존 값으로 복구하고 닫기
-                            etHideTheClockTime.setText(String.format(Locale.US, "%d", mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string), 10)));
+                            etHideTheClockTime.setText(String.format(Locale.US, "%d", mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string), 30)));
                             etHideTheClockTime.setSelection(etHideTheClockTime.length());
                             return;
                         }

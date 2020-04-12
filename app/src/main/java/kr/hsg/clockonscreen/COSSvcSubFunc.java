@@ -314,7 +314,7 @@ final class COSSvcSubFunc {
 
     // 숨기는 시간 값 반환
     short getHidingTime() {
-        return (short)mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string), 10);
+        return (short)mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string), 30);
     }
 
     boolean getHideTemporaryByLongTouch() {
