@@ -237,10 +237,9 @@ public final class COSSvc extends Service implements Runnable {
                             // 현재 존재하는 모든 네트워크를 먼저 검사
                             for (Network net : cosSvc_connManager.getAllNetworks()) {
                                 NetworkCapabilities netCap = cosSvc_connManager.getNetworkCapabilities(net);
-                                if (netCap == null) continue;
 
                                 // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
-                                if (netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                                if (netCap != null && netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
                                     if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
                                         network_count++;
                                         // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
@@ -313,10 +312,9 @@ public final class COSSvc extends Service implements Runnable {
                         else {
                             // 현재 존재하는 모든 네트워크 조사
                             for (NetworkInfo netinfo : cosSvc_connManager.getAllNetworkInfo()) {
-                                if (netinfo == null) continue;
 
                                 // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
-                                if (netinfo.isConnected()) {
+                                if (netinfo != null && netinfo.isConnected()) {
                                     switch(netinfo.getType()) {
                                         // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
                                         // - TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true
