@@ -29,8 +29,3 @@
 # Without argument or with an empty string (''), the package is removed completely.
 # This option overrides the -flattenpackagehierarchy option.
 -repackageclasses ''
-
-# use this to keep a sourcefile's linenumber for debug
-# This will keep the line numbers but replace the filename in the stacktrace with "SourceFile".
-#-renamesourcefileattribute SourceFile
-#-keepattributes SourceFile,LineNumberTable
