@@ -44,16 +44,16 @@ import java.util.Locale;
 
 public final class COSSettings extends PreferenceActivity
         implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
-    private Context mCon;
-    private SharedPreferences mPref;
+    Context mCon;
+    SharedPreferences mPref;
 
-    private AlertDialog ClockTextDialog;
-    private AlertDialog ClockTextNotFSDialog;
-    private AlertDialog FontSizeDialog;
-    private AlertDialog FontShadowShapeDialog;
-    private AlertDialog ClockTransparencyDialog;
-    private AlertDialog HideTheClockTimeDialog;
-    private AlertDialog ResetSettingsDialog;
+    AlertDialog ClockTextDialog;
+    AlertDialog ClockTextNotFSDialog;
+    AlertDialog FontSizeDialog;
+    AlertDialog FontShadowShapeDialog;
+    AlertDialog ClockTransparencyDialog;
+    AlertDialog HideTheClockTimeDialog;
+    AlertDialog ResetSettingsDialog;
 	private View ClockTextLayout;
     private View ClockTextNotFSLayout;
 	private View FontSizeLayout;
@@ -64,25 +64,25 @@ public final class COSSettings extends PreferenceActivity
     private TextWatcher ClockTextNotFSTWatcher;
     private TextWatcher ClockTransparencyTWatcher;
 
-    private StringBuilder ClockTextPreviewBuilder;
-    private EditText etClockText;
-    private TextView tvClockTextPreview;
-    private ScrollView svClockTextPreview;
-    private EditText etClockTextNotFS;
-    private TextView tvClockTextNotFSPreview;
-    private ScrollView svClockTextNotFSPreview;
-    private EditText etFontSize;
-    private EditText etFontShadowDx;
-    private EditText etFontShadowDy;
-    private EditText etFontShadowRadius;
-    private EditText etClockTransparency;
-    private SeekBar seekClockTransparency;
-    private EditText etHideTheClockTime;
+    StringBuilder ClockTextPreviewBuilder;
+    EditText etClockText;
+    TextView tvClockTextPreview;
+    ScrollView svClockTextPreview;
+    EditText etClockTextNotFS;
+    TextView tvClockTextNotFSPreview;
+    ScrollView svClockTextNotFSPreview;
+    EditText etFontSize;
+    EditText etFontShadowDx;
+    EditText etFontShadowDy;
+    EditText etFontShadowRadius;
+    EditText etClockTransparency;
+    SeekBar seekClockTransparency;
+    EditText etHideTheClockTime;
 
-    private boolean ClockTransparencyEditTextFromUser = true;
+    boolean ClockTransparencyEditTextFromUser = true;
 
     // 서비스 실행
-    private void runService(int way, boolean stillInPrefActivity) {
+    void runService(int way, boolean stillInPrefActivity) {
         Intent mSvc_Idle = new Intent(mCon, COSSvc_Idle.class);
         Intent mSvc = new Intent(mCon, COSSvc.class);
 
@@ -116,7 +116,7 @@ public final class COSSettings extends PreferenceActivity
     // byte를 반환하므로 다른 곳에서 사용 시 주의
     // 여기서는 최대 80줄을 초과 할 수 없으므로 byte 사용
     // * 프로젝트 경로의 COS_structure.txt 파일 참조
-    private byte refreshPreview(CharSequence data, int modified_end, StringBuilder SB) {
+    byte refreshPreview(CharSequence data, int modified_end, StringBuilder SB) {
         char[] array = data.toString().toCharArray();
         boolean mEnglish = mPref.getBoolean(mCon.getString(R.string.pref_english_key_string), true);
 

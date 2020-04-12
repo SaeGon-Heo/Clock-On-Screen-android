@@ -69,28 +69,28 @@ import java.util.concurrent.TimeUnit;
 
 public final class COSSvc extends Service implements Runnable {
     // 반복 사용 될 단순 문자 및 문자열 저장
-    private static final char CHAR_PERCENT = '%';
-    private static final char CHAR_BATTSTATE_FULL = '◎';
-    private static final char CHAR_BATTSTATE_CHARGING1 = '△';
-    private static final char CHAR_BATTSTATE_CHARGING2 = '▲';
-    private static final char CHAR_BATTSTATE_DISCHARGING1 = '▽';
-    private static final char CHAR_BATTSTATE_DISCHARGING2 = '▼';
-    private static final char CHAR_NETSTATE_NONE = '⌀';
-    private static final char CHAR_NETSTATE_MOBILE = '⇵';
-    private static final char CHAR_NETSTATE_WIFI = '≋';
-    private static final char CHAR_NETSTATE_ETHERNET = '⌂';
-    private static final char CHAR_NETSTATE_ALTER_NONE = 'N';
-    private static final char CHAR_NETSTATE_ALTER_MOBILE = 'M';
-    private static final char CHAR_NETSTATE_ALTER_WIFI = 'W';
-    private static final char CHAR_NETSTATE_ALTER_ETHERNET = 'E';
-    private static final String STR_NETSTATE_ALTER_WIFI_MOBILE = "W+M";
-    private static final String STR_EMPTY = "";
-    private static final String STR_SYMBOL_SECOND = "\uF002";
-    private static final String STR_SYMBOL_SECOND_FILLZERO = "\uF001";
-    private static final String STR_SYMBOL_BATT = "\uF000";
-    private static final String STR_SYMBOL_BATTVOLTAGE = "\uF005";
-    private static final String STR_SYMBOL_NETWORKSTATE = "\uF003";
-    private static final String STR_SYMBOL_NETWORKSTATE_ALTER = "\uF004";
+    static final char CHAR_PERCENT = '%';
+    static final char CHAR_BATTSTATE_FULL = '◎';
+    static final char CHAR_BATTSTATE_CHARGING1 = '△';
+    static final char CHAR_BATTSTATE_CHARGING2 = '▲';
+    static final char CHAR_BATTSTATE_DISCHARGING1 = '▽';
+    static final char CHAR_BATTSTATE_DISCHARGING2 = '▼';
+    static final char CHAR_NETSTATE_NONE = '⌀';
+    static final char CHAR_NETSTATE_MOBILE = '⇵';
+    static final char CHAR_NETSTATE_WIFI = '≋';
+    static final char CHAR_NETSTATE_ETHERNET = '⌂';
+    static final char CHAR_NETSTATE_ALTER_NONE = 'N';
+    static final char CHAR_NETSTATE_ALTER_MOBILE = 'M';
+    static final char CHAR_NETSTATE_ALTER_WIFI = 'W';
+    static final char CHAR_NETSTATE_ALTER_ETHERNET = 'E';
+    static final String STR_NETSTATE_ALTER_WIFI_MOBILE = "W+M";
+    static final String STR_EMPTY = "";
+    static final String STR_SYMBOL_SECOND = "\uF002";
+    static final String STR_SYMBOL_SECOND_FILLZERO = "\uF001";
+    static final String STR_SYMBOL_BATT = "\uF000";
+    static final String STR_SYMBOL_BATTVOLTAGE = "\uF005";
+    static final String STR_SYMBOL_NETWORKSTATE = "\uF003";
+    static final String STR_SYMBOL_NETWORKSTATE_ALTER = "\uF004";
 
     // Network State 상수
     private static final byte NETSTATE_NONE = 0;
@@ -107,35 +107,35 @@ public final class COSSvc extends Service implements Runnable {
 
     private Context mCon;
     //항상 보이게 할 뷰
-    private TextView cosSvc_TV;
-    private TextView cosSvc_TVGradient;
-    private Object cosSvc_OutBoundLayout;
-    private FSDetector cosSvc_FSDetector;
+    TextView cosSvc_TV;
+    TextView cosSvc_TVGradient;
+    Object cosSvc_OutBoundLayout;
+    FSDetector cosSvc_FSDetector;
     private byte cosSvc_FSMode;
     // 풀스크린 상태는 풀스크린 상태에 따라 시계를 다르게 표시할 경우에만
     // 값이 변화하며, 그렇지 않으면 항상 true 이다
-    private boolean cosSvc_FSState;
+    boolean cosSvc_FSState;
     private WindowManager cosSvc_winManager;
-    private ScheduledFuture<?> cosSvc_repeater;
-    private Instant cosSvc_current;
-    private DateTimeFormatter cosSvc_formatter;
-    private Locale cosSvc_Locale;
-    private StringBuilder cosSvc_FinalClockTextExceptSecond = new StringBuilder();
-    private StringBuilder cosSvc_FinalClockText = new StringBuilder();
-    private StringBuilder cosSvc_strBattLevelBuilder;
-    private StringBuilder cosSvc_strBattBuilder;
-    private StringBuilder cosSvc_strNetStateBuilder;
-    private StringBuilder cosSvc_strNetStateAlterBuilder;
-    private String cosSvc_ClockTextFormatted;
-    private String cosSvc_ClockTextMax;
-    private String cosSvc_ClockTextFormatted_notfs;
-    private String cosSvc_ClockTextMax_notfs;
+    ScheduledFuture<?> cosSvc_repeater;
+    Instant cosSvc_current;
+    DateTimeFormatter cosSvc_formatter;
+    Locale cosSvc_Locale;
+    StringBuilder cosSvc_FinalClockTextExceptSecond = new StringBuilder();
+    StringBuilder cosSvc_FinalClockText = new StringBuilder();
+    StringBuilder cosSvc_strBattLevelBuilder;
+    StringBuilder cosSvc_strBattBuilder;
+    StringBuilder cosSvc_strNetStateBuilder;
+    StringBuilder cosSvc_strNetStateAlterBuilder;
+    String cosSvc_ClockTextFormatted;
+    String cosSvc_ClockTextMax;
+    String cosSvc_ClockTextFormatted_notfs;
+    String cosSvc_ClockTextMax_notfs;
     private byte cosSvc_ClockPosition;
     private byte cosSvc_ClockPosition_notfs;
-    private int[] cosSvc_gradientColors;
-    private int cosSvc_battVoltage;
-    private short cosSvc_HidingTimeLength;
-    private short cosSvc_HidingTime;
+    int[] cosSvc_gradientColors;
+    int cosSvc_battVoltage;
+    short cosSvc_HidingTimeLength;
+    short cosSvc_HidingTime;
     // Each bit have meaning as below
     // (12.isUsing_Network_State_Alter)
     // (11.isUsing_FixBug1)
@@ -149,14 +149,14 @@ public final class COSSvc extends Service implements Runnable {
     // ( 3.isBattery_Charging)
     // ( 2.isUsing_Battery)
     // ( 1.InterruptHandler)
-    private short cosSvc_Status;
-    private short cosSvc_InitStatus;
-    private short cosSvc_InitStatus_notfs;
-    private byte cosSvc_second;
+    short cosSvc_Status;
+    short cosSvc_InitStatus;
+    short cosSvc_InitStatus_notfs;
+    byte cosSvc_second;
     private byte cosSvc_layoutAttachState;
-    private View.OnLayoutChangeListener cosSvc_gradientRefresher;
-    private ConnectivityManager cosSvc_connManager;
-    private BroadcastReceiver cosSvc_receiver = new BroadcastReceiver() {
+    View.OnLayoutChangeListener cosSvc_gradientRefresher;
+    ConnectivityManager cosSvc_connManager;
+    BroadcastReceiver cosSvc_receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // action null 여부 확인
@@ -719,7 +719,7 @@ public final class COSSvc extends Service implements Runnable {
     public IBinder onBind(Intent arg0) { return null; }
 
     // Idle 서비스 시작. (Main 상태 탈출)
-    private void startSvc_Idle() {
+    void startSvc_Idle() {
         mCon.startService(new Intent(mCon, COSSvc_Idle.class));
         stopSelf();
     }
@@ -1256,7 +1256,7 @@ public final class COSSvc extends Service implements Runnable {
 
     // 매 초마다 실행.
     @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
+    final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             // 1st bit check (InterruptHandler)

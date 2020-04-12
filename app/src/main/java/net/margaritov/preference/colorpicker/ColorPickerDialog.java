@@ -47,14 +47,24 @@ public class ColorPickerDialog
         ColorPickerView.OnColorChangedListener,
         View.OnClickListener, ViewTreeObserver.OnGlobalLayoutListener {
 
-    private ColorPickerView mColorPicker;
+    /**
+     * Member access modifier changed by
+     * @author SaeGon Heo
+     * Fix: Access private member in inner class or object make a synthetic methods.
+     *      A synthetic methods are created automatically and make our app's performance low.
+     *      Because this is open source, we don't need to care about security for all of vars.
+     *
+     */
+    ColorPickerView mColorPicker;
 
     private ColorPickerPanelView mOldColor;
     private ColorPickerPanelView mNewColor;
 
-    private EditText mHexVal;
+    // Member access modifier changed
+    EditText mHexVal;
     private boolean mHexValueEnabled = false;
-    private ColorStateList mHexDefaultTextColor;
+    // Member access modifier changed
+    ColorStateList mHexDefaultTextColor;
 
     private OnColorChangedListener mListener;
     private int mOrientation;
@@ -220,7 +230,8 @@ public class ColorPickerDialog
         return mColorPicker.getColor();
     }
 
-    /**Method edited by
+    /**
+     * Method modified by
      * @author SaeGon Heo
      * Changed: Press oldColor behavior.
      */

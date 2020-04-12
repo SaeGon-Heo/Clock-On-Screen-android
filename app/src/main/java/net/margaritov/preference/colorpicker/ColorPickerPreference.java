@@ -166,7 +166,8 @@ public class ColorPickerPreference
         return false;
     }
 
-    /**Method edited by
+    /**
+     * Method modified by
      * @author SaeGon Heo
      * Fixed: Dialog appear twice by tap quickly.
      * Changed : Code flows.

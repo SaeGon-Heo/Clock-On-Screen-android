@@ -44,15 +44,15 @@ import java.io.InputStreamReader;
 import java.util.Locale;
 
 public final class COSMain extends Activity {
-    private Context mCon;
-    private AlertDialog PermissionDialog;
-    private AlertDialog AppInfoDialog;
-    private AlertDialog OpenSourceDialog;
-    private Uri GitHubLink;
+    Context mCon;
+    AlertDialog PermissionDialog;
+    AlertDialog AppInfoDialog;
+    AlertDialog OpenSourceDialog;
+    Uri GitHubLink;
     private boolean bInfo;
 
     // 서비스 실행
-    private void runService(int way) {
+    void runService(int way) {
         Intent mSvc_Idle = new Intent(mCon, COSSvc_Idle.class);
         Intent mSvc = new Intent(mCon, COSSvc.class);
 

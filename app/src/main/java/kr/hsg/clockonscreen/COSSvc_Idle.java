@@ -28,13 +28,13 @@ public final class COSSvc_Idle extends Service {
     private Context mCon;
     private FSDetector cosSvc_FSDetector_Idle;
     private BroadcastReceiver cosSvc_BReceiver;
-    private byte cosSvc_FSMode;
+    byte cosSvc_FSMode;
 
     @Override
     public IBinder onBind(Intent arg0) { return null; }
 
     // Main 서비스 시작. (Idle 상태 탈출)
-    private void startSvc() {
+    void startSvc() {
         mCon.startService(new Intent(mCon, COSSvc.class));
         stopSelf();
     }
