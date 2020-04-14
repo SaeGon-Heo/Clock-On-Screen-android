@@ -3,7 +3,7 @@
 *.ap_
 *.aab
 
-# TODO 리스트 파일
+# TODO list
 TODO-list.txt
 
 # Files for the ART/Dalvik VM
@@ -19,7 +19,6 @@ out/
 
 # Gradle files
 .gradle/
-gradle/
 build/
 gradle.properties
 gradlew
