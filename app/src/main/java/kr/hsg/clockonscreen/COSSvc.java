@@ -129,6 +129,7 @@ public final class COSSvc extends Service implements Runnable {
     String cosSvc_ClockTextMax;
     String cosSvc_ClockTextFormatted_notfs;
     String cosSvc_ClockTextMax_notfs;
+    String cosSvc_ClockTextTooBig;
     private byte cosSvc_ClockPosition;
     private byte cosSvc_ClockPosition_notfs;
     int[] cosSvc_gradientColors;
@@ -541,7 +542,32 @@ public final class COSSvc extends Service implements Runnable {
         dis = cosSvc_winManager.getDefaultDisplay();
         dis.getSize(size);
 
+        // 가로 크기는 기기에서 사용가능한 너비만큼 제한하고
+        // 세로 크기는 제한 없도록하여 최대 길이의 텍스트 사용 시 예상 크기를 측정
         cosSvc_TV.measure(View.MeasureSpec.makeMeasureSpec(size.x, View.MeasureSpec.AT_MOST), 0);
+        // 가로 크기는 예상 값을 바로 반영
+        size.x = cosSvc_TV.getMeasuredWidth();
+
+        // 만약 최대 길이의 텍스트 기준 기기의 최대 높이를 넘어가는 경우
+        // 시계 내용을 경고 문구로 변경 및 실제 화면에 나타날
+        // cosSvc_OutBoundLayout의 높이 값을
+        // 기기에서 사용가능한 최대 높이로 쓰도록 size.y 값을 그대로 둠
+        if (cosSvc_TV.getMeasuredHeight() > size.y) {
+            cosSvc_ClockTextFormatted = cosSvc_ClockTextTooBig;
+            cosSvc_ClockTextFormatted_notfs = cosSvc_ClockTextTooBig;
+            cosSvc_formatter = DateTimeFormatter.ofPattern(cosSvc_ClockTextTooBig)
+                    .withLocale(cosSvc_Locale)
+                    .withZone(ZoneId.systemDefault());
+
+            cosSvc_FinalClockTextExceptSecond.setLength(0);
+            cosSvc_FinalClockTextExceptSecond.append(cosSvc_ClockTextTooBig);
+            cosSvc_FinalClockText.setLength(0);
+            cosSvc_FinalClockText.append(cosSvc_ClockTextTooBig);
+        }
+        // 예상 세로 크기가 기기에서 사용가능한 최대 크기 미만이면 그대로 사용
+        else {
+            size.y = cosSvc_TV.getMeasuredHeight();
+        }
 
         // 안드로이드 버젼 및 터치로 숨기기 또는
         // 롱 터치로 임시로 숨기기 기능 여부에 따라 다른 값을 사용
@@ -565,9 +591,9 @@ public final class COSSvc extends Service implements Runnable {
         WindowManager.LayoutParams layout;
 
         // OutBoundLayout를 최상단에 넣기 위한 layout 설정 값
-        // 여기서 텍스트뷰 크기를 계산하여 고정된 크기를 사용
+        // 여기서 최대 텍스트뷰 크기를 계산해둔 값을 가져와 사용
         layout = new WindowManager.LayoutParams(
-                cosSvc_TV.getMeasuredWidth(), cosSvc_TV.getMeasuredHeight(),
+                size.x, size.y,
                 __type, __flags, PixelFormat.TRANSLUCENT);
 
         // 시계위치 저장
@@ -865,6 +891,7 @@ public final class COSSvc extends Service implements Runnable {
         cosSvc_ClockTextFormatted_notfs = _subClass.getClockTextFormatted_notfs();
         cosSvc_ClockTextMax = _subClass.getClockTextMax();
         cosSvc_ClockTextMax_notfs = _subClass.getClockTextMax_notfs();
+        cosSvc_ClockTextTooBig = getString(R.string.text_clocktext_too_big);
 
         // 시계 위치 저장
         cosSvc_ClockPosition = _subClass.getClockPosition();

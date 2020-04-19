@@ -15,6 +15,9 @@
     <string name="text_svc_off">Clock On Screen service is not running</string>
     <string name="text_svc_on">Clock On Screen service is running</string>
     <string name="text_svc_idle">Clock On Screen service is currently idle</string>
+
+    <string name="text_clocktext_too_big">\'Your clock text is too big\'</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_info">Info</string>
     <string name="action_exit">Exit</string>

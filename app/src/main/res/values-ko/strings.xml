@@ -11,6 +11,9 @@
     <string name="text_svc_off">Clock On Screen 서비스가 실행되고 있지 않습니다</string>
     <string name="text_svc_on">Clock On Screen 서비스가 실행 중입니다</string>
     <string name="text_svc_idle">Clock On Screen 서비스가 현재 유휴 상태입니다</string>
+
+    <string name="text_clocktext_too_big">\'시계 내용이 너무 큽니다\'</string>
+
     <string name="action_settings">설정</string>
     <string name="action_info">정보</string>
     <string name="action_exit">종료</string>
