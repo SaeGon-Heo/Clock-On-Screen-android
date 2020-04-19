@@ -93,11 +93,11 @@ public final class COSSvc extends Service implements Runnable {
     static final String STR_SYMBOL_NETWORKSTATE_ALTER = "\uF004";
 
     // Network State 상수
-    private static final byte NETSTATE_NONE = 0;
-    private static final byte NETSTATE_MOBILE = 1;
-    private static final byte NETSTATE_WIFI = 2;
-    private static final byte NETSTATE_WIFI_MOBILE = 3;
-    private static final byte NETSTATE_ETHERNET = 4;
+    static final byte NETSTATE_NONE = 0;
+    static final byte NETSTATE_MOBILE = 1;
+    static final byte NETSTATE_WIFI = 2;
+    static final byte NETSTATE_WIFI_MOBILE = 3;
+    static final byte NETSTATE_ETHERNET = 4;
 
     // Layout Attach State 상수
     private static final byte LAYOUT_IS_DETACHED = 0;
@@ -105,12 +105,11 @@ public final class COSSvc extends Service implements Runnable {
     private static final byte LAYOUT_IS_DETACHING = 2;
     private static final byte LAYOUT_IS_ATTACHING = 3;
 
-    private Context mCon;
     //항상 보이게 할 뷰
     TextView cosSvc_TV;
     TextView cosSvc_TVGradient;
     Object cosSvc_OutBoundLayout;
-    FSDetector cosSvc_FSDetector;
+    private FSDetector cosSvc_FSDetector;
     private byte cosSvc_FSMode;
     // 풀스크린 상태는 풀스크린 상태에 따라 시계를 다르게 표시할 경우에만
     // 값이 변화하며, 그렇지 않으면 항상 true 이다
@@ -433,7 +432,7 @@ public final class COSSvc extends Service implements Runnable {
     // 현재 시스템 시간을 불러와 저장
     void reloadCurrentTime(boolean bForceResetFormatter) {
         // 시계 구조 formatter 정의
-        if(cosSvc_formatter == null || bForceResetFormatter) {
+        if(bForceResetFormatter || cosSvc_formatter == null) {
             // 풀스크린 상태에 따라 알맞는 시계 구조 포맷을 불러온다
             if (cosSvc_FSState) {
                 cosSvc_formatter =
@@ -720,7 +719,7 @@ public final class COSSvc extends Service implements Runnable {
 
     // Idle 서비스 시작. (Main 상태 탈출)
     void startSvc_Idle() {
-        mCon.startService(new Intent(mCon, COSSvc_Idle.class));
+        getApplicationContext().startService(new Intent(getApplicationContext(), COSSvc_Idle.class));
         stopSelf();
     }
 
@@ -767,7 +766,6 @@ public final class COSSvc extends Service implements Runnable {
     @Override
     public void onCreate() {
         super.onCreate();
-        mCon = getApplicationContext();
 
         // 서비스의 Class import 수를 최소화 하고자 사용하는 SubClass
         // PowerManager, SharedPreferences, DisplayManager, Notification 등을 처리
@@ -786,7 +784,7 @@ public final class COSSvc extends Service implements Runnable {
         }
 
         // java.time library backport init
-        AndroidThreeTen.init(mCon);
+        AndroidThreeTen.init(this);
 
         // 기본 TextView 생성 및 software 레이어로 설정.
         cosSvc_TV = new TextView(this);
@@ -996,8 +994,7 @@ public final class COSSvc extends Service implements Runnable {
         if((cosSvc_InitStatus & 0b1001_0000_0000) != 0 ||
                 (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b1001_0000_0000) != 0)) {
             // ConnectivityManager 생성
-            cosSvc_connManager = (ConnectivityManager)mCon
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            cosSvc_connManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
             // StringBuilder 생성
             // 9th bit check (isUsing_Network_State)

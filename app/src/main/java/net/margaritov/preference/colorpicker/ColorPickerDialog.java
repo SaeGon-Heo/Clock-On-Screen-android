@@ -51,9 +51,7 @@ public class ColorPickerDialog
      * Member access modifier changed by
      * @author SaeGon Heo
      * Fix: Access private member in inner class or object make a synthetic methods.
-     *      A synthetic methods are created automatically and make our app's performance low.
-     *      Because this is open source, we don't need to care about security for all of vars.
-     *
+     *      A synthetic methods are created automatically and make the app's performance low.
      */
     ColorPickerView mColorPicker;
 

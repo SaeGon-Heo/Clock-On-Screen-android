@@ -25,7 +25,6 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 
 public final class COSSvc_Idle extends Service {
-    private Context mCon;
     private FSDetector cosSvc_FSDetector_Idle;
     private BroadcastReceiver cosSvc_BReceiver;
     byte cosSvc_FSMode;
@@ -35,7 +34,7 @@ public final class COSSvc_Idle extends Service {
 
     // Main 서비스 시작. (Idle 상태 탈출)
     void startSvc() {
-        mCon.startService(new Intent(mCon, COSSvc.class));
+        getApplicationContext().startService(new Intent(getApplicationContext(), COSSvc.class));
         stopSelf();
     }
 
@@ -57,7 +56,6 @@ public final class COSSvc_Idle extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mCon = getApplicationContext();
 
         // 서비스의 Class import 수를 최소화 하고자 사용하는 SubClass
         // PowerManager, SharedPreferences, DisplayManager, Notification 등을 처리

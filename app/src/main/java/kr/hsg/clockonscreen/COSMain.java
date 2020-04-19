@@ -348,8 +348,7 @@ public final class COSMain extends Activity {
                 // 설정값에 따라 서비스를 시작 / 중지
                 @Override
                 public void onClick(View v) {
-                    Context mCon = getApplicationContext();
-                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mCon);
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     TextView tv = findViewById(R.id.tv_svc_state);
                     ImageView iv = findViewById(R.id.btn_svc_toggle);
 

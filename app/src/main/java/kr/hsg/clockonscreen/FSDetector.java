@@ -62,7 +62,7 @@ public final class FSDetector extends LinearLayout {
 
     public FSDetector(Context context) {
         super(context);
-        mCon = context;
+        mCon = context.getApplicationContext();
         winManager = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
         if(mCon == null || winManager == null) {
             bError = true;
