@@ -563,6 +563,10 @@ public final class COSSvc extends Service implements Runnable {
             cosSvc_FinalClockTextExceptSecond.append(cosSvc_ClockTextTooBig);
             cosSvc_FinalClockText.setLength(0);
             cosSvc_FinalClockText.append(cosSvc_ClockTextTooBig);
+
+            // force apply fontsize as 18sp
+            cosSvc_TV.setTextSize(18.0f);
+            if (cosSvc_TVGradient != null) cosSvc_TVGradient.setTextSize(18.0f);
         }
         // 예상 세로 크기가 기기에서 사용가능한 최대 크기 미만이면 그대로 사용
         else {
