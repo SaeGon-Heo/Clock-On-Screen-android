@@ -829,6 +829,22 @@ public final class COSSvc extends Service implements Runnable {
             // 다른 하나는 그림자만 표현하도록 함
             // 이는 TextView가 Gradient 설정 후 Shadow를 넣으면 그림자 색상이
             // Gradient의 모양과 동일하게 나타나서 그림자인지 구분이 잘 안되기 때문
+
+            // TextView의 크기가 변경될 때 마다 Gradient를 재설정하는 리스너 생성
+            cosSvc_gradientRefresher = new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    // 10th bit check (onDestroy_called)
+                    if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
+
+                    // 텍스트 뷰 크기가 변경 되었는지 확인
+                    if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
+                        ((TextView)view).getPaint().setShader(new LinearGradient(0, 0,
+                                right - left, bottom - top, cosSvc_gradientColors, null, Shader.TileMode.CLAMP));
+                    }
+                }
+            };
+
             if(_subClass.getShadowEnabled()) {
                 // Gradient 전용 TextView 생성 및 software 레이어로 설정.
                 cosSvc_TVGradient = new TextView(this);
@@ -838,20 +854,7 @@ public final class COSSvc extends Service implements Runnable {
                 // RelativeLayout 생성 및 software 레이어로 설정
                 cosSvc_OutBoundLayout = new RelativeLayout(this);
                 ((ViewGroup)cosSvc_OutBoundLayout).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                // TextView 영역 변경 시 Gradient 재설정을 위한 리스너
-                cosSvc_gradientRefresher = new View.OnLayoutChangeListener() {
-                    @Override
-                    public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                        // 10th bit check (onDestroy_called)
-                        if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
-                        // 텍스트 뷰 크기가 변경 되었는지 확인
-                        if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
-                            cosSvc_TVGradient.getPaint().setShader(new LinearGradient(0, 0,
-                                    right - left, bottom - top, cosSvc_gradientColors, null, Shader.TileMode.REPEAT));
-                        }
-                    }
-                };
                 cosSvc_TVGradient.addOnLayoutChangeListener(cosSvc_gradientRefresher);
             }
             // Shadow를 쓰지 않는 경우 단순히 TextView 1개를 써도 되므로
@@ -861,24 +864,11 @@ public final class COSSvc extends Service implements Runnable {
                 // LinearLayout 생성 및 software 레이어로 설정
                 cosSvc_OutBoundLayout = new LinearLayout(this);
                 ((ViewGroup)cosSvc_OutBoundLayout).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                // TextView 영역 변경 시 Gradient 재설정을 위한 리스너
-                cosSvc_gradientRefresher = new View.OnLayoutChangeListener() {
-                    @Override
-                    public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                        // 10th bit check (onDestroy_called)
-                        if((cosSvc_Status & 0b0010_0000_0000) != 0) return;
 
-                        // 텍스트 뷰 크기가 변경 되었는지 확인
-                        if ((right - left) != (oldRight - oldLeft) || (bottom - top) != (oldBottom - oldTop)) {
-                            cosSvc_TV.getPaint().setShader(new LinearGradient(0, 0,
-                                    right - left, bottom - top, cosSvc_gradientColors, null, Shader.TileMode.REPEAT));
-                        }
-                    }
-                };
                 cosSvc_TV.addOnLayoutChangeListener(cosSvc_gradientRefresher);
             }
         }
-        // Gradient 또는 Shadow 둘 다 쓰지 않는 경우 또한
+        // Gradient 색상을 쓰지 않는 경우
         // TextView 1개 및 OutBoundLayout를 LinearLayout으로 함
         else {
             // LinearLayout 생성 및 software 레이어로 설정
