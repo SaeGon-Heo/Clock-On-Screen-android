@@ -39,6 +39,6 @@ tasks.whenTaskAdded { task ->
 }
 
 dependencies {
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.3'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 }
