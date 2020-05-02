@@ -1,36 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_fontshadowshape"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-	android:padding="5dp">
-	<TextView android:text="@string/pref_dialog_fontshadowshape_dx"
+    android:padding="3dp">
+
+    <LinearLayout
         android:layout_width="match_parent"
-	    android:layout_height="20dp" />
-	<EditText android:id="@+id/edittext_shadowdx"
-        android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:imeOptions="actionDone"
-		android:inputType="numberSigned"
-        android:maxLength="3"/>
-	<TextView android:text="@string/pref_dialog_fontshadowshape_dy"
-        android:layout_width="match_parent"
-	    android:layout_height="20dp" />
-	<EditText android:id="@+id/edittext_shadowdy"
-        android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:imeOptions="actionDone"
-		android:inputType="numberSigned"
-        android:maxLength="3"/>
-	<TextView android:text="@string/pref_dialog_fontshadowshape_radius"
-        android:layout_width="match_parent"
-	    android:layout_height="20dp" />
-	<EditText android:id="@+id/edittext_shadowradius"
-        android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:imeOptions="actionDone"
-		android:inputType="number"
-        android:maxLength="2"/>
-    
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="@string/pref_dialog_fontshadowshape_dx"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="5dp"/>
+
+        <EditText
+            android:id="@+id/edittext_shadowdx"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="5dp"
+            android:imeOptions="actionNext"
+            android:inputType="numberSigned"
+            android:maxLength="3"/>
+
+        <TextView
+            android:text="@string/pref_dialog_fontshadowshape_dy"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="5dp"/>
+
+        <EditText
+            android:id="@+id/edittext_shadowdy"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="5dp"
+            android:imeOptions="actionNext"
+            android:inputType="numberSigned"
+            android:maxLength="3"/>
+
+        <TextView
+            android:text="@string/pref_dialog_fontshadowshape_radius"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="5dp"/>
+
+        <EditText
+            android:id="@+id/edittext_shadowradius"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="5dp"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:maxLength="2"/>
+
+    </LinearLayout>
+
+</ScrollView>

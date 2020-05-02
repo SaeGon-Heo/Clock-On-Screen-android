@@ -4,20 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:padding="3dp">
 
     <SeekBar
         android:id="@+id/seekbar_clocktransparency"
         android:layout_width="0px"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:layout_weight="1.0"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:layout_gravity="center_vertical"
         android:max="255"/>
 
-    <EditText android:id="@+id/edittext_clocktransparency"
+    <EditText
+        android:id="@+id/edittext_clocktransparency"
         android:layout_width="60dp"
         android:layout_height="50dp"
         android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="5dp"
         android:gravity="center_horizontal"
         android:imeOptions="actionDone"
         android:inputType="number"

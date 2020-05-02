@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/layout_fontsize"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:padding="5dp">
-	<EditText android:id="@+id/edittext_fontsize"
-		android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:imeOptions="actionDone"
-		android:inputType="number"
-		android:maxLength="2"/>
+    android:id="@+id/layout_fontsize"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="3dp">
+
+    <EditText
+        android:id="@+id/edittext_fontsize"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="5dp"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:maxLength="2"/>
 
 </LinearLayout>

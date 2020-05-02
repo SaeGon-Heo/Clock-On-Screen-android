@@ -2,14 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_hidetheclocktime"
     android:orientation="vertical"
-	android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-	android:padding="5dp">
-	<EditText android:id="@+id/edittext_hidetheclocktime"
-		android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:imeOptions="actionDone"
-		android:inputType="number"
-		android:maxLength="3"/>
+    android:padding="3dp">
+
+    <EditText
+        android:id="@+id/edittext_hidetheclocktime"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="5dp"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:maxLength="3"/>
 
 </LinearLayout>

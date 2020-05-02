@@ -14,7 +14,7 @@
         android:padding="5dp"
         android:background="#00000000"
         android:src="@mipmap/ic_svc_off"
-        android:layout_centerInParent = "true"/>
+        android:layout_centerInParent="true"/>
 
     <TextView
         android:id="@+id/tv_svc_state"
@@ -27,7 +27,6 @@
         android:gravity="center"
         android:text="@string/text_svc_off"
         android:textColor="#FFFF0000"
-        android:textSize="16dp"/>
-
+        android:textSize="18sp"/>
 
 </RelativeLayout>
