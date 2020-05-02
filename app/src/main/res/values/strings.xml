@@ -156,9 +156,9 @@
     <string name="pref_fontshadow_des">Add a shadow to the text</string>
     <string name="pref_fontshadowshape_title">Font Shadow Shape</string>
     <string name="pref_dialog_fontshadowshape_title">Set Font Shadow Value</string>
-    <string name="pref_dialog_fontshadowshape_dx">Horizontal Offset (-10 ~ 10)</string>
-    <string name="pref_dialog_fontshadowshape_dy">Vertical Offset (-10 ~ 10)</string>
-    <string name="pref_dialog_fontshadowshape_radius">Radius (1 ~ 20)</string>
+    <string name="pref_dialog_fontshadowshape_dx">Horizontal Offset (-16 ~ 16)</string>
+    <string name="pref_dialog_fontshadowshape_dy">Vertical Offset (-16 ~ 16)</string>
+    <string name="pref_dialog_fontshadowshape_radius">Radius (1 ~ 32)</string>
     <string name="pref_fontshadowcolor_title">Font Shadow Color</string>
     <string name="pref_clocktransparency_title">Clock Transparency</string>
     <string name="pref_clocktransparency_current_postfix" translatable="false">\u0020/ 255</string>

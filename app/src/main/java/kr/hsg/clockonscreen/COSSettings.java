@@ -1162,12 +1162,12 @@ public final class COSSettings extends PreferenceActivity
                             valDx = Float.parseFloat(etFontShadowDx.getText().toString());
 
                             // 최소값 미만, 최대값 초과시 입력란에 입력된 값을 최소, 최대값으로 변경.
-                            if (valDx > 10.0f) {
-                                etFontShadowDx.setText(String.format(Locale.US, "%.0f", 10.0f));
+                            if (valDx > 16.0f) {
+                                etFontShadowDx.setText("16");
                                 etFontShadowDx.setSelection(2);
                                 valueFixed++;
-                            } else if (valDx < -10.0f) {
-                                etFontShadowDx.setText(String.format(Locale.US, "%.0f", -10.0f));
+                            } else if (valDx < -16.0f) {
+                                etFontShadowDx.setText("-16");
                                 etFontShadowDx.setSelection(3);
                                 valueFixed++;
                             }
@@ -1183,12 +1183,12 @@ public final class COSSettings extends PreferenceActivity
                         try {
                             valDy = Float.parseFloat(etFontShadowDy.getText().toString());
 
-                            if (valDy > 10.0f) {
-                                etFontShadowDy.setText(String.format(Locale.US, "%.0f", 10.0f));
+                            if (valDy > 16.0f) {
+                                etFontShadowDy.setText("16");
                                 etFontShadowDy.setSelection(2);
                                 valueFixed++;
-                            } else if (valDy < -10.0f) {
-                                etFontShadowDy.setText(String.format(Locale.US, "%.0f", -10.0f));
+                            } else if (valDy < -16.0f) {
+                                etFontShadowDy.setText("-16");
                                 etFontShadowDy.setSelection(3);
                                 valueFixed++;
                             }
@@ -1203,12 +1203,12 @@ public final class COSSettings extends PreferenceActivity
                         try {
                             valRadius = Float.parseFloat(etFontShadowRadius.getText().toString());
 
-                            if (valRadius > 20.0f) {
-                                etFontShadowRadius.setText(String.format(Locale.US, "%.0f", 20.0f));
+                            if (valRadius > 32.0f) {
+                                etFontShadowRadius.setText("32");
                                 etFontShadowRadius.setSelection(2);
                                 valueFixed++;
                             } else if (valRadius < 1.0f) {
-                                etFontShadowRadius.setText(String.format(Locale.US, "%.0f", 1.0f));
+                                etFontShadowRadius.setText("1");
                                 etFontShadowRadius.setSelection(1);
                                 valueFixed++;
                             }
@@ -1227,7 +1227,8 @@ public final class COSSettings extends PreferenceActivity
                                 .putFloat(mCon.getString(R.string.pref_fontShadowShape_radius_key_string), valRadius).apply();
 
                         // 변경된 값을 설정에 표기
-                        findPreference(mCon.getString(R.string.pref_fontShadowShape_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_dx_key_string), 2.0f)) + "x " +
+                        findPreference(mCon.getString(R.string.pref_fontShadowShape_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) +
+                                String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_dx_key_string), 2.0f)) + "x " +
                                 String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_dy_key_string), 2.0f)) + "y " +
                                 String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_radius_key_string), 3.0f)) + "r");
 
