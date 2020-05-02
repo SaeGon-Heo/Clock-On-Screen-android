@@ -32,7 +32,7 @@
 					<state>\n
 					Mobile: ⇵ / WiFi: ≋\n
 					Ethernet: ⌂ / None: ⌀\n
-.y		(none)	    \uF004	네트워크 상태(문자)\n
+.X		(none)	    \uF004	네트워크 상태(문자)\n
 					<state>\n
 					Mobile: M / WiFi: W\n
 					Ethernet: E / None: N\n
@@ -46,4 +46,4 @@
 %n	2	6	베터리 충전상태\n\n
 %:	0	6	깜빡거리는 :
 
-* 추가 구성요소가 있다면 .0 ~ .9 / .A ~ .V / .X ~ .Z 부분 할당가능
+* 추가 구성요소가 있다면 .0 ~ .9 / .y / .A ~ .V / .Y ~ .Z 부분 할당가능

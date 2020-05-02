@@ -194,7 +194,7 @@ final class COSSvcSubFunc {
 
         boolean useBatt = structure.contains(".w") || structure.contains(".W");
         boolean useNetState = structure.contains(".x");
-        boolean useNetStateAlter = structure.contains(".y");
+        boolean useNetStateAlter = structure.contains(".X");
         boolean useSec = structure.contains(".u") || structure.contains(".v");
 
         // Batt 사용
