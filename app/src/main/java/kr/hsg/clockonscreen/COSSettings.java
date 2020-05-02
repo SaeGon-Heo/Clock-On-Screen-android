@@ -690,7 +690,7 @@ public final class COSSettings extends PreferenceActivity
             case 4: findPreference(mCon.getString(R.string.pref_clockPosition_notfs_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + titles_clockposition[4]); break;
             case 5: findPreference(mCon.getString(R.string.pref_clockPosition_notfs_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + titles_clockposition[5]); break;
         }
-        findPreference(mCon.getString(R.string.pref_fontSize_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(mPref.getInt(mCon.getString(R.string.pref_fontSize_key_string),18)));
+        findPreference(mCon.getString(R.string.pref_fontSize_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + mPref.getInt(mCon.getString(R.string.pref_fontSize_key_string),18));
         switch(Integer.parseInt(mPref.getString(mCon.getString(R.string.pref_font_key_string), "0"))) {
             case 0: findPreference(mCon.getString(R.string.pref_font_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + titles_font[0]); break;
             case 1: findPreference(mCon.getString(R.string.pref_font_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + mCon.getString(R.string.pref_font_serif_string)); break;
@@ -728,8 +728,8 @@ public final class COSSettings extends PreferenceActivity
         findPreference(mCon.getString(R.string.pref_fontShadowShape_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_dx_key_string), 2.0f)) + "x " +
                 String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_dy_key_string), 2.0f)) + "y " +
                 String.format(Locale.US, "%.0f", mPref.getFloat(mCon.getString(R.string.pref_fontShadowShape_radius_key_string), 3.0f)) + "r");
-        findPreference(mCon.getString(R.string.pref_clockTransparency_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(mPref.getInt(mCon.getString(R.string.pref_clockTransparency_key_string), 255)) + mCon.getString(R.string.pref_clocktransparency_current_postfix));
-        findPreference(mCon.getString(R.string.pref_hideTheClockTime_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string),30)) + mCon.getString(R.string.pref_suffix_second));
+        findPreference(mCon.getString(R.string.pref_clockTransparency_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + mPref.getInt(mCon.getString(R.string.pref_clockTransparency_key_string), 255) + mCon.getString(R.string.pref_clocktransparency_current_postfix));
+        findPreference(mCon.getString(R.string.pref_hideTheClockTime_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + mPref.getInt(mCon.getString(R.string.pref_hideTheClockTime_key_string),30) + mCon.getString(R.string.pref_suffix_second));
     } //onCreate
 
     @Override
@@ -1099,7 +1099,7 @@ public final class COSSettings extends PreferenceActivity
                         // 변경 내역 적용을 위해 서비스 재시작
                         runService(2, true);
                         // 변경된 값을 설정에 표기
-                        findPreference(mCon.getString(R.string.pref_fontSize_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(valInt));
+                        findPreference(mCon.getString(R.string.pref_fontSize_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + valInt);
                         FontSizeDialog.dismiss();
                     }
                 });
@@ -1360,7 +1360,7 @@ public final class COSSettings extends PreferenceActivity
                         // 변경 내역 적용을 위해 서비스 재시작
                         runService(2, true);
                         // 변경된 값을 설정에 표기
-                        findPreference(mCon.getString(R.string.pref_clockTransparency_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(valInt) + mCon.getString(R.string.pref_clocktransparency_current_postfix));
+                        findPreference(mCon.getString(R.string.pref_clockTransparency_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + valInt + mCon.getString(R.string.pref_clocktransparency_current_postfix));
                         ClockTransparencyDialog.dismiss();
                     }
                 });
@@ -1433,7 +1433,7 @@ public final class COSSettings extends PreferenceActivity
                         // 변경 내역 적용을 위해 서비스 재시작
                         runService(2, true);
                         // 변경된 값을 설정에 표기
-                        findPreference(mCon.getString(R.string.pref_hideTheClockTime_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + Integer.toString(valInt) + getString(R.string.pref_suffix_second));
+                        findPreference(mCon.getString(R.string.pref_hideTheClockTime_key_string)).setSummary(mCon.getString(R.string.pref_prefix_current) + valInt + getString(R.string.pref_suffix_second));
                         HideTheClockTimeDialog.dismiss();
                     }
                 });
