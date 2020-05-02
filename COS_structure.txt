@@ -27,7 +27,7 @@
 					Full: ◎\n
 					Charging: △or▲\n
 					Discharging (under 15%): ▽or▼\n
-.W		(none)	    \uF005	배터리 전압(Hidden option)\n
+.W		(none)	    \uF005	배터리 전압 (mV)\n
 .x		(none)	    \uF003	네트워크 상태\n
 					<state>\n
 					Mobile: ⇵ / WiFi: ≋\n

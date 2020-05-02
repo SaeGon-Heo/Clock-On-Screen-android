@@ -235,6 +235,10 @@ public final class COSSettings extends PreferenceActivity
                     SB.append("50%▲");
                     i++;
                 }
+                else if(array[i + 1] == 'W') {
+                    SB.append("4000");
+                    i++;
+                }
                 else if(array[i + 1] == 'x') {
                     SB.append('⇵');
                     i++;
@@ -450,7 +454,7 @@ public final class COSSettings extends PreferenceActivity
                 }
                 else if(array[i + 1] == 'W') {
                     if(state != 0) { SB.append('\''); state = 0; }
-                    // 배터리 전압(히든)에 대한 특수 값
+                    // 배터리 전압에 대한 특수 값
                     SB.append('\uF005');
                     i++;
                 }
@@ -522,7 +526,7 @@ public final class COSSettings extends PreferenceActivity
                     i++;
                 }
                 else if(array[i + 1] == 'a') {
-                    SB.append("0000");
+                    SB.append("8888");
                     i++;
                 }
                 else if(array[i + 1] == 'b' || array[i + 1] == 'e' || array[i + 1] == 'f' ||
@@ -530,15 +534,15 @@ public final class COSSettings extends PreferenceActivity
                         array[i + 1] == 'p' || array[i + 1] == 'q' || array[i + 1] == 'r' ||
                         array[i + 1] == 's' || array[i + 1] == 't' || array[i + 1] == 'u' ||
                         array[i + 1] == 'v') {
-                    SB.append("00");
+                    SB.append("88");
                     i++;
                 }
                 else if(array[i + 1] == 'c' || array[i + 1] == 'i') {
-                    SB.append('0');
+                    SB.append('8');
                     i++;
                 }
                 else if(array[i + 1] == 'd') {
-                    SB.append("Q0");
+                    SB.append("Q8");
                     i++;
                 }
                 else if(array[i + 1] == 'g') {

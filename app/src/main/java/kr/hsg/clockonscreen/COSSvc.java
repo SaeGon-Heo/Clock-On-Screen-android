@@ -206,7 +206,7 @@ public final class COSSvc extends Service implements Runnable {
                             // 3,4 bit 둘다 켜져있으면 풀충전 상태로 간주
                             cosSvc_Status |= 0b0000_0000_1000;
                         }
-                    } else if (level < 16) {
+                    } else if (level <= 30) {
                         // 3rd, 4th bit reset
                         cosSvc_Status &= 0b1111_1111_0011;
                         // 4th bit on (isBattery_Discharging)
@@ -1329,7 +1329,7 @@ public final class COSSvc extends Service implements Runnable {
                                 if((cosSvc_second & 0x1) == 1) cosSvc_strBattBuilder.append(CHAR_BATTSTATE_CHARGING1);
                                 else cosSvc_strBattBuilder.append(CHAR_BATTSTATE_CHARGING2);
                             }
-                            // 배터리가 15퍼 미만인 경우 방전으로 처리
+                            // 배터리가 30퍼 이하인 경우 방전으로 처리
                             // 4th bit check (isBattery_Discharging)
                             else {
                                 if((cosSvc_second & 0x1) == 1) cosSvc_strBattBuilder.append(CHAR_BATTSTATE_DISCHARGING1);
