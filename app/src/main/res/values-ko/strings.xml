@@ -58,7 +58,7 @@
         <item>Sans-Serif</item>
     </string-array>
     <string name="pref_fontsize_title">폰트 크기</string>
-    <string name="pref_dialog_fontsize_title">폰트 크기 (10 ~ 45)</string>
+    <string name="pref_dialog_fontsize_title">폰트 크기 (8 ~ 72)</string>
     <string name="pref_fontappearance_title">폰트 외관</string>
     <string-array name="pref_fontappearance_list">
         <item>보통 글씨</item>

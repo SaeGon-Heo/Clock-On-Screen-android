@@ -1043,7 +1043,7 @@ public final class COSSettings extends PreferenceActivity
                 // 레이아웃에서 설정 값을 가지는 EditText를 불러와 내용을 기존 설정 값으로 변경
                 etFontSize = FontSizeLayout.findViewById(R.id.edittext_fontsize);
                 etFontSize.setText(String.format(Locale.US, "%d", mPref.getInt(mCon.getString(R.string.pref_fontSize_key_string), 18)));
-                etFontSize.setSelection(2);
+                etFontSize.setSelection(etFontSize.length());
 
                 // 다이얼로그 빌드
                 FontSizeDialog = new AlertDialog.Builder(this)
@@ -1075,18 +1075,18 @@ public final class COSSettings extends PreferenceActivity
                         } catch (NumberFormatException e) {
                             // 빈값이 입력된경우 기존 값으로 복구
                             etFontSize.setText(String.format(Locale.US, "%d", mPref.getInt(mCon.getString(R.string.pref_fontSize_key_string), 18)));
-                            etFontSize.setSelection(2);
+                            etFontSize.setSelection(etFontSize.length());
                             return;
                         }
                         // 최소값 미만, 최대값 초과시 최소, 최대값으로 변경
-                        if (valInt > 45) {
-                            etFontSize.setText("45");
+                        if (valInt > 72) {
+                            etFontSize.setText("72");
                             etFontSize.setSelection(2);
                             return;
                         }
-                        else if (valInt < 10) {
-                            etFontSize.setText("10");
-                            etFontSize.setSelection(2);
+                        else if (valInt < 8) {
+                            etFontSize.setText("8");
+                            etFontSize.setSelection(1);
                             return;
                         }
 

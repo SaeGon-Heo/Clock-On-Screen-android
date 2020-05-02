@@ -125,7 +125,7 @@
         <item>3</item>
     </string-array>
     <string name="pref_fontsize_title">Font Size</string>
-    <string name="pref_dialog_fontsize_title">Font Size (10 ~ 45)</string>
+    <string name="pref_dialog_fontsize_title">Font Size (8 ~ 72)</string>
     <string name="pref_fontappearance_title">Font Appearance</string>
     <string-array name="pref_fontappearance_list">
         <item>Normal</item>
