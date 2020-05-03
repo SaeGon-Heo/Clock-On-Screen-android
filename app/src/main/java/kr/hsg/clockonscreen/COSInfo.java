@@ -49,7 +49,7 @@ public final class COSInfo extends Activity {
                 && !Settings.canDrawOverlays(mCon)) {
             // 정보 엑티비티 이면 정보 엑티비티만 닫음. service_running 값은 여전히 true 이므로
             // Main Activity로 복귀하면서 오버레이 권한을 한번더 확인.
-            finish();
+            if(!isFinishing()) finish();
             return;
         }
 
@@ -169,7 +169,7 @@ public final class COSInfo extends Activity {
                             if (input != null) input.close();
                         } catch (IOException e2) { }
 
-                        finish();
+                        if(!isFinishing()) finish();
                     }
 
                     OpenSourceDialog = new AlertDialog.Builder(COSInfo.this)
