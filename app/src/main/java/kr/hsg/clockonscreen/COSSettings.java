@@ -16,6 +16,7 @@
 package kr.hsg.clockonscreen;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,6 +33,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -612,6 +614,10 @@ public final class COSSettings extends PreferenceActivity
         addPreferencesFromResource(R.xml.pref_clockonscreen);
         setTitle(R.string.action_settings);
 
+        // Add up button
+        ActionBar ab = getActionBar();
+        if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
+
         mCon = getApplicationContext();
         mPref = PreferenceManager.getDefaultSharedPreferences(mCon);
 
@@ -799,6 +805,17 @@ public final class COSSettings extends PreferenceActivity
 		}
 
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Home button (As Up button) action
+        if (item.getItemId() == android.R.id.home) {
+            if(!isFinishing()) finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     // 일부 설정 값들의 기본 값이나 최대/최소 값은 언어에 따른 영향이 X

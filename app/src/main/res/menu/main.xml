@@ -1,18 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="kr.hsg.clockonscreen.COSMain">
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_settings" />
+        android:showAsAction="ifRoom|collapseActionView"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/action_settings"/>
+
     <item android:id="@+id/action_info"
         android:orderInCategory="101"
-        android:showAsAction="never"
-        android:title="@string/action_info" />
-    <item android:id="@+id/action_exit"
-        android:orderInCategory="102"
-        android:showAsAction="never"
-        android:title="@string/action_exit" />
+        android:showAsAction="ifRoom|collapseActionView"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/action_info"/>
+
 </menu>

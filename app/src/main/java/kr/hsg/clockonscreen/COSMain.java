@@ -17,6 +17,7 @@ package kr.hsg.clockonscreen;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -202,6 +203,10 @@ public final class COSMain extends Activity {
         // 메인화면 출력
         setContentView(R.layout.activity_main);
 
+        // Add up button
+        ActionBar ab = getActionBar();
+        if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
+
         // 오버레이 권한 확인 및 오버레이 권한이 풀린 경우 다시 켜도록 유도
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
                 && !Settings.canDrawOverlays(mCon))
@@ -290,7 +295,8 @@ public final class COSMain extends Activity {
             case R.id.action_info:
                 startActivity(new Intent(this, COSInfo.class));
                 return true;
-            case R.id.action_exit:
+            // Home button (As Up button) action
+            case android.R.id.home:
                 if(!isFinishing()) finish();
                 return true;
             default:

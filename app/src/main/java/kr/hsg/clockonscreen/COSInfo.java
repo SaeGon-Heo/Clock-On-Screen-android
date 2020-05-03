@@ -16,6 +16,7 @@
 package kr.hsg.clockonscreen;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -75,6 +77,10 @@ public final class COSInfo extends Activity {
 
         setContentView(R.layout.activity_info);
         setTitle(R.string.action_info);
+
+        // Add up button
+        ActionBar ab = getActionBar();
+        if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
 
         // GitHub Uri 미리 생성
         GitHubLink = Uri.parse("https://github.com/SaeGon-Heo/Clock-On-Screen-android");
@@ -187,4 +193,15 @@ public final class COSInfo extends Activity {
         // 서비스가 켜진상태면 재실행
         if(PreferenceManager.getDefaultSharedPreferences(mCon).getBoolean("service_running", false)) restartService();
     } // onResume
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Home button (As Up button) action
+        if (item.getItemId() == android.R.id.home) {
+            if(!isFinishing()) finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
