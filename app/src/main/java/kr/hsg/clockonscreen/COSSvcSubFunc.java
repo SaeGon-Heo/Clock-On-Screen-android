@@ -233,14 +233,14 @@ final class COSSvcSubFunc {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
             DisplayManager dm = (DisplayManager)mCon.getSystemService(Context.DISPLAY_SERVICE);
 
-            try {
+            if (dm != null) {
                 for (Display display : dm.getDisplays()) {
                     if (display.getDisplayId() == Display.DEFAULT_DISPLAY &&
                             display.getState() == Display.STATE_ON) {
                         return true;
                     }
                 }
-            } catch (NullPointerException e) {}
+            }
             return false;
         } else {
             try {
