@@ -819,6 +819,8 @@ public final class COSSvc extends Service implements Runnable {
         // 기본 TextView 생성 및 software 레이어로 설정.
         cosSvc_TV = new TextView(this);
         cosSvc_TV.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        // block selected by keyboard's arrow keys
+        cosSvc_TV.setMovementMethod(null);
 
         // Gradient 색상을 얻어보고 null(Gradient 미사용)이 아니면 Gradient를 사용
         // OnLayoutChangeListener를 TextView에 등록 후 뷰 크기가 변경된 경우 Gradient를 재설정
@@ -849,11 +851,13 @@ public final class COSSvc extends Service implements Runnable {
                 // Gradient 전용 TextView 생성 및 software 레이어로 설정.
                 cosSvc_TVGradient = new TextView(this);
                 cosSvc_TVGradient.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                // block selected by keyboard's arrow keys
+                cosSvc_TVGradient.setMovementMethod(null);
+
                 // Gradient + Shadow 조합인 경우
                 // TextView 2개를 겹치게 넣기 위해 RelativeLayout 사용
                 // RelativeLayout 생성 및 software 레이어로 설정
                 cosSvc_OutBoundLayout = new RelativeLayout(this);
-                ((ViewGroup)cosSvc_OutBoundLayout).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
                 cosSvc_TVGradient.addOnLayoutChangeListener(cosSvc_gradientRefresher);
             }
@@ -863,10 +867,10 @@ public final class COSSvc extends Service implements Runnable {
                 // TextView 1개만 쓰므로 LinearLayout 사용
                 // LinearLayout 생성 및 software 레이어로 설정
                 cosSvc_OutBoundLayout = new LinearLayout(this);
-                ((ViewGroup)cosSvc_OutBoundLayout).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
                 cosSvc_TV.addOnLayoutChangeListener(cosSvc_gradientRefresher);
             }
+            ((ViewGroup)cosSvc_OutBoundLayout).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
         // Gradient 색상을 쓰지 않는 경우
         // TextView 1개 및 OutBoundLayout를 LinearLayout으로 함
@@ -898,7 +902,6 @@ public final class COSSvc extends Service implements Runnable {
         // Get Window Manager
         cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
         if(cosSvc_winManager == null) startSvc_Idle();
-
 
         cosSvc_FSMode = _subClass.getFSMode();
         cosSvc_Status = cosSvc_InitStatus_notfs;
