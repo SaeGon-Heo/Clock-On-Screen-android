@@ -24,6 +24,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".COSInfo"
+            android:label="@string/action_info"
+            android:exported="false"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".COSSettings"
             android:label="@string/action_settings"
             android:exported="false"
