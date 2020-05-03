@@ -336,7 +336,7 @@ final class COSSvcSubFunc {
             if(mChannelExist == null) {
                 // Configure the notification channel.
                 NotificationChannel mChannel = new NotificationChannel(mCon.getString(R.string.notification_channel_id),
-                        mCon.getString(R.string.notification_channel_title), NotificationManager.IMPORTANCE_LOW);
+                        mCon.getString(R.string.notification_channel_title), NotificationManager.IMPORTANCE_MIN);
                 mChannel.setDescription(mCon.getString(R.string.notification_channel_des));
                 mChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
 
