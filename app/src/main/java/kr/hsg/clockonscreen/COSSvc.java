@@ -37,6 +37,7 @@ import android.graphics.LinearGradient;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Shader;
+import android.hardware.display.DisplayManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -46,7 +47,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -900,9 +900,20 @@ public final class COSSvc extends Service implements Runnable {
         cosSvc_InitStatus = _subClass.getConfigStatus(true);
         cosSvc_InitStatus_notfs = _subClass.getConfigStatus(false);
 
-        // Get Window Manager
-        cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
-        if(cosSvc_winManager == null) startSvc_Idle();
+        // Get Window Manager using default display context
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DisplayManager dm = ((DisplayManager)getSystemService(Context.DISPLAY_SERVICE));
+            if (dm != null) {
+                Display dis = dm.getDisplay(Display.DEFAULT_DISPLAY);
+                Context defaultDisContext = createDisplayContext(dis);
+                cosSvc_winManager = ((WindowManager) defaultDisContext.getSystemService(Context.WINDOW_SERVICE));
+            } else {
+                startSvc_Idle();
+            }
+        } else {
+            cosSvc_winManager = ((WindowManager)getSystemService(Context.WINDOW_SERVICE));
+        }
+        if (cosSvc_winManager == null) startSvc_Idle();
 
         cosSvc_FSMode = _subClass.getFSMode();
         cosSvc_Status = cosSvc_InitStatus_notfs;

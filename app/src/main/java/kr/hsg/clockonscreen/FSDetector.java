@@ -43,6 +43,7 @@ package kr.hsg.clockonscreen;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.view.Display;
 import android.view.Gravity;
@@ -63,11 +64,27 @@ public final class FSDetector extends LinearLayout {
     public FSDetector(Context context) {
         super(context);
         mCon = context.getApplicationContext();
-        winManager = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
-        if(mCon == null || winManager == null) {
+
+        // Get Window Manager using default display context
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DisplayManager dm = ((DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE));
+            if (dm != null) {
+                Display dis = dm.getDisplay(Display.DEFAULT_DISPLAY);
+                Context defaultDisContext = context.createDisplayContext(dis);
+                winManager = ((WindowManager) defaultDisContext.getSystemService(Context.WINDOW_SERVICE));
+            } else {
+                bError = true;
+                // Log.e(FLAG, "Window Manager creation error");
+            }
+        } else {
+            winManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
+        }
+
+        if (mCon == null || winManager == null) {
             bError = true;
             // Log.e(FLAG, "context error");
         }
+
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
