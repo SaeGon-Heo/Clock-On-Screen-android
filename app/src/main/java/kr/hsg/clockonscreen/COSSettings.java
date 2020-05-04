@@ -128,140 +128,120 @@ public final class COSSettings extends PreferenceActivity
 		// 현재 수정중인 위치의 라인 값 저장
         byte linecnt = 0;
         // 변환작업
-        while(i < len) {
-            if(array[i] == '.') {
-                if(array[i + 1] == 'z') {
-                    SB.append('\n');
-                    if(i < (modified_end)) linecnt++;
-                    i++;
-                }
-                else if(array[i + 1] == 'a') {
-                    SB.append("2018");
-                    i++;
-                }
-                else if(array[i + 1] == 'b') {
-                    SB.append("18");
-                    i++;
-                }
-                else if(array[i + 1] == 'c') {
-                    SB.append('1');
-                    i++;
-                }
-                else if(array[i + 1] == 'd') {
-                    SB.append("Q1");
-                    i++;
-                }
-                else if(array[i + 1] == 'e') {
-                    SB.append('1');
-                    i++;
-                }
-                else if(array[i + 1] == 'f') {
-                    SB.append("01");
-                    i++;
-                }
-                else if(array[i + 1] == 'g') {
-                    // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
-                    if(mEnglish) SB.append("Jan");
-                    else SB.append("1월");
-                    i++;
-                }
-                else if(array[i + 1] == 'h') {
-                    // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
-                    if(mEnglish) SB.append("January");
-                    else SB.append("1월");
-                    i++;
-                }
-                else if(array[i + 1] == 'i') {
-                    SB.append('1');
-                    i++;
-                }
-                else if(array[i + 1] == 'j') {
-                    SB.append('1');
-                    i++;
-                }
-                else if(array[i + 1] == 'k') {
-                    SB.append("01");
-                    i++;
-                }
-                else if(array[i + 1] == 'l') {
-                    // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
-                    if(mEnglish) SB.append("Mon");
-                    else SB.append("월");
-                    i++;
-                }
-                else if(array[i + 1] == 'm') {
-                    // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
-                    if(mEnglish) SB.append("Monday");
-                    else SB.append("월요일");
-                    i++;
-                }
-                else if(array[i + 1] == 'n') {
-                    // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
-                    if(mEnglish) SB.append("PM");
-                    else SB.append("오후");
-                    i++;
-                }
-                else if(array[i + 1] == 'o') {
-                    SB.append('1');
-                    i++;
-                }
-                else if(array[i + 1] == 'p') {
-                    SB.append("01");
-                    i++;
-                }
-                else if(array[i + 1] == 'q') {
-                    SB.append("13");
-                    i++;
-                }
-                else if(array[i + 1] == 'r') {
-                    SB.append("13");
-                    i++;
-                }
-                else if(array[i + 1] == 's') {
-                    SB.append('1');
-                    i++;
-                }
-                else if(array[i + 1] == 't') {
-                    SB.append("01");
-                    i++;
-                }
-                else if(array[i + 1] == 'u') {
-                    SB.append('1');
-                    i++;
-                }
-                else if(array[i + 1] == 'v') {
-                    SB.append("01");
-                    i++;
-                }
-                else if(array[i + 1] == 'w') {
-                    SB.append("50%▲");
-                    i++;
-                }
-                else if(array[i + 1] == 'W') {
-                    SB.append("4000");
-                    i++;
-                }
-                else if(array[i + 1] == 'x') {
-                    SB.append('⇵');
-                    i++;
-                }
-                else if(array[i + 1] == 'X') {
-                    SB.append('M');
-                    i++;
-                }
-                else if(array[i + 1] == '.') {
-                    SB.append(".");
-                    i++;
+        while (i < len) {
+            if (array[i] == '.') {
+                switch (array[i + 1]) {
+                    case 'z':
+                        SB.append('\n');
+                        if (i < modified_end)
+                            linecnt++;
+                        i++;
+                        break;
+                    case 'a':
+                        SB.append("2020");
+                        i++;
+                        break;
+                    case 'b':
+                        SB.append("20");
+                        i++;
+                        break;
+                    case 'c':
+                    case 'e':
+                    case 'i':
+                    case 'j':
+                    case 'o':
+                    case 's':
+                    case 'u':
+                        SB.append('1');
+                        i++;
+                        break;
+                    case 'd':
+                        SB.append("Q1");
+                        i++;
+                        break;
+                    case 'f':
+                    case 'k':
+                    case 'p':
+                    case 't':
+                    case 'v':
+                        SB.append("01");
+                        i++;
+                        break;
+                    case 'g':
+                        // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
+                        if (mEnglish)
+                            SB.append("Jan");
+                        else
+                            SB.append("1월");
+                        i++;
+                        break;
+                    case 'h':
+                        // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
+                        if (mEnglish)
+                            SB.append("January");
+                        else
+                            SB.append("1월");
+                        i++;
+                        break;
+                    case 'l':
+                        // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
+                        if (mEnglish)
+                            SB.append("Mon");
+                        else
+                            SB.append("월");
+                        i++;
+                        break;
+                    case 'm':
+                        // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
+                        if (mEnglish)
+                            SB.append("Monday");
+                        else
+                            SB.append("월요일");
+                        i++;
+                        break;
+                    case 'n':
+                        // 일부 설정은 언어 설정에 따라 다른 출력을 나타냄
+                        if (mEnglish)
+                            SB.append("PM");
+                        else
+                            SB.append("오후");
+                        i++;
+                        break;
+                    case 'q':
+                    case 'r':
+                        SB.append("13");
+                        i++;
+                        break;
+                    case 'w':
+                        SB.append("50%▲");
+                        i++;
+                        break;
+                    case 'W':
+                        SB.append("4000");
+                        i++;
+                        break;
+                    case 'x':
+                        SB.append('⇵');
+                        i++;
+                        break;
+                    case 'X':
+                        SB.append('M');
+                        i++;
+                        break;
+                    case '.':
+                        SB.append(".");
+                        i++;
+                        break;
                 }
             }
             // .와 다음줄 문자를 제외한 값을 처리
-            else if(array[i] != '\n' && array[i] != '\r') {
+            else if (array[i] != '\n' && array[i] != '\r') {
                 SB.append(array[i]);
             }
             i++;
         }
         // 마지막 문자 1개가 남았을 시 넣음
-        if(i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
+        if (i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
             SB.append(array[i]);
         }
 
@@ -284,227 +264,369 @@ public final class COSSettings extends PreferenceActivity
         byte i = 0;
         byte len = (byte)(array.length - 1);
         // 변환작업
-        while(i < len) {
-            if(array[i] == '.') {
-                if(array[i + 1] == 'z') {
-                    if(state != 0) { SB.append('\''); state = 0; }
-                    SB.append('\n');
-                    i++;
-                }
-                else if(array[i + 1] == 'a') {
-                    // 1.문자열을 쓰다가 구성요소로 오면 '(문자열 구분자) 추가
-                    // 2.현재 구성요소와 같은 문자를 쓰는 구성요소를 이어서 쓰는 경우
-                    // 사이에 Zero Width Space(유니코드 공식 문자) 추가
-                    // 3.다른 구성요소에서 현재 구성요소를 추가한 경우
-                    // 현재 구성요소 상태로 변환(이 밑으로 같은 형식으로 작성)
-                    if(state == 0) { SB.append('\''); state = 1; }
-                    else if(state == 1) { SB.append('\u200B'); }
-                    else state = 1;
-                    SB.append("uuuu"); // 년 (2018)
-                    i++;
-                }
-                else if(array[i + 1] == 'b') {
-                    if(state == 0) { SB.append('\''); state = 1; }
-                    else if(state == 1) { SB.append('\u200B'); }
-                    else state = 1;
-                    SB.append("uu"); // 년 (18)
-                    i++;
-                }
-                else if(array[i + 1] == 'c') {
-                    if(state == 0) { SB.append('\''); state = 2; }
-                    else if(state == 2) { SB.append('\u200B'); }
-                    else state = 2;
-                    SB.append('Q'); // 분기 (1 ~ 4)
-                    i++;
-                }
-                else if(array[i + 1] == 'd') {
-                    if(state == 0) { SB.append('\''); state = 2; }
-                    else if(state == 2) { SB.append('\u200B'); }
-                    else state = 2;
-                    SB.append("QQQ"); // 분기 (Q1, Q2, Q3, Q4)
-                    i++;
-                }
-                else if(array[i + 1] == 'e') {
-                    if(state == 0) { SB.append('\''); state = 3; }
-                    else if(state == 3) { SB.append('\u200B'); }
-                    else state = 3;
-                    SB.append('M'); // 월 (1 ~ 12)
-                    i++;
-                }
-                else if(array[i + 1] == 'f') {
-                    if(state == 0) { SB.append('\''); state = 3; }
-                    else if(state == 3) { SB.append('\u200B'); }
-                    else state = 3;
-                    SB.append("MM"); // 월 (01 ~ 12)
-                    i++;
-                }
-                else if(array[i + 1] == 'g') {
-                    if(state == 0) { SB.append('\''); state = 3; }
-                    else if(state == 3) { SB.append('\u200B'); }
-                    else state = 3;
-                    SB.append("MMM"); // 월 (Jan, Feb...) (1월, 2월...)
-                    i++;
-                }
-                else if(array[i + 1] == 'h') {
-                    if(state == 0) { SB.append('\''); state = 3; }
-                    else if(state == 3) { SB.append('\u200B'); }
-                    else state = 3;
-                    SB.append("MMMM"); // 월 (January, February...) (1월, 2월...)
-                    i++;
-                }
-                else if(array[i + 1] == 'i') {
-                    if(state == 0) { SB.append('\''); state = 4; }
-                    else if(state == 4) { SB.append('\u200B'); }
-                    else state = 4;
-                    SB.append('W'); // 주차 (1 ~ 5)
-                    i++;
-                }
-                else if(array[i + 1] == 'j') {
-                    if(state == 0) { SB.append('\''); state = 5; }
-                    else if(state == 5) { SB.append('\u200B'); }
-                    else state = 5;
-                    SB.append('d'); // 일 (1 ~ 31)
-                    i++;
-                }
-                else if(array[i + 1] == 'k') {
-                    if(state == 0) { SB.append('\''); state = 5; }
-                    else if(state == 5) { SB.append('\u200B'); }
-                    else state = 5;
-                    SB.append("dd"); // 일 (01 ~ 31)
-                    i++;
-                }
-                else if(array[i + 1] == 'l') {
-                    if(state == 0) { SB.append('\''); state = 6; }
-                    else if(state == 6) { SB.append('\u200B'); }
-                    else state = 6;
-                    SB.append("EE"); // 요일 (Mon, Tus...) (월, 화...)
-                    i++;
-                }
-                else if(array[i + 1] == 'm') {
-                    if(state == 0) { SB.append('\''); state = 6; }
-                    else if(state == 6) { SB.append('\u200B'); }
-                    else state = 6;
-                    SB.append("EEEE"); // 요일 (Monday, Tuesday...) (월요일, 화요일...)
-                    i++;
-                }
-                else if(array[i + 1] == 'n') {
-                    if(state == 0) { SB.append('\''); state = 7; }
-                    else if(state == 7) { SB.append('\u200B'); }
-                    else state = 7;
-                    SB.append('a'); // "AM" or "PM", "오전" 또는 "오후"
-                    i++;
-                }
-                else if(array[i + 1] == 'o') {
-                    if(state == 0) { SB.append('\''); state = 8; }
-                    else if(state == 8) { SB.append('\u200B'); }
-                    else state = 8;
-                    SB.append('h'); // 시간 (1 ~ 12)
-                    i++;
-                }
-                else if(array[i + 1] == 'p') {
-                    if(state == 0) { SB.append('\''); state = 8; }
-                    else if(state == 8) { SB.append('\u200B'); }
-                    else state = 8;
-                    SB.append("hh"); // 시간 (01 ~ 12)
-                    i++;
-                }
-                else if(array[i + 1] == 'q') {
-                    if(state == 0) { SB.append('\''); state = 9; }
-                    else if(state == 9) { SB.append('\u200B'); }
-                    else state = 9;
-                    SB.append('H'); // 시간 (0 ~ 23)
-                    i++;
-                }
-                else if(array[i + 1] == 'r') {
-                    if(state == 0) { SB.append('\''); state = 9; }
-                    else if(state == 9) { SB.append('\u200B'); }
-                    else state = 9;
-                    SB.append("HH"); // 시간 (00 ~ 23)
-                    i++;
-                }
-                else if(array[i + 1] == 's') {
-                    if(state == 0) { SB.append('\''); state = 10; }
-                    else if(state == 10) { SB.append('\u200B'); }
-                    else state = 10;
-                    SB.append('m'); // 분 (0 ~ 59)
-                    i++;
-                }
-                else if(array[i + 1] == 't') {
-                    if(state == 0) { SB.append('\''); state = 10; }
-                    else if(state == 10) { SB.append('\u200B'); }
-                    else state = 10;
-                    SB.append("mm"); // 분 (00 ~ 59)
-                    i++;
-                }
-                else if(array[i + 1] == 'u') {
-                    if(state == 0) { SB.append('\''); state = 11; }
-                    //else if(state == 11) { SB.append('\u200B'); }
-                    else state = 11;
-                    //SB.append('s');
-                    // 초(0~59)에 대한 특수 값
-                    SB.append('\uF002');
-                    i++;
-                }
-                else if(array[i + 1] == 'v') {
-                    if(state == 0) { SB.append('\''); state = 11; }
-                    //else if(state == 11) { SB.append('\u200B'); }
-                    else state = 11;
-                    //SB.append("ss");
-                    // 초(00~59)에 대한 특수 값
-                    SB.append('\uF001');
-                    i++;
-                }
-                else if(array[i + 1] == 'W') {
-                    if(state != 0) { SB.append('\''); state = 0; }
-                    // 배터리 전압에 대한 특수 값
-                    SB.append('\uF005');
-                    i++;
-                }
-                else if(array[i + 1] == 'w') {
-                    if(state != 0) { SB.append('\''); state = 0; }
-                    // 배터리에 대한 특수 값
-                    SB.append('\uF000');
-                    i++;
-                }
-                else if(array[i + 1] == 'x') {
-                    if(state != 0) { SB.append('\''); state = 0; }
-                    // 네트워크 상태에 대한 특수 값
-                    SB.append('\uF003');
-                    i++;
-                }
-                else if(array[i + 1] == 'X') {
-                    if(state != 0) { SB.append('\''); state = 0; }
-                    // 네트워크 상태(문자)에 대한 특수 값
-                    SB.append('\uF004');
-                    i++;
-                }
-                else if(array[i + 1] == '.') {
-                    if(state != 0) { SB.append('\''); state = 0; }
-                    SB.append(".");
-                    i++;
+        while (i < len) {
+            if (array[i] == '.') {
+                switch (array[i + 1]) {
+                    case 'z':
+                        if (state != 0) {
+                            SB.append('\'');
+                            state = 0;
+                        }
+                        SB.append('\n');
+                        i++;
+                        break;
+                    case 'a':
+                        // 1.문자열을 쓰다가 구성요소로 오면 '(문자열 구분자) 추가
+                        // 2.현재 구성요소와 같은 문자를 쓰는 구성요소를 이어서 쓰는 경우
+                        // 사이에 Zero Width Space(유니코드 공식 문자) 추가
+                        // 3.다른 구성요소에서 현재 구성요소를 추가한 경우
+                        // 현재 구성요소 상태로 변환(이 밑으로 같은 형식으로 작성)
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 1;
+                        } else if (state == 1) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 1;
+                        }
+                        SB.append("uuuu"); // 년 (2020)
+                        i++;
+                        break;
+                    case 'b':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 1;
+                        } else if (state == 1) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 1;
+                        }
+                        SB.append("uu"); // 년 (20)
+                        i++;
+                        break;
+                    case 'c':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 2;
+                        } else if (state == 2) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 2;
+                        }
+                        SB.append('Q'); // 분기 (1 ~ 4)
+                        i++;
+                        break;
+                    case 'd':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 2;
+                        } else if (state == 2) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 2;
+                        }
+                        SB.append("QQQ"); // 분기 (Q1, Q2, Q3, Q4)
+                        i++;
+                        break;
+                    case 'e':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 3;
+                        } else if (state == 3) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 3;
+                        }
+                        SB.append('M'); // 월 (1 ~ 12)
+                        i++;
+                        break;
+                    case 'f':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 3;
+                        } else if (state == 3) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 3;
+                        }
+                        SB.append("MM"); // 월 (01 ~ 12)
+                        i++;
+                        break;
+                    case 'g':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 3;
+                        } else if (state == 3) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 3;
+                        }
+                        SB.append("MMM"); // 월 (Jan, Feb...) (1월, 2월...)
+                        i++;
+                        break;
+                    case 'h':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 3;
+                        } else if (state == 3) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 3;
+                        }
+                        SB.append("MMMM"); // 월 (January, February...) (1월, 2월...)
+                        i++;
+                        break;
+                    case 'i':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 4;
+                        } else if (state == 4) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 4;
+                        }
+                        SB.append('W'); // 주차 (1 ~ 5)
+                        i++;
+                        break;
+                    case 'j':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 5;
+                        } else if (state == 5) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 5;
+                        }
+                        SB.append('d'); // 일 (1 ~ 31)
+                        i++;
+                        break;
+                    case 'k':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 5;
+                        } else if (state == 5) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 5;
+                        }
+                        SB.append("dd"); // 일 (01 ~ 31)
+                        i++;
+                        break;
+                    case 'l':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 6;
+                        } else if (state == 6) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 6;
+                        }
+                        SB.append("EE"); // 요일 (Mon, Tus...) (월, 화...)
+                        i++;
+                        break;
+                    case 'm':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 6;
+                        } else if (state == 6) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 6;
+                        }
+                        SB.append("EEEE"); // 요일 (Monday, Tuesday...) (월요일, 화요일...)
+                        i++;
+                        break;
+                    case 'n':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 7;
+                        } else if (state == 7) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 7;
+                        }
+                        SB.append('a'); // "AM" or "PM", "오전" 또는 "오후"
+                        i++;
+                        break;
+                    case 'o':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 8;
+                        } else if (state == 8) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 8;
+                        }
+                        SB.append('h'); // 시간 (1 ~ 12)
+                        i++;
+                        break;
+                    case 'p':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 8;
+                        } else if (state == 8) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 8;
+                        }
+                        SB.append("hh"); // 시간 (01 ~ 12)
+                        i++;
+                        break;
+                    case 'q':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 9;
+                        } else if (state == 9) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 9;
+                        }
+                        SB.append('H'); // 시간 (0 ~ 23)
+                        i++;
+                        break;
+                    case 'r':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 9;
+                        } else if (state == 9) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 9;
+                        }
+                        SB.append("HH"); // 시간 (00 ~ 23)
+                        i++;
+                        break;
+                    case 's':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 10;
+                        } else if (state == 10) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 10;
+                        }
+                        SB.append('m'); // 분 (0 ~ 59)
+                        i++;
+                        break;
+                    case 't':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 10;
+                        } else if (state == 10) {
+                            SB.append('\u200B');
+                        } else {
+                            state = 10;
+                        }
+                        SB.append("mm"); // 분 (00 ~ 59)
+                        i++;
+                        break;
+                    case 'u':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 11;
+//                        } else if (state == 11) {
+//                            SB.append('\u200B');
+                        } else {
+                            state = 11;
+                        }
+                        //SB.append('s');
+                        // 초(0~59)에 대한 특수 값
+                        SB.append('\uF002');
+                        i++;
+                        break;
+                    case 'v':
+                        if (state == 0) {
+                            SB.append('\'');
+                            state = 11;
+//                        } else if (state == 11) {
+//                            SB.append('\u200B');
+                        } else {
+                            state = 11;
+                        }
+                        //SB.append("ss");
+                        // 초(00~59)에 대한 특수 값
+                        SB.append('\uF001');
+                        i++;
+                        break;
+                    case 'w':
+                        if (state != 0) {
+                            SB.append('\'');
+                            state = 0;
+                        }
+                        // 배터리에 대한 특수 값
+                        SB.append('\uF000');
+                        i++;
+                        break;
+                    case 'W':
+                        if (state != 0) {
+                            SB.append('\'');
+                            state = 0;
+                        }
+                        // 배터리 전압에 대한 특수 값
+                        SB.append('\uF005');
+                        i++;
+                        break;
+                    case 'x':
+                        if (state != 0) {
+                            SB.append('\'');
+                            state = 0;
+                        }
+                        // 네트워크 상태에 대한 특수 값
+                        SB.append('\uF003');
+                        i++;
+                        break;
+                    case 'X':
+                        if (state != 0) {
+                            SB.append('\'');
+                            state = 0;
+                        }
+                        // 네트워크 상태(문자)에 대한 특수 값
+                        SB.append('\uF004');
+                        i++;
+                        break;
+                    case '.':
+                        if (state != 0) {
+                            SB.append('\'');
+                            state = 0;
+                        }
+                        SB.append(".");
+                        i++;
+                        break;
                 }
             }
             // '문자는 DateTimeFormatter에서 문자열 구분용으로 쓰이므로
             // '문자가 입력된 경우 따로 ''로 변환해줘야 정상 출력
-            else if(array[i] == '\'') {
-                if(state != 0) { SB.append('\''); state = 0; }
+            else if (array[i] == '\'') {
+                if (state != 0) {
+                    SB.append('\'');
+                    state = 0;
+                }
                 SB.append("\'\'");
             }
             // .와 다음줄 문자를 제외한 값을 처리
-            else if(array[i] != '\n' && array[i] != '\r') {
-                if(state != 0) { SB.append('\''); state = 0; }
+            else if (array[i] != '\n' && array[i] != '\r') {
+                if (state != 0) {
+                    SB.append('\'');
+                    state = 0;
+                }
                 SB.append(array[i]);
             }
             i++;
         }
         // 마지막 문자 1개가 남았을 시 넣음
-        if(i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
-            if(state != 0) { SB.append('\''); state = 0; }
-            if(array[i] == '\'') SB.append("\'\'");
-            else SB.append(array[i]);
+        if (i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
+            if (state != 0) {
+                SB.append('\'');
+                state = 0;
+            }
+            if (array[i] == '\'')
+                SB.append("\'\'");
+            else
+                SB.append(array[i]);
         }
         // 마지막에 문자열 입력상태면 문자열 끝을 표시하기 위해 '추가
-        if(state == 0) SB.append('\'');
+        if (state == 0)
+            SB.append('\'');
 
         return SB.toString();
     }
@@ -521,86 +643,107 @@ public final class COSSettings extends PreferenceActivity
         byte i = 0;
         byte len = (byte)(array.length - 1);
         // 변환작업
-        while(i < len) {
-            if(array[i] == '.') {
-                if(array[i + 1] == 'z') {
-                    SB.append(" \n");
-                    i++;
-                }
-                else if(array[i + 1] == 'a') {
-                    SB.append("8888");
-                    i++;
-                }
-                else if(array[i + 1] == 'b' || array[i + 1] == 'e' || array[i + 1] == 'f' ||
-                        array[i + 1] == 'j' || array[i + 1] == 'k' || array[i + 1] == 'o' ||
-                        array[i + 1] == 'p' || array[i + 1] == 'q' || array[i + 1] == 'r' ||
-                        array[i + 1] == 's' || array[i + 1] == 't' || array[i + 1] == 'u' ||
-                        array[i + 1] == 'v') {
-                    SB.append("88");
-                    i++;
-                }
-                else if(array[i + 1] == 'c' || array[i + 1] == 'i') {
-                    SB.append('8');
-                    i++;
-                }
-                else if(array[i + 1] == 'd') {
-                    SB.append("Q8");
-                    i++;
-                }
-                else if(array[i + 1] == 'g') {
-                    if(mEnglish) SB.append("Www");
-                    else SB.append("00월");
-                    i++;
-                }
-                else if(array[i + 1] == 'h') {
-                    if(mEnglish) SB.append("Wwwwwwwww");
-                    else SB.append("00월");
-                    i++;
-                }
-                else if(array[i + 1] == 'l') {
-                    if(mEnglish) SB.append("Www");
-                    else SB.append("뷁");
-                    i++;
-                }
-                else if(array[i + 1] == 'm') {
-                    if(mEnglish) SB.append("Wwwwwwwww");
-                    else SB.append("뷁요일");
-                    i++;
-                }
-                else if(array[i + 1] == 'n') {
-                    if(mEnglish) SB.append("WM");
-                    else SB.append("오뷁");
-                    i++;
-                }
-                else if(array[i + 1] == 'W') {
-                    SB.append("8888");
-                    i++;
-                }
-                else if(array[i + 1] == 'w') {
-                    SB.append("100%△");
-                    i++;
-                }
-                else if(array[i + 1] == 'x') {
-                    SB.append("≋⇵");
-                    i++;
-                }
-                else if(array[i + 1] == 'X') {
-                    SB.append("W+M");
-                    i++;
-                }
-                else if(array[i + 1] == '.') {
-                    SB.append('.');
-                    i++;
+        while (i < len) {
+            if (array[i] == '.') {
+                switch (array[i + 1]) {
+                    case 'z':
+                        SB.append(" \n");
+                        i++;
+                        break;
+                    case 'a':
+                        SB.append("8888");
+                        i++;
+                        break;
+                    case 'b':
+                    case 'e':
+                    case 'f':
+                    case 'j':
+                    case 'k':
+                    case 'o':
+                    case 'p':
+                    case 'q':
+                    case 'r':
+                    case 's':
+                    case 't':
+                    case 'u':
+                    case 'v':
+                        SB.append("88");
+                        i++;
+                        break;
+                    case 'c':
+                    case 'i':
+                        SB.append('8');
+                        i++;
+                        break;
+                    case 'd':
+                        SB.append("Q8");
+                        i++;
+                        break;
+                    case 'g':
+                        if (mEnglish)
+                            SB.append("Www");
+                        else
+                            SB.append("00월");
+                        i++;
+                        break;
+                    case 'h':
+                        if (mEnglish)
+                            SB.append("Wwwwwwwww");
+                        else
+                            SB.append("00월");
+                        i++;
+                        break;
+                    case 'l':
+                        if (mEnglish)
+                            SB.append("Www");
+                        else
+                            SB.append("뷁");
+                        i++;
+                        break;
+                    case 'm':
+                        if (mEnglish)
+                            SB.append("Wwwwwwwww");
+                        else
+                            SB.append("뷁요일");
+                        i++;
+                        break;
+                    case 'n':
+                        if (mEnglish)
+                            SB.append("WM");
+                        else
+                            SB.append("오뷁");
+                        i++;
+                        break;
+                    case 'w':
+                        SB.append("100%△");
+                        i++;
+                        break;
+                    case 'W':
+                        SB.append("8888");
+                        i++;
+                        break;
+                    case 'x':
+                        SB.append("≋⇵");
+                        i++;
+                        break;
+                    case 'X':
+                        SB.append("W+M");
+                        i++;
+                        break;
+                    case '.':
+                        SB.append('.');
+                        i++;
+                        break;
                 }
             }
             // .와 다음줄 문자를 제외한 값을 처리
-            else if(array[i] != '\n' && array[i] != '\r') {
+            else if (array[i] != '\n' && array[i] != '\r') {
                 SB.append(array[i]);
             }
             i++;
         }
         // 마지막 문자 1개가 남았을 시 넣음
-        if(i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
+        if (i < len + 1 && array[i] != '.' && array[i] != '\n' && array[i] != '\r') {
             SB.append(array[i]);
         }
         SB.append(' ');
