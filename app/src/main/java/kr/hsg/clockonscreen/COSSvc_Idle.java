@@ -64,7 +64,7 @@ public final class COSSvc_Idle extends Service {
         // 언어 설정
         _subClass.setContextLocale(this);
         // 진행 중 알람 시작
-        startForeground(220, _subClass.getNotification(true));
+        startForeground(220, _subClass.getNotification(this, true));
 
         // 풀스크린 모드 값 저장
         cosSvc_FSMode = _subClass.getFSMode();
@@ -79,12 +79,12 @@ public final class COSSvc_Idle extends Service {
                 @Override
                 public void fsChanged(Context context, boolean bFSState) {
                     // 풀스크린이고 절전모드(DOZE)도 아니면서 화면이 켜진 상태면 서비스 실행
-                    if (bFSState && new COSSvcSubFunc(COSSvc_Idle.this).getIsScreenOnAndNotDOZEState())
+                    if (bFSState && new COSSvcSubFunc(COSSvc_Idle.this).isInteractive(COSSvc_Idle.this))
                         startSvc();
                 }
             });
         } else {
-            if(_subClass.getIsScreenOnAndNotDOZEState()) startSvc();
+            if(_subClass.isInteractive(this)) startSvc();
         }
 
         cosSvc_BReceiver = new BroadcastReceiver() {
@@ -95,7 +95,7 @@ public final class COSSvc_Idle extends Service {
                 // 절전모드(DOZE)도 아닌 경우 서비스 실행
                 if(action != null && action.equals(Intent.ACTION_SCREEN_ON) &&
                         cosSvc_FSMode != 1 &&
-                        new COSSvcSubFunc(COSSvc_Idle.this).getIsScreenOnAndNotDOZEState()) {
+                        new COSSvcSubFunc(COSSvc_Idle.this).isInteractive(COSSvc_Idle.this)) {
                     startSvc();
                 }
             }

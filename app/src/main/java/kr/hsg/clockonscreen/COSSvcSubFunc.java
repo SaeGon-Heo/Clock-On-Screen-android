@@ -228,26 +228,14 @@ final class COSSvcSubFunc {
     }
 
     // 현재 화면이 켜져있고 절전모드가 아니라면 참을 반환
-    // (삼성 Always On Display 사용시 화면은 켜져있는 것으로 인식되나 절전모드(DOZE)를 사용)
-    boolean getIsScreenOnAndNotDOZEState() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
-            DisplayManager dm = (DisplayManager)mCon.getSystemService(Context.DISPLAY_SERVICE);
+    boolean isInteractive(Context context) {
+        PowerManager pm = ((PowerManager)context.getSystemService(Context.POWER_SERVICE));
+        if (pm == null) return false;
 
-            if (dm != null) {
-                for (Display display : dm.getDisplays()) {
-                    if (display.getDisplayId() == Display.DEFAULT_DISPLAY &&
-                            display.getState() == Display.STATE_ON) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
+            return pm.isInteractive();
         } else {
-            try {
-                return ((PowerManager) mCon.getSystemService(Context.POWER_SERVICE)).isScreenOn();
-            } catch (NullPointerException e) {
-                return false;
-            }
+            return pm.isScreenOn();
         }
     }
 
@@ -322,12 +310,13 @@ final class COSSvcSubFunc {
     }
 
     // Notification 을 만들고 반환
-    Notification getNotification(boolean isIdle) {
+    Notification getNotification(Context context, boolean isIdle) {
         Notification.Builder mNotiBuilder;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             // 알람 채널 관리자 생성
-            NotificationManager mNotificationManager = (NotificationManager)mCon.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (mNotificationManager == null) return null;
 
             // 알림 채널이 존재하는지 확인
             NotificationChannel mChannelExist = mNotificationManager.getNotificationChannel(mCon.getString(R.string.notification_channel_id));
@@ -344,10 +333,10 @@ final class COSSvcSubFunc {
                 mNotificationManager.createNotificationChannel(mChannel);
             }
             // 알림 빌더 생성
-            mNotiBuilder = new Notification.Builder(mCon, mCon.getString(R.string.notification_channel_id));
+            mNotiBuilder = new Notification.Builder(context, mCon.getString(R.string.notification_channel_id));
         } else {
             // 알림 빌더 생성
-            mNotiBuilder = new Notification.Builder(mCon);
+            mNotiBuilder = new Notification.Builder(context);
             if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
                 mNotiBuilder.setPriority(Notification.PRIORITY_MIN);
         }

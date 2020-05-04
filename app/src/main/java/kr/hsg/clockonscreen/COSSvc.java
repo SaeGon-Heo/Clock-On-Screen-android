@@ -46,6 +46,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -804,11 +805,11 @@ public final class COSSvc extends Service implements Runnable {
         // 언어 설정
         _subClass.setContextLocale(this);
         // 진행 중 알람 시작
-        startForeground(221, _subClass.getNotification(false));
+        startForeground(221, _subClass.getNotification(this, false));
 
         // 만약 화면이 꺼진 상태거나 DOZE(절전)상태이면
         // Idle 서비스를 켜고 자신을 종료
-        if(!_subClass.getIsScreenOnAndNotDOZEState()) {
+        if (!_subClass.isInteractive(this)) {
             startSvc_Idle();
             return;
         }
@@ -1019,6 +1020,7 @@ public final class COSSvc extends Service implements Runnable {
                 (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b1001_0000_0000) != 0)) {
             // ConnectivityManager 생성
             cosSvc_connManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+            if(cosSvc_connManager == null) startSvc_Idle();
 
             // StringBuilder 생성
             // 9th bit check (isUsing_Network_State)

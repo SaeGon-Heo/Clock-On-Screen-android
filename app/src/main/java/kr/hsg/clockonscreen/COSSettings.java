@@ -834,7 +834,7 @@ public final class COSSettings extends PreferenceActivity
                 // 다이얼로그 내 들어갈 레이아웃 로드
 				if(ClockTextLayout == null) {
 				    try {
-                        ClockTextLayout = ((LayoutInflater) mCon.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                        ClockTextLayout = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                 .inflate(R.layout.pref_dialog_clocktext, (ViewGroup) findViewById(R.id.layout_clocktext));
                     } catch(NullPointerException e) {
 				        return false;
@@ -945,7 +945,7 @@ public final class COSSettings extends PreferenceActivity
                 // 다이얼로그 내 들어갈 레이아웃 로드
                 if(ClockTextNotFSLayout == null) {
                     try {
-                        ClockTextNotFSLayout = ((LayoutInflater) mCon.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                        ClockTextNotFSLayout = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                 .inflate(R.layout.pref_dialog_clocktext, (ViewGroup) findViewById(R.id.layout_clocktext));
                     } catch(NullPointerException e) {
                         return false;
@@ -1055,7 +1055,7 @@ public final class COSSettings extends PreferenceActivity
                 // 다이얼로그 내 들어갈 레이아웃 로드
                 if (FontSizeLayout == null) {
                     try {
-                        FontSizeLayout = ((LayoutInflater) mCon.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                        FontSizeLayout = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                 .inflate(R.layout.pref_dialog_fontsize, (ViewGroup) findViewById(R.id.layout_fontsize));
                     } catch (NullPointerException e) {
                         return false;
@@ -1128,7 +1128,7 @@ public final class COSSettings extends PreferenceActivity
                 // 다이얼로그 내 들어갈 레이아웃 로드
                 if (FontShadowShapeLayout == null) {
                     try {
-                        FontShadowShapeLayout = ((LayoutInflater) mCon.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                        FontShadowShapeLayout = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                 .inflate(R.layout.pref_dialog_fontshadowshape, (ViewGroup) findViewById(R.id.layout_fontshadowshape));
                     } catch (NullPointerException e) {
                         return false;
@@ -1267,7 +1267,7 @@ public final class COSSettings extends PreferenceActivity
                 // 다이얼로그 내 들어갈 레이아웃 로드
                 if (ClockTransparencyLayout == null) {
                     try {
-                        ClockTransparencyLayout = ((LayoutInflater) mCon.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                        ClockTransparencyLayout = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                 .inflate(R.layout.pref_dialog_clocktransparency, (ViewGroup) findViewById(R.id.layout_clocktransparency));
                     } catch (NullPointerException e) {
                         return false;
@@ -1389,7 +1389,7 @@ public final class COSSettings extends PreferenceActivity
                 // 다이얼로그 내 들어갈 레이아웃 로드
                 if (HideTheClockTimeLayout == null) {
                     try {
-                        HideTheClockTimeLayout = ((LayoutInflater) mCon.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                        HideTheClockTimeLayout = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                 .inflate(R.layout.pref_dialog_hidetheclocktime, (ViewGroup) findViewById(R.id.layout_hidetheclocktime));
                     } catch(NullPointerException e) {
                         return false;
