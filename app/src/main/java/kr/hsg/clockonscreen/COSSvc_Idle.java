@@ -79,12 +79,13 @@ public final class COSSvc_Idle extends Service {
                 @Override
                 public void fsChanged(Context context, boolean bFSState) {
                     // 풀스크린이고 절전모드(DOZE)도 아니면서 화면이 켜진 상태면 서비스 실행
-                    if (bFSState && new COSSvcSubFunc(COSSvc_Idle.this).isInteractive(COSSvc_Idle.this))
+                    if (bFSState && COSSvcSubFunc.isInteractive(COSSvc_Idle.this))
                         startSvc();
                 }
             });
         } else {
-            if(_subClass.isInteractive(this)) startSvc();
+            if (COSSvcSubFunc.isInteractive(this))
+                startSvc();
         }
 
         cosSvc_BReceiver = new BroadcastReceiver() {
@@ -93,9 +94,9 @@ public final class COSSvc_Idle extends Service {
                 String action = intent.getAction();
                 // 화면 켜짐 action이 들어오고, 풀스크린에서만 시계 표시 모드가 아니면서
                 // 절전모드(DOZE)도 아닌 경우 서비스 실행
-                if(action != null && action.equals(Intent.ACTION_SCREEN_ON) &&
+                if (action != null && action.equals(Intent.ACTION_SCREEN_ON) &&
                         cosSvc_FSMode != 1 &&
-                        new COSSvcSubFunc(COSSvc_Idle.this).isInteractive(COSSvc_Idle.this)) {
+                        COSSvcSubFunc.isInteractive(COSSvc_Idle.this)) {
                     startSvc();
                 }
             }

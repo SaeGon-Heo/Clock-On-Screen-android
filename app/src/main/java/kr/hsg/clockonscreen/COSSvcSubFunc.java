@@ -15,8 +15,6 @@
  */
 package kr.hsg.clockonscreen;
 
-import java.util.Locale;
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,13 +25,12 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.hardware.display.DisplayManager;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 final class COSSvcSubFunc {
     private Context mCon;
@@ -228,7 +225,7 @@ final class COSSvcSubFunc {
     }
 
     // 현재 화면이 켜져있고 절전모드가 아니라면 참을 반환
-    boolean isInteractive(Context context) {
+    static boolean isInteractive(Context context) {
         PowerManager pm = ((PowerManager)context.getSystemService(Context.POWER_SERVICE));
         if (pm == null) return false;
 

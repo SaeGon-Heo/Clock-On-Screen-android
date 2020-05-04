@@ -809,7 +809,7 @@ public final class COSSvc extends Service implements Runnable {
 
         // 만약 화면이 꺼진 상태거나 DOZE(절전)상태이면
         // Idle 서비스를 켜고 자신을 종료
-        if (!_subClass.isInteractive(this)) {
+        if (!COSSvcSubFunc.isInteractive(this)) {
             startSvc_Idle();
             return;
         }
