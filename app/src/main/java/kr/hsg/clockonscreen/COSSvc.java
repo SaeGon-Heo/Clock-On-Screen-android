@@ -890,7 +890,7 @@ public final class COSSvc extends Service implements Runnable {
         cosSvc_ClockTextFormatted_notfs = _subClass.getClockTextFormatted_notfs();
         cosSvc_ClockTextMax = _subClass.getClockTextMax();
         cosSvc_ClockTextMax_notfs = _subClass.getClockTextMax_notfs();
-        cosSvc_ClockTextTooBig = getString(R.string.text_clocktext_too_big);
+        cosSvc_ClockTextTooBig = getString(R.string.pref_clockText_too_big);
 
         // 시계 위치 저장
         cosSvc_ClockPosition = _subClass.getClockPosition();
@@ -969,7 +969,7 @@ public final class COSSvc extends Service implements Runnable {
                     if((cosSvc_Status & 0b0010_0000_0000) != 0) return true;
 
                     // 화면을 끄고 켜는 경우에만 서비스 재시작한다고 토스트 메시지를 띄운다
-                    Toast.makeText(COSSvc.this, R.string.pref_toast_hidetheclocktemporary, Toast.LENGTH_LONG).show();
+                    Toast.makeText(COSSvc.this, R.string.pref_toast_removeaclocktemporary, Toast.LENGTH_LONG).show();
 
                     if (cosSvc_repeater != null) {
                         while (true) {

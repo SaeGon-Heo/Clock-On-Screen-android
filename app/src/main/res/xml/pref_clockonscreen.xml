@@ -121,23 +121,23 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_subject_function">
         <SwitchPreference
-            android:title="@string/pref_hidetheclock_title"
+            android:title="@string/pref_hideaclock_title"
             android:key="mHideTheClock"
             android:defaultValue="false"
             android:switchTextOn=""
             android:switchTextOff=""
-            android:summary="@string/pref_hidetheclock_des" />
+            android:summary="@string/pref_hideaclock_des" />
         <Preference
-            android:title="@string/pref_hidetheclocktime_title"
+            android:title="@string/pref_hideaclocktime_title"
             android:key="mHideTheClockTime"
             android:dependency="mHideTheClock" />
         <SwitchPreference
-            android:title="@string/pref_longtouchtohide_title"
+            android:title="@string/pref_removebylongpress_title"
             android:key="mLongTouchToHide"
             android:defaultValue="false"
             android:switchTextOn=""
             android:switchTextOff=""
-            android:summary="@string/pref_longtouchtohide_des" />
+            android:summary="@string/pref_removebylongpress_des" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_subject_etc">
         <SwitchPreference

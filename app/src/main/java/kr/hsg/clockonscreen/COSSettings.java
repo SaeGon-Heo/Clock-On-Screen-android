@@ -31,7 +31,6 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -1546,7 +1545,7 @@ public final class COSSettings extends PreferenceActivity
 
                 // 다이얼로그 빌드
                 HideTheClockTimeDialog = new AlertDialog.Builder(this)
-                        .setTitle(R.string.pref_dialog_hidetheclocktime_title)
+                        .setTitle(R.string.pref_dialog_hideaclocktime_title)
                         .setView(HideTheClockTimeLayout)
                         .setPositiveButton(android.R.string.ok, null)
                         .setNegativeButton(android.R.string.cancel, null)
