@@ -71,7 +71,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public final class COSSvc extends Service implements Runnable {
+public final class COSSvc extends Service {
     // 반복 사용 될 단순 문자 및 문자열 저장
     static final char CHAR_PERCENT = '%';
     static final char CHAR_BATTSTATE_FULL = '◎';
@@ -118,6 +118,7 @@ public final class COSSvc extends Service implements Runnable {
     boolean cosSvc_FSState;
     private WindowManager cosSvc_winManager;
     ScheduledFuture<?> cosSvc_repeater;
+    Runnable cosSvc_Runnable;
     Instant cosSvc_current;
     DateTimeFormatter cosSvc_formatter;
     Locale cosSvc_Locale;
@@ -716,7 +717,7 @@ public final class COSSvc extends Service implements Runnable {
                 if(cosSvc_repeater.cancel(true)) break;
             }
         }
-        mHandler.removeCallbacks(this);
+        mHandler.removeCallbacks(cosSvc_Runnable);
         mHandler.removeMessages(0);
 
         cosSvc_receiver.clearAbortBroadcast();
@@ -1050,6 +1051,15 @@ public final class COSSvc extends Service implements Runnable {
                             .withZone(ZoneId.systemDefault());
         }
 
+        // Runnable 객체 생성
+        cosSvc_Runnable = new Runnable() {
+            // cosSvc_repeater로 인해 매초 실행되는 부분
+            public void run() {
+                // 주기마다 mHandler에 Message 전송
+                mHandler.sendEmptyMessage(0);
+            }
+        };
+
         // 현재 시간
         cosSvc_current = Instant.now();
 
@@ -1064,7 +1074,7 @@ public final class COSSvc extends Service implements Runnable {
         // Runnable을 서비스 자신으로 등록한다.
 		if(cosSvc_repeater == null) {
             cosSvc_repeater = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate
-                    (this, 2000 - (cosSvc_current.getNano() / 1000000), 1000, TimeUnit.MILLISECONDS);
+                    (cosSvc_Runnable, 2000 - (cosSvc_current.getNano() / 1000000), 1000, TimeUnit.MILLISECONDS);
         }
 
         // 초 정보 저장
@@ -1247,12 +1257,6 @@ public final class COSSvc extends Service implements Runnable {
             reloadCurrentTime(false);
         }
         super.onConfigurationChanged(newConfig);
-    }
-
-    // cosSvc_repeater로 인해 매초 또는 0.5초 마다 실행되는 부분
-    public void run() {
-        // 주기마다 mHandler에 Message 전송
-        mHandler.sendEmptyMessage(0);
     }
 
     // 매 초마다 실행.
