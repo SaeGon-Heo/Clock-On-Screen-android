@@ -722,11 +722,11 @@ public final class COSSettings extends PreferenceActivity
                         i++;
                         break;
                     case 'x':
-                        SB.append("≋⇵");
+                        SB.append("⌂≋⇵");
                         i++;
                         break;
                     case 'X':
-                        SB.append("W+M");
+                        SB.append("EWM");
                         i++;
                         break;
                     case '.':

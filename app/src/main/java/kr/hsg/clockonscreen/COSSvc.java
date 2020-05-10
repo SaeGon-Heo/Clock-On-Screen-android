@@ -42,11 +42,14 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -84,7 +87,6 @@ public final class COSSvc extends Service implements Runnable {
     static final char CHAR_NETSTATE_ALTER_MOBILE = 'M';
     static final char CHAR_NETSTATE_ALTER_WIFI = 'W';
     static final char CHAR_NETSTATE_ALTER_ETHERNET = 'E';
-    static final String STR_NETSTATE_ALTER_WIFI_MOBILE = "W+M";
     static final String STR_EMPTY = "";
     static final String STR_SYMBOL_SECOND = "\uF002";
     static final String STR_SYMBOL_SECOND_FILLZERO = "\uF001";
@@ -97,7 +99,6 @@ public final class COSSvc extends Service implements Runnable {
     static final byte NETSTATE_NONE = 0;
     static final byte NETSTATE_MOBILE = 1;
     static final byte NETSTATE_WIFI = 2;
-    static final byte NETSTATE_WIFI_MOBILE = 3;
     static final byte NETSTATE_ETHERNET = 4;
 
     // Layout Attach State 상수
@@ -157,6 +158,8 @@ public final class COSSvc extends Service implements Runnable {
     private byte cosSvc_layoutAttachState;
     View.OnLayoutChangeListener cosSvc_gradientRefresher;
     ConnectivityManager cosSvc_connManager;
+    TelephonyManager cosSvc_telManager;
+    PhoneStateListener cosSvc_psListener;
     BroadcastReceiver cosSvc_receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -220,216 +223,161 @@ public final class COSSvc extends Service implements Runnable {
                 // 네트워크 상태가 변경 될 때 마다
                 // 전체 네트워크를 검사하여 현재 활성화된 네트워크를 탐색
                 case ConnectivityManager.CONNECTIVITY_ACTION:
-                    // 총 발견된 네트워크 수를 저장
-                    byte network_count = 0;
-                    // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
-                    boolean bMobileHipri = false;
-
-                    // 초기 값 지정
-                    byte netState = COSSvc.NETSTATE_NONE;
-
-                    // EXTRA_NO_CONNECTIVITY 값 확인 후 false 인 경우 상세 정보 확인
-                    if(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
-                        // API 21(LOLLIPOP) 이상에서는 NetworkCapabilities를 사용
-                        // getActiveNetwork() 함수를 쓸수도 있지만
-                        // 만약 사용자가 VPN 사용 시 getActiveNetwork()는
-                        // VPN 네트워크를 반환하므로 아래와 같은 방법을 사용
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            // 현재 존재하는 모든 네트워크를 먼저 검사
-                            for (Network net : cosSvc_connManager.getAllNetworks()) {
-                                NetworkCapabilities netCap = cosSvc_connManager.getNetworkCapabilities(net);
-
-                                // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
-                                if (netCap != null && netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-                                    if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                                        network_count++;
-                                        // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
-                                        NetworkInfo hipriNetInfo = cosSvc_connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE_HIPRI);
-                                        if(hipriNetInfo != null && hipriNetInfo.isConnected()) {
-                                            bMobileHipri = true;
-                                        }
-                                        netState += COSSvc.NETSTATE_MOBILE;
-                                    } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                                        network_count++;
-                                        netState += COSSvc.NETSTATE_WIFI;
-                                    } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                                        network_count++;
-                                        netState += COSSvc.NETSTATE_ETHERNET;
-                                    }
-                                }
-                            }
-
-                            // 만약 발견된 네트워크가 없다면 netState의 초기 값인
-                            // 네트워크 없음 상태값이 유지되고
-                            // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
-
-                            // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
-                            if (network_count > 1) {
-                                // 기본적으로 2개 이상이 탐지되면
-                                // netState에 저장된 값은 1 / 2 / 4 중 하나가 되지 않는다
-                                // (NETSTATE_MOBILE(1) / WIFI(2) / ETHERNET(4))
-                                //
-                                // 그리고 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
-                                // 특정 네트워크 x의 값보다 큰 경우
-                                // 현재 활성화된 네트워크는 x라고 볼 수 있다
-                                //
-                                // NetworkInfo에서 Type 값이 TYPE_MOBILE_HIPRI로 나타나면
-                                // 셀룰러 네트워크의 우선순위가 높아지지만
-                                // Mobile DNS servers 로만 접속이 가능해진다고 한다
-                                //
-                                // 그런데 삼성의 다운로드 부스터 및 band LTE WiFi 사용 시
-                                // Type 값이 TYPE_MOBILE_HIPRI인 NetworkInfo의
-                                // isConnected 값이 true로 변화한다
-                                //
-                                // 따라서 TYPE_MOBILE_HIPRI NetworkInfo의
-                                // isConnected 상태를 저장한 bMobileHipri 값을 활용하여
-                                // 다운로드 부스터 및 band LTE WiFi 사용 여부를 출력한다
-
-                                // 만약 Ethernet + 기타 네트워크가 활성화된 경우
-                                // Ethernet 사용 상태로 처리
-                                if (netState > COSSvc.NETSTATE_ETHERNET) {
-                                    netState = COSSvc.NETSTATE_ETHERNET;
-                                }
-                                // 만약 WiFi + Mobile 네트워크가 활성화된 경우
-                                else if (netState > COSSvc.NETSTATE_WIFI) {
-                                    // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
-                                    if (bMobileHipri) {
-                                        // 다운로드 부스터 및 band LTE WiFi 사용 상태
-                                        netState = COSSvc.NETSTATE_WIFI_MOBILE;
-                                    }
-                                    else {
-                                        // WiFi 사용 상태
-                                        netState = COSSvc.NETSTATE_WIFI;
-                                    }
-                                }
-                                // 총 네트워크 수 2개 + 네트워크 상태 2(Mobile 2번)으로
-                                // 나타나는 경우 네트워크 상태를 1(Mobile)로 변경한다
-                                else {
-                                    netState = COSSvc.NETSTATE_MOBILE;
-                                }
-                            } // if(network_count > 1)
-                        } // LOLLIPOP 이상 API
-                        // API 21(LOLLIPOP) 미만에서는 예전 방식인 NetworkInfo를 사용
-                        else {
-                            // 현재 존재하는 모든 네트워크 조사
-                            for (NetworkInfo netinfo : cosSvc_connManager.getAllNetworkInfo()) {
-
-                                // 활성화된 네트워크 종류 확인 및 저장 후 네트워크 총 개수 1 증가
-                                if (netinfo != null && netinfo.isConnected()) {
-                                    switch(netinfo.getType()) {
-                                        // 삼성의 다운로드 부스터 및 band LTE WiFi 사용 여부 판별
-                                        // - TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true
-                                        // TYPE_MOBILE과 네트워크를 공유하므로 break;를 쓰지 않고
-                                        // TYPE_MOBILE_HIPRI는 TYPE_MOBILE를 탐지한 것으로 처리
-                                        case ConnectivityManager.TYPE_MOBILE_HIPRI:
-                                            bMobileHipri = true;
-                                        case ConnectivityManager.TYPE_MOBILE:
-                                            network_count++;
-                                            netState += COSSvc.NETSTATE_MOBILE;
-                                            break;
-                                        case ConnectivityManager.TYPE_WIFI:
-                                            network_count++;
-                                            netState += COSSvc.NETSTATE_WIFI;
-                                            break;
-                                        case ConnectivityManager.TYPE_ETHERNET:
-                                            network_count++;
-                                            netState += COSSvc.NETSTATE_ETHERNET;
-                                            break;
-                                    }
-                                }
-                            }
-
-                            // 만약 발견된 네트워크가 없다면 netState의 초기 값인
-                            // 네트워크 없음 상태값이 유지되고
-                            // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
-
-                            // 만약 발견된 네트워크 수가 2개 이상이면 현재 활성화된 네트워크를 탐색
-                            if (network_count > 1) {
-                                // 기본적으로 2개 이상이 탐지되면
-                                // netState에 저장된 값은 1 / 2 / 4 중 하나가 되지 않는다
-                                // (NETSTATE_MOBILE(1) / WIFI(2) / ETHERNET(4))
-                                //
-                                // 그리고 숫자가 클 수록 더 높은 우선순위를 가진 네트워크로
-                                // 특정 네트워크 x의 값보다 큰 경우
-                                // 현재 활성화된 네트워크는 x라고 볼 수 있다
-
-                                // 만약 Ethernet + 기타 네트워크가 활성화된 경우
-                                // Ethernet 사용 상태로 처리
-                                if (netState > COSSvc.NETSTATE_ETHERNET) {
-                                    netState = COSSvc.NETSTATE_ETHERNET;
-                                }
-                                // 만약 WiFi + Mobile 네트워크가 활성화된 경우
-                                else if (netState > COSSvc.NETSTATE_WIFI) {
-                                    // TYPE_MOBILE_HIPRI NetworkInfo의 isConnected 값이 true이면
-                                    if (bMobileHipri) {
-                                        // 다운로드 부스터 및 band LTE WiFi 사용 상태
-                                        netState = COSSvc.NETSTATE_WIFI_MOBILE;
-                                    }
-                                    else {
-                                        // WiFi 사용 상태
-                                        netState = COSSvc.NETSTATE_WIFI;
-                                    }
-                                }
-                                // 만약 다운로드 부스터 및 band LTE WiFi 사용 중 WiFi를 꺼버리면
-                                // 0/5 Type(둘 다 Mobile)의 NetworkInfo는
-                                // 여전히 isConnected: true 상태를 가지므로
-                                // 총 네트워크 수 2개 + 네트워크 상태 2(Mobile 2번)로 나타난다
-                                // 이 경우 네트워크 상태를 1(Mobile)로 변경한다
-                                else {
-                                    netState = COSSvc.NETSTATE_MOBILE;
-                                }
-                            } // if(network_count > 1)
-                        } // LOLLIPOP 미만 API
-                    } // EXTRA_NO_CONNECTIVITY check
-
-                    // 최종 획득한 상태 값을 기준으로 최종 문자열을 미리 저장
-                    // 9th bit check (isUsing_Network_State)
-                    if((cosSvc_Status & 0b0001_0000_0000) != 0) {
-                        cosSvc_strNetStateBuilder.setLength(0);
-
-                        switch (netState) {
-                            case COSSvc.NETSTATE_NONE:
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_NONE);
-                                break;
-                            case COSSvc.NETSTATE_WIFI_MOBILE:
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
-                            case COSSvc.NETSTATE_MOBILE:
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_MOBILE);
-                                break;
-                            case COSSvc.NETSTATE_WIFI:
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
-                                break;
-                            case COSSvc.NETSTATE_ETHERNET:
-                                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_ETHERNET);
-                                break;
-                        }
-                    }
-                    // 12nd bit check (isUsing_Network_State_Alter)
-                    if((cosSvc_Status & 0b1000_0000_0000) != 0) {
-                        cosSvc_strNetStateAlterBuilder.setLength(0);
-
-                        switch (netState) {
-                            case COSSvc.NETSTATE_NONE:
-                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_NONE);
-                                break;
-                            case COSSvc.NETSTATE_WIFI_MOBILE:
-                                cosSvc_strNetStateAlterBuilder.append(STR_NETSTATE_ALTER_WIFI_MOBILE);
-                                break;
-                            case COSSvc.NETSTATE_MOBILE:
-                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_MOBILE);
-                                break;
-                            case COSSvc.NETSTATE_WIFI:
-                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_WIFI);
-                                break;
-                            case COSSvc.NETSTATE_ETHERNET:
-                                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_ETHERNET);
-                                break;
-                        }
-                    }
+                case WifiManager.NETWORK_STATE_CHANGED_ACTION:
+                    updateNetworkState(intent, -1);
                     break;
             }
         }
     };
+
+    // update network state value
+
+    // stateMobile의 기본값은 -1
+    // onDataConnectionStateChanged은
+    // 모바일 네트워크 변경이 반영되기 전에 호출되기도 하므로
+    // onDataConnectionStateChanged에서 호출하는 경우 (intent == null)
+    // onDataConnectionStateChanged로부터 받은 stateMobile값을 추가로 사용한다
+    void updateNetworkState(Intent intent, int stateMobile) {
+        // 초기 값 지정
+        byte netState = COSSvc.NETSTATE_NONE;
+
+        // EXTRA_NO_CONNECTIVITY 값 확인 후 false 인 경우 상세 정보 확인
+        if (intent == null || !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+            // API 21(LOLLIPOP) 이상에서는 NetworkCapabilities를 사용
+
+            // API 21 이상에서는 기본적으로 여러개의 네트워크가 동시에 연결될 수 있다
+            // 따라서 모든 연결된 네트워크를 찾아서 저장한다
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // 현재 존재하는 모든 네트워크를 먼저 검사
+                // getActiveNetwork() 함수를 쓸수도 있지만
+                // 만약 사용자가 VPN 사용 시 getActiveNetwork()는
+                // VPN 네트워크를 반환하므로 아래와 같은 방법을 사용
+                for (Network net : cosSvc_connManager.getAllNetworks()) {
+                    NetworkCapabilities netCap = cosSvc_connManager.getNetworkCapabilities(net);
+
+                    // 활성화된 네트워크 종류 확인 및 해당 네트워크 값을 가리키는 비트를 1로 변경
+                    if (netCap != null && netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                        if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                            netState |= COSSvc.NETSTATE_MOBILE;
+                        } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                            netState |= COSSvc.NETSTATE_WIFI;
+                        } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                            netState |= COSSvc.NETSTATE_ETHERNET;
+                        }
+                    }
+                }
+
+                // 만약 onDataConnectionStateChanged를 통해 stateMobile 값을 받아온 경우 반영
+                if (intent == null && stateMobile != -1) {
+                    if (stateMobile == TelephonyManager.DATA_CONNECTED) {
+                        netState |= COSSvc.NETSTATE_MOBILE;
+                    } else {
+                        netState &= ~COSSvc.NETSTATE_MOBILE;
+                    }
+                }
+
+                // 만약 발견된 네트워크가 없다면 netState의 초기 값인
+                // 네트워크 없음 상태값이 유지되고
+                // 네트워크가 하나만 발견된 경우 해당 네트워크 값만 netState에 남는다
+                // 네트워크가 여러개 발견된 경우 비트 단위로 활성화된 네트워크 목록을 확인한다
+            } // LOLLIPOP 이상 API
+            else {
+                // API 21(LOLLIPOP) 미만에서는 예전 방식인 NetworkInfo를 사용
+
+                // API 21 미만에서는 기본적으로 네트워크 우선순위에 따라
+                // 우선순위가 가장 높은 단일 네트워크에만 연결되고
+                // 별도로 HIPRI 모바일 네트워크에 연결할 수 있으므로
+                // HIPRI 네트워크를 추가로 검사한다
+                boolean bMobileHipri = false;
+                // 현재 존재하는 모든 네트워크 조사
+                for (NetworkInfo netinfo : cosSvc_connManager.getAllNetworkInfo()) {
+
+                    // 활성화된 네트워크 종류 확인 및 해당 네트워크 값을 가리키는 비트를 1로 변경
+                    if (netinfo != null && netinfo.isConnected()) {
+                        switch (netinfo.getType()) {
+                            // TYPE_MOBILE_HIPRI는 wifi 또는 ethernet 연결 상태에서도
+                            // mobile 네트워크를 사용하기 위해 시스템 앱에서 가끔 쓰이므로
+                            // 별도로 확인 후 알맞게 처리
+                            case ConnectivityManager.TYPE_MOBILE_HIPRI:
+                                bMobileHipri = true;
+                            case ConnectivityManager.TYPE_MOBILE:
+                                netState |= COSSvc.NETSTATE_MOBILE;
+                                break;
+                            case ConnectivityManager.TYPE_WIFI:
+                                netState |= COSSvc.NETSTATE_WIFI;
+                                break;
+                            case ConnectivityManager.TYPE_ETHERNET:
+                                netState |= COSSvc.NETSTATE_ETHERNET;
+                                break;
+                        }
+                    }
+                }
+
+                // 만약 onDataConnectionStateChanged를 통해 stateMobile 값을 받아온 경우 반영
+                if (intent == null && stateMobile != -1) {
+                    if (stateMobile == TelephonyManager.DATA_CONNECTED) {
+                        netState |= COSSvc.NETSTATE_MOBILE;
+                    } else {
+                        netState &= ~COSSvc.NETSTATE_MOBILE;
+                    }
+                }
+
+                // 만약 2개 이상의 네트워크가 탐지된 경우
+                // 가장 우선순위가 높은 네트워크를 사용한다고 가정하고
+                // HIPRI 모바일 네트워크를 사용하는 경우(bMobileHipri)
+                // 모바일 사용 문자를 추가로 붙인다
+                if ((netState & COSSvc.NETSTATE_ETHERNET) != 0) {
+                    netState = COSSvc.NETSTATE_ETHERNET;
+                    if (bMobileHipri) {
+                        netState += COSSvc.NETSTATE_MOBILE;
+                    }
+                } else if ((netState & COSSvc.NETSTATE_WIFI) != 0) {
+                    netState = COSSvc.NETSTATE_WIFI;
+                    if (bMobileHipri) {
+                        netState += COSSvc.NETSTATE_MOBILE;
+                    }
+                }
+            } // LOLLIPOP 미만 API
+        } // EXTRA_NO_CONNECTIVITY check
+
+        // 최종 획득한 상태 값을 기준으로 최종 문자열을 미리 저장
+        // 9th bit check (isUsing_Network_State)
+        if ((cosSvc_Status & 0b0001_0000_0000) != 0) {
+            cosSvc_strNetStateBuilder.setLength(0);
+
+            if (netState == COSSvc.NETSTATE_NONE) {
+                cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_NONE);
+            } else {
+                if ((netState & COSSvc.NETSTATE_ETHERNET) != 0) {
+                    cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_ETHERNET);
+                }
+                if ((netState & COSSvc.NETSTATE_WIFI) != 0) {
+                    cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_WIFI);
+                }
+                if ((netState & COSSvc.NETSTATE_MOBILE) != 0) {
+                    cosSvc_strNetStateBuilder.append(CHAR_NETSTATE_MOBILE);
+                }
+            }
+        }
+        // 12nd bit check (isUsing_Network_State_Alter)
+        if ((cosSvc_Status & 0b1000_0000_0000) != 0) {
+            cosSvc_strNetStateAlterBuilder.setLength(0);
+
+            if (netState == COSSvc.NETSTATE_NONE) {
+                cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_NONE);
+            } else {
+                if ((netState & COSSvc.NETSTATE_ETHERNET) != 0) {
+                    cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_ETHERNET);
+                }
+                if ((netState & COSSvc.NETSTATE_WIFI) != 0) {
+                    cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_WIFI);
+                }
+                if ((netState & COSSvc.NETSTATE_MOBILE) != 0) {
+                    cosSvc_strNetStateAlterBuilder.append(CHAR_NETSTATE_ALTER_MOBILE);
+                }
+            }
+        }
+    }
 
     // 현재 시스템 시간을 불러와 저장
     void reloadCurrentTime(boolean bForceResetFormatter) {
@@ -774,6 +722,11 @@ public final class COSSvc extends Service implements Runnable {
         cosSvc_receiver.clearAbortBroadcast();
         unregisterReceiver(cosSvc_receiver);
 
+        // unregister PhoneStateListener
+        if (cosSvc_telManager != null) {
+            cosSvc_telManager.listen(cosSvc_psListener, PhoneStateListener.LISTEN_NONE);
+        }
+
         if(cosSvc_gradientRefresher != null) {
             if(cosSvc_TVGradient != null)
                 cosSvc_TVGradient.removeOnLayoutChangeListener(cosSvc_gradientRefresher);
@@ -1031,7 +984,19 @@ public final class COSSvc extends Service implements Runnable {
                 (cosSvc_FSMode == 2 && (cosSvc_InitStatus_notfs & 0b1001_0000_0000) != 0)) {
             // ConnectivityManager 생성
             cosSvc_connManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-            if(cosSvc_connManager == null) startSvc_Idle();
+
+            // use TelephonyManager to listen onDataConnectionStateChanged
+            cosSvc_telManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+            cosSvc_psListener = new PhoneStateListener() {
+                public void onDataConnectionStateChanged(int state) {
+                    updateNetworkState(null, state);
+                }
+            };
+
+            if (cosSvc_connManager == null || cosSvc_telManager == null) startSvc_Idle();
+
+            // register PhoneStateListener
+            cosSvc_telManager.listen(cosSvc_psListener, PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
 
             // StringBuilder 생성
             // 9th bit check (isUsing_Network_State)
@@ -1050,6 +1015,8 @@ public final class COSSvc extends Service implements Runnable {
             // 먼저 호출되어 버려서 네트워크 상태를 재대로 갱신하지 못한다
             // 따라서 BroadcastReceiver만 사용
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            // wifi 변경 사항도 추적
+            filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         }
 
         // 리시버 등록
