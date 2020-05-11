@@ -161,6 +161,7 @@ public final class COSSvc extends Service {
     ConnectivityManager cosSvc_connManager;
     TelephonyManager cosSvc_telManager;
     PhoneStateListener cosSvc_psListener;
+    boolean cossvc_bCellularEnabled;
     BroadcastReceiver cosSvc_receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -225,7 +226,7 @@ public final class COSSvc extends Service {
                 // 전체 네트워크를 검사하여 현재 활성화된 네트워크를 탐색
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                 case WifiManager.NETWORK_STATE_CHANGED_ACTION:
-                    updateNetworkState(intent, -1);
+                    updateNetworkState(intent);
                     break;
             }
         }
@@ -233,16 +234,14 @@ public final class COSSvc extends Service {
 
     // update network state value
 
-    // stateMobile의 기본값은 -1
-    // onDataConnectionStateChanged은
-    // 모바일 네트워크 변경이 반영되기 전에 호출되기도 하므로
-    // onDataConnectionStateChanged에서 호출하는 경우 (intent == null)
-    // onDataConnectionStateChanged로부터 받은 stateMobile값을 추가로 사용한다
-    void updateNetworkState(Intent intent, int stateMobile) {
+    // onDataConnectionStateChanged에서 저장된 모바일 네트워크 값과
+    // 별도로 ETHERNET 및 WIFI 상태를 추가로 확인하여
+    // 현재 네트워크 상태를 갱신
+    void updateNetworkState(Intent intent) {
         // 초기 값 지정
         byte netState = COSSvc.NETSTATE_NONE;
 
-        // EXTRA_NO_CONNECTIVITY 값 확인 후 false 인 경우 상세 정보 확인
+        // intent가 null 또는 EXTRA_NO_CONNECTIVITY 값이 false인 경우 상세 정보 확인
         if (intent == null || !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
             // API 21(LOLLIPOP) 이상에서는 NetworkCapabilities를 사용
 
@@ -258,22 +257,11 @@ public final class COSSvc extends Service {
 
                     // 활성화된 네트워크 종류 확인 및 해당 네트워크 값을 가리키는 비트를 1로 변경
                     if (netCap != null && netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-                        if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                            netState |= COSSvc.NETSTATE_MOBILE;
-                        } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                        if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                             netState |= COSSvc.NETSTATE_WIFI;
                         } else if (netCap.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
                             netState |= COSSvc.NETSTATE_ETHERNET;
                         }
-                    }
-                }
-
-                // 만약 onDataConnectionStateChanged를 통해 stateMobile 값을 받아온 경우 반영
-                if (intent == null && stateMobile != -1) {
-                    if (stateMobile == TelephonyManager.DATA_CONNECTED) {
-                        netState |= COSSvc.NETSTATE_MOBILE;
-                    } else {
-                        netState &= ~COSSvc.NETSTATE_MOBILE;
                     }
                 }
 
@@ -287,23 +275,16 @@ public final class COSSvc extends Service {
 
                 // API 21 미만에서는 기본적으로 네트워크 우선순위에 따라
                 // 우선순위가 가장 높은 단일 네트워크에만 연결되고
-                // 별도로 HIPRI 모바일 네트워크에 연결할 수 있으므로
-                // HIPRI 네트워크를 추가로 검사한다
-                boolean bMobileHipri = false;
+                // 별도로 HIPRI 모바일 네트워크에 연결할 수 있으나
+                // 모바일 네트워크 상태는 onDataConnectionStateChanged에서 별도로 관리하므로
+                // 여기서 별도로 검사하지 않는다
+
                 // 현재 존재하는 모든 네트워크 조사
                 for (NetworkInfo netinfo : cosSvc_connManager.getAllNetworkInfo()) {
 
                     // 활성화된 네트워크 종류 확인 및 해당 네트워크 값을 가리키는 비트를 1로 변경
                     if (netinfo != null && netinfo.isConnected()) {
                         switch (netinfo.getType()) {
-                            // TYPE_MOBILE_HIPRI는 wifi 또는 ethernet 연결 상태에서도
-                            // mobile 네트워크를 사용하기 위해 시스템 앱에서 가끔 쓰이므로
-                            // 별도로 확인 후 알맞게 처리
-                            case ConnectivityManager.TYPE_MOBILE_HIPRI:
-                                bMobileHipri = true;
-                            case ConnectivityManager.TYPE_MOBILE:
-                                netState |= COSSvc.NETSTATE_MOBILE;
-                                break;
                             case ConnectivityManager.TYPE_WIFI:
                                 netState |= COSSvc.NETSTATE_WIFI;
                                 break;
@@ -314,31 +295,22 @@ public final class COSSvc extends Service {
                     }
                 }
 
-                // 만약 onDataConnectionStateChanged를 통해 stateMobile 값을 받아온 경우 반영
-                if (intent == null && stateMobile != -1) {
-                    if (stateMobile == TelephonyManager.DATA_CONNECTED) {
-                        netState |= COSSvc.NETSTATE_MOBILE;
-                    } else {
-                        netState &= ~COSSvc.NETSTATE_MOBILE;
-                    }
-                }
-
-                // 만약 2개 이상의 네트워크가 탐지된 경우
-                // 가장 우선순위가 높은 네트워크를 사용한다고 가정하고
-                // HIPRI 모바일 네트워크를 사용하는 경우(bMobileHipri)
-                // 모바일 사용 문자를 추가로 붙인다
+                // 만약 2개 이상의 네트워크가 탐지된 경우가 있다면
+                // 가장 우선순위가 높은 네트워크를 사용한다고 가정한다
                 if ((netState & COSSvc.NETSTATE_ETHERNET) != 0) {
                     netState = COSSvc.NETSTATE_ETHERNET;
-                    if (bMobileHipri) {
-                        netState += COSSvc.NETSTATE_MOBILE;
-                    }
                 } else if ((netState & COSSvc.NETSTATE_WIFI) != 0) {
                     netState = COSSvc.NETSTATE_WIFI;
-                    if (bMobileHipri) {
-                        netState += COSSvc.NETSTATE_MOBILE;
-                    }
                 }
             } // LOLLIPOP 미만 API
+
+            // 마지막으로 onDataConnectionStateChanged를 통해 확인한
+            // 모바일 네트워크 상태를 반영
+            if (cossvc_bCellularEnabled) {
+                netState |= COSSvc.NETSTATE_MOBILE;
+            } else {
+                netState &= ~COSSvc.NETSTATE_MOBILE;
+            }
         } // EXTRA_NO_CONNECTIVITY check
 
         // 최종 획득한 상태 값을 기준으로 최종 문자열을 미리 저장
@@ -989,8 +961,12 @@ public final class COSSvc extends Service {
             // use TelephonyManager to listen onDataConnectionStateChanged
             cosSvc_telManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
             cosSvc_psListener = new PhoneStateListener() {
+                // onDataConnectionStateChanged는 모바일 네트워크상태 변화가 적용되기 전에
+                // 호출되는 경우도 있으므로 해당 리스너를 통해 얻은 상태값을 별도로 저장한다
                 public void onDataConnectionStateChanged(int state) {
-                    updateNetworkState(null, state);
+                    // save cellular network state only here
+                    cossvc_bCellularEnabled = (state == TelephonyManager.DATA_CONNECTED);
+                    updateNetworkState(null);
                 }
             };
 
