@@ -68,6 +68,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.Locale;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -117,6 +118,7 @@ public final class COSSvc extends Service {
     // 값이 변화하며, 그렇지 않으면 항상 true 이다
     boolean cosSvc_FSState;
     private WindowManager cosSvc_winManager;
+    ScheduledExecutorService cosSvc_executor;
     ScheduledFuture<?> cosSvc_repeater;
     Runnable cosSvc_Runnable;
     Instant cosSvc_current;
@@ -684,11 +686,23 @@ public final class COSSvc extends Service {
         cosSvc_Status |= 0b0010_0000_0001;
 
         // 서비스 종료 과정
-        if(cosSvc_repeater != null) {
-            while(true) {
-                if(cosSvc_repeater.cancel(true)) break;
-            }
+        // 스케줄러 해제
+        if (cosSvc_repeater != null) {
+            do {
+                cosSvc_repeater.cancel(true);
+            } while (!cosSvc_repeater.isDone());
         }
+
+        if (cosSvc_executor != null) {
+            do {
+                cosSvc_executor.shutdownNow();
+                try {
+                    cosSvc_executor.awaitTermination(30, TimeUnit.SECONDS);
+                } catch (InterruptedException ignored) {}
+            } while (!cosSvc_executor.isTerminated());
+        }
+
+        // 실행 대기중인 Runnable 객체 제거
         mHandler.removeCallbacks(cosSvc_Runnable);
         mHandler.removeMessages(0);
 
@@ -886,21 +900,26 @@ public final class COSSvc extends Service {
         }
 
         // 롱터치시 시계 표시 조건을 만족 할 때 까지 시계를 계속 숨기는 기능
-        if(_subClass.getHideTemporaryByLongTouch()) {
+        if (_subClass.getHideTemporaryByLongTouch()) {
             // 가장 뷰 크기가 큰 cosSvc_OutBoundLayout에서 처리
             ((ViewGroup)cosSvc_OutBoundLayout).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     // 10th bit check (onDestroy_called)
-                    if((cosSvc_Status & 0b0010_0000_0000) != 0) return true;
+                    if ((cosSvc_Status & 0b0010_0000_0000) != 0) return true;
 
                     // 화면을 끄고 켜는 경우에만 서비스 재시작한다고 토스트 메시지를 띄운다
                     Toast.makeText(COSSvc.this, R.string.pref_toast_removeaclocktemporary, Toast.LENGTH_LONG).show();
 
+                    // 하위 뷰 TextView의 텍스트를 초기화
+                    cosSvc_TV.setText(STR_EMPTY);
+                    if (cosSvc_TVGradient != null) cosSvc_TVGradient.setText(STR_EMPTY);
+
+                    // 스케줄러 해제
                     if (cosSvc_repeater != null) {
-                        while (true) {
-                            if (cosSvc_repeater.cancel(true)) break;
-                        }
+                        do {
+                            cosSvc_repeater.cancel(true);
+                        } while (!cosSvc_repeater.isDone());
                         // cosSvc_repeater을 null로 만들어서
                         // 화면 회전 시 cosSvc_repeater 가 null이 아닌 경우에만
                         // 서비스를 재시작하도록 함
@@ -908,9 +927,20 @@ public final class COSSvc extends Service {
                         cosSvc_repeater = null;
                     }
 
-                    // 하위 뷰 TextView의 텍스트를 초기화
-                    cosSvc_TV.setText(STR_EMPTY);
-                    if(cosSvc_TVGradient != null) cosSvc_TVGradient.setText(STR_EMPTY);
+                    if (cosSvc_executor != null) {
+                        do {
+                            cosSvc_executor.shutdownNow();
+                            try {
+                                cosSvc_executor.awaitTermination(30, TimeUnit.SECONDS);
+                            } catch (InterruptedException ignored) {}
+                        } while (!cosSvc_executor.isTerminated());
+                        // 위의 cosSvc_repeater와 동일
+                        cosSvc_executor = null;
+                    }
+
+                    // 실행 대기중인 Runnable 객체 제거
+                    mHandler.removeCallbacks(cosSvc_Runnable);
+                    mHandler.removeMessages(0);
 
                     // 시계 숨기기
                     ((ViewGroup)cosSvc_OutBoundLayout).setVisibility(View.GONE);
@@ -1036,10 +1066,13 @@ public final class COSSvc extends Service {
             }
         };
 
+        // ScheduledExecutorService 단일 스레드로 생성
+        cosSvc_executor = Executors.newSingleThreadScheduledExecutor();
+
         // 현재 시간
         cosSvc_current = Instant.now();
 
-		// 1초 마다 반복 처리하는 스케쥴러 등록
+		// 1초 마다 반복 처리하는 스케줄러 등록
         // 단 2000ms - 현재 시간의 ms 한 만큼 딜레이를 가지고 시작한다
         // 즉, 1초 초과 ~ 2초 이하 만큼 기다린 뒤에 반복 작업을 시작하며
         // 최소 1초는 스케쥴러 등록 후 남은 작업을 위한 여유 시간으로 사용한다
@@ -1049,7 +1082,7 @@ public final class COSSvc extends Service {
         //
         // Runnable을 서비스 자신으로 등록한다.
 		if(cosSvc_repeater == null) {
-            cosSvc_repeater = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate
+            cosSvc_repeater = cosSvc_executor.scheduleAtFixedRate
                     (cosSvc_Runnable, 2000 - (cosSvc_current.getNano() / 1000000), 1000, TimeUnit.MILLISECONDS);
         }
 
