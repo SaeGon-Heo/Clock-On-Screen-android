@@ -120,7 +120,6 @@ public final class COSSvc extends Service {
     private WindowManager cosSvc_winManager;
     ScheduledExecutorService cosSvc_executor;
     ScheduledFuture<?> cosSvc_repeater;
-    Runnable cosSvc_Runnable;
     Instant cosSvc_current;
     DateTimeFormatter cosSvc_formatter;
     Locale cosSvc_Locale;
@@ -702,8 +701,7 @@ public final class COSSvc extends Service {
             } while (!cosSvc_executor.isTerminated());
         }
 
-        // 실행 대기중인 Runnable 객체 제거
-        mHandler.removeCallbacks(cosSvc_Runnable);
+        // 실행 대기중인 message 제거
         mHandler.removeMessages(0);
 
         cosSvc_receiver.clearAbortBroadcast();
@@ -938,8 +936,7 @@ public final class COSSvc extends Service {
                         cosSvc_executor = null;
                     }
 
-                    // 실행 대기중인 Runnable 객체 제거
-                    mHandler.removeCallbacks(cosSvc_Runnable);
+                    // 실행 대기중인 message 제거
                     mHandler.removeMessages(0);
 
                     // 시계 숨기기
@@ -1057,8 +1054,8 @@ public final class COSSvc extends Service {
                             .withZone(ZoneId.systemDefault());
         }
 
-        // Runnable 객체 생성
-        cosSvc_Runnable = new Runnable() {
+        // Runnable 객체 미리 생성
+        Runnable msgSender = new Runnable() {
             // cosSvc_repeater로 인해 매초 실행되는 부분
             public void run() {
                 // 주기마다 mHandler에 Message 전송
@@ -1081,9 +1078,9 @@ public final class COSSvc extends Service {
         //     1초마다 sendEmptyMessage를 호출한다
         //
         // Runnable을 서비스 자신으로 등록한다.
-		if(cosSvc_repeater == null) {
+		if (cosSvc_repeater == null) {
             cosSvc_repeater = cosSvc_executor.scheduleAtFixedRate
-                    (cosSvc_Runnable, 2000 - (cosSvc_current.getNano() / 1000000), 1000, TimeUnit.MILLISECONDS);
+                    (msgSender, 2000 - (cosSvc_current.getNano() / 1000000), 1000, TimeUnit.MILLISECONDS);
         }
 
         // 초 정보 저장
