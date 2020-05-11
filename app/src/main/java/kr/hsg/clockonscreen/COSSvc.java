@@ -1069,7 +1069,7 @@ public final class COSSvc extends Service {
         // 현재 시간
         cosSvc_current = Instant.now();
 
-		// 1초 마다 반복 처리하는 스케줄러 등록
+        // 1초 마다 반복 처리하는 스케줄러 등록
         // 단 2000ms - 현재 시간의 ms 한 만큼 딜레이를 가지고 시작한다
         // 즉, 1초 초과 ~ 2초 이하 만큼 기다린 뒤에 반복 작업을 시작하며
         // 최소 1초는 스케쥴러 등록 후 남은 작업을 위한 여유 시간으로 사용한다
@@ -1077,8 +1077,8 @@ public final class COSSvc extends Service {
         // ex) 3.325초 에서 실행한 경우 5.000초 가 되는 순간부터
         //     1초마다 sendEmptyMessage를 호출한다
         //
-        // Runnable을 서비스 자신으로 등록한다.
-		if (cosSvc_repeater == null) {
+        // 위에서 만든 Runnable을 등록
+        if (cosSvc_repeater == null) {
             cosSvc_repeater = cosSvc_executor.scheduleAtFixedRate
                     (msgSender, 2000 - (cosSvc_current.getNano() / 1000000), 1000, TimeUnit.MILLISECONDS);
         }
