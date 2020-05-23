@@ -619,6 +619,11 @@ public final class COSSvc extends Service {
         // 텍스트뷰를 화면 위에 추가 한 뒤 최대 크기 계산을 위한 넣어둔 쓰래기값을 지움
         cosSvc_TV.setText("");
 
+        // 최상단 뷰가 화면 위에 추가 되면 포커싱 설정이 리셋되는 것으로 보인다
+        // setFocusedByDefault 참조
+        // 따라서 최상단 뷰가 포커스를 받도록 리셋된 결과를 다시 안 받도록 설정
+        ((ViewGroup)cosSvc_OutBoundLayout).setFocusable(false);
+
         // Attach 완료 상태로 변경
         cosSvc_layoutAttachState = LAYOUT_IS_ATTACHED;
     }
