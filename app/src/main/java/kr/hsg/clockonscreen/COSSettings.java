@@ -600,7 +600,7 @@ public final class COSSettings extends PreferenceActivity
                     SB.append('\'');
                     state = 0;
                 }
-                SB.append("\'\'");
+                SB.append("''");
             }
             // .와 다음줄 문자를 제외한 값을 처리
             else if (array[i] != '\n' && array[i] != '\r') {
@@ -619,7 +619,7 @@ public final class COSSettings extends PreferenceActivity
                 state = 0;
             }
             if (array[i] == '\'')
-                SB.append("\'\'");
+                SB.append("''");
             else
                 SB.append(array[i]);
         }
