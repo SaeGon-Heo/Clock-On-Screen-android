@@ -84,30 +84,30 @@ public final class COSSettings extends PreferenceActivity
 
     // 서비스 실행
     void runService(int way, boolean stillInPrefActivity) {
-        Intent mSvc_Idle = new Intent(mCon, COSSvc_Idle.class);
-        Intent mSvc = new Intent(mCon, COSSvc.class);
+        Intent mSvc_Idle = new Intent(COSSettings.this, COSSvc_Idle.class);
+        Intent mSvc = new Intent(COSSettings.this, COSSvc.class);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
                 && !Settings.canDrawOverlays(mCon)) {
-            mCon.stopService(mSvc); mCon.stopService(mSvc_Idle);
+            stopService(mSvc); stopService(mSvc_Idle);
 
             mPref.edit().putBoolean("service_running", false).apply();
 
             // FLAG_ACTIVITY_NEW_TASK 때문에 ApplicationContext에서도 실행
-            mCon.startActivity(new Intent(mCon, COSMain.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            startActivity(new Intent(this, COSMain.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             return;
         }
 
         // 0 = stop / 1 = start / 2 = restart
         // 여기서 0, 2만 쓰이므로 Main의 함수와는 달리 필요없는 부분 제거
-        mCon.stopService(mSvc); mCon.stopService(mSvc_Idle);
+        stopService(mSvc); stopService(mSvc_Idle);
         if(way == 2) {
             if(stillInPrefActivity) {
                 // 설정 창임을 알리는 값을 추가
                 mSvc.putExtra("PreferenceView", true);
-                mCon.startService(mSvc);
+                startService(mSvc);
             } else {
-                mCon.startService(mSvc_Idle);
+                startService(mSvc_Idle);
             }
         }
     }
@@ -1623,7 +1623,7 @@ public final class COSSettings extends PreferenceActivity
                         Toast.makeText(COSSettings.this, mCon.getString(R.string.pref_toast_reset_complete), Toast.LENGTH_SHORT).show();
                         // 메인 액티비티 실행
                         // FLAG_ACTIVITY_NEW_TASK 때문에 ApplicationContext에서도 실행
-                        mCon.startActivity(new Intent(mCon, COSMain.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        startActivity(new Intent(COSSettings.this, COSMain.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
                 });
 			}
@@ -1751,7 +1751,7 @@ public final class COSSettings extends PreferenceActivity
 
             // 지금까지의 액티비티 모두 제거 및 메인 액티비티 실행
             // FLAG_ACTIVITY_NEW_TASK 때문에 ApplicationContext에서도 실행
-            mCon.startActivity(new Intent(mCon, COSMain.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            startActivity(new Intent(COSSettings.this, COSMain.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             return true;
         } else if(prefKey.equals(mCon.getString(R.string.pref_fontColor_key_string)) || prefKey.equals(mCon.getString(R.string.pref_fontShadowColor_key_string)) || prefKey.equals(mCon.getString(R.string.pref_fontShadow_key_string)) ||
                 prefKey.equals(mCon.getString(R.string.pref_hideTheClock_key_string)) || prefKey.equals(mCon.getString(R.string.pref_background_key_string)) || prefKey.equals(mCon.getString(R.string.pref_backgroundColor_key_string)) ||

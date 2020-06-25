@@ -54,16 +54,17 @@ import android.widget.LinearLayout;
 import java.lang.reflect.InvocationTargetException;
 
 public final class FSDetector extends LinearLayout {
-    //private String FLAG = "FSDetectorLog";
+    //private final static String FLAG = "FSDetectorLog";
+
     private OnFullScreenListener OnFullScreenListener;
     private WindowManager winManager;
-    private Context mCon;
+    private Context ctx;
     private boolean bError;
     private boolean bAttachedOnFullScreenListener;
 
     public FSDetector(Context context) {
         super(context);
-        mCon = context.getApplicationContext();
+        ctx = context;
 
         // Get Window Manager using default display context
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -80,7 +81,7 @@ public final class FSDetector extends LinearLayout {
             winManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
         }
 
-        if (mCon == null || winManager == null) {
+        if (ctx == null || winManager == null) {
             bError = true;
             // Log.e(FLAG, "context error");
         }
@@ -128,6 +129,7 @@ public final class FSDetector extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if(bError) return;
+        //Log.d(FLAG, "onLayout called");
         //this.setBackgroundColor(0xafffffff);
         if (changed) {
             //Log.d(FLAG, "screen - " + r + " x " + b);
@@ -152,14 +154,14 @@ public final class FSDetector extends LinearLayout {
                 dis.getRealSize(size);
             } else {
                 try {
-                    //size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(dis);
-                    size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(dis);
+                    //size.x = (int) Display.class.getMethod("getRawWidth").invoke(dis);
+                    size.y = (int) Display.class.getMethod("getRawHeight").invoke(dis);
                 } catch (IllegalAccessException e) {} catch (InvocationTargetException e) {} catch (NoSuchMethodException e) {}
             }
 
             // LinearLayout의 bottom (세로 픽셀 크기)과 측정된 화면 크기 Point의 y값(세로)이 같으면 풀스크린 상태
             //Log.d(FLAG, "screen FS " + (bottom == height || bottom == size.y) + ". scrSize:" + size.x + "/" + size.y + ", Bottom:" + bottom);
-            OnFullScreenListener.fsChanged(mCon, bottom == height || bottom == size.y);
+            OnFullScreenListener.fsChanged(ctx, bottom == height || bottom == size.y);
         }
     }
 

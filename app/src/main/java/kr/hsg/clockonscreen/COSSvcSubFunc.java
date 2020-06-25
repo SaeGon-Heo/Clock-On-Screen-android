@@ -340,9 +340,11 @@ final class COSSvcSubFunc {
 
         // 알림 터치 시 앱 메인화면 띄우기 위한 PendingIntent
         PendingIntent mPendingIntent = PendingIntent.getActivity(
-                mCon,
+                context,
                 0,
-                new Intent(mCon, COSMain.class),
+                new Intent(context, COSMain.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
 

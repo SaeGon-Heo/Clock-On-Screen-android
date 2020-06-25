@@ -19,7 +19,6 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
@@ -35,27 +34,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public final class COSInfo extends Activity {
-    Context mCon;
     AlertDialog OpenSourceDialog;
-    Uri GitHubLink;
 
     // 서비스 실행
     void restartService() {
-        Intent mSvc_Idle = new Intent(mCon, COSSvc_Idle.class);
-        Intent mSvc = new Intent(mCon, COSSvc.class);
+        Intent mSvc_Idle = new Intent(COSInfo.this, COSSvc_Idle.class);
+        Intent mSvc = new Intent(COSInfo.this, COSSvc.class);
 
         // 오버레이 권한이 사용자에 의해 풀린 경우 확인하여 서비스를 종료하고 다시 켜도록 유도
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
-                && !Settings.canDrawOverlays(mCon)) {
+                && !Settings.canDrawOverlays(getApplicationContext())) {
             // 정보 엑티비티 이면 정보 엑티비티만 닫음. service_running 값은 여전히 true 이므로
             // Main Activity로 복귀하면서 오버레이 권한을 한번더 확인.
             if(!isFinishing()) finish();
             return;
         }
 
-        mCon.stopService(mSvc);
-        mCon.stopService(mSvc_Idle);
-        mCon.startService(mSvc_Idle);
+        stopService(mSvc);
+        stopService(mSvc_Idle);
+        startService(mSvc_Idle);
     }
 
     @Override
@@ -73,17 +70,12 @@ public final class COSInfo extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCon = getApplicationContext();
-
         setContentView(R.layout.activity_info);
         setTitle(R.string.action_info);
 
         // Add up button
         ActionBar ab = getActionBar();
         if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
-
-        // GitHub Uri 미리 생성
-        GitHubLink = Uri.parse("https://github.com/SaeGon-Heo/Clock-On-Screen-android");
 
         // 버튼 터치 시 효과 (음영)
         View.OnTouchListener touchEffect = new View.OnTouchListener() {
@@ -117,7 +109,7 @@ public final class COSInfo extends Activity {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent.setData(GitHubLink);
+                intent.setData(Uri.parse("https://github.com/SaeGon-Heo/Clock-On-Screen-android"));
                 startActivity(intent);
             }
         });
@@ -191,7 +183,7 @@ public final class COSInfo extends Activity {
     protected void onResume() {
         super.onResume();
         // 서비스가 켜진상태면 재실행
-        if(PreferenceManager.getDefaultSharedPreferences(mCon).getBoolean("service_running", false)) restartService();
+        if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("service_running", false)) restartService();
     } // onResume
 
     @Override

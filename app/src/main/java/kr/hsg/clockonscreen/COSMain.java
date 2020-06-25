@@ -48,14 +48,14 @@ public final class COSMain extends Activity {
 
     // 서비스 실행
     void runService(int way) {
-        Intent mSvc_Idle = new Intent(mCon, COSSvc_Idle.class);
-        Intent mSvc = new Intent(mCon, COSSvc.class);
+        Intent mSvc_Idle = new Intent(this, COSSvc_Idle.class);
+        Intent mSvc = new Intent(this, COSSvc.class);
 
         // 오버레이 권한이 사용자에 의해 풀린 경우 확인하여 서비스를 종료하고 다시 켜도록 유도
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
                 && !Settings.canDrawOverlays(mCon)) {
             // service_running 값을 false 으로 저장 및 서비스 중지 상태로 버튼을 전환
-            mCon.stopService(mSvc); mCon.stopService(mSvc_Idle);
+            stopService(mSvc); stopService(mSvc_Idle);
 
             // 서비스 실행 상태 꺼짐으로 변경 및 서비스 켜기/끄기 버튼 상태를 끄기로 변경
             PreferenceManager.getDefaultSharedPreferences(mCon).edit().putBoolean("service_running", false).apply();
@@ -72,8 +72,8 @@ public final class COSMain extends Activity {
         }
 
         // 0 = stop / 1 = start / 2 = restart
-        if(way != 1) { mCon.stopService(mSvc); mCon.stopService(mSvc_Idle); }
-        if(way != 0) mCon.startService(mSvc_Idle);
+        if(way != 1) { stopService(mSvc); stopService(mSvc_Idle); }
+        if(way != 0) startService(mSvc_Idle);
     }
 
     // API 23(Marshmallow)이후 오버레이 권한을 켜도록 하는 Dialog 출력

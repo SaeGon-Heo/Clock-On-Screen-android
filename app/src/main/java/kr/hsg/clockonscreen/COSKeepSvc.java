@@ -46,11 +46,11 @@ public final class COSKeepSvc extends BroadcastReceiver {
             // 부팅(QuickBoot 포함) 및 앱 재설치 시 서비스 실행
             if(strAction.equals(Intent.ACTION_BOOT_COMPLETED) || strAction.equals(Intent.ACTION_MY_PACKAGE_REPLACED) ||
             strAction.equals("android.intent.action.QUICKBOOT_POWERON") || strAction.equals("com.htc.intent.action.QUICKBOOT_POWERON")) {
-                Intent mSvc_Idle = new Intent(mCon, COSSvc_Idle.class);
+                Intent mSvc_Idle = new Intent(context, COSSvc_Idle.class);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    mCon.startForegroundService(mSvc_Idle);
+                    context.startForegroundService(mSvc_Idle);
                 else
-                    mCon.startService(mSvc_Idle);
+                    context.startService(mSvc_Idle);
             }
         }
     }

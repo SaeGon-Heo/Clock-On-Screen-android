@@ -34,7 +34,7 @@ public final class COSSvc_Idle extends Service {
 
     // Main 서비스 시작. (Idle 상태 탈출)
     void startSvc() {
-        getApplicationContext().startService(new Intent(getApplicationContext(), COSSvc.class));
+        startService(new Intent(this, COSSvc.class));
         stopSelf();
     }
 
