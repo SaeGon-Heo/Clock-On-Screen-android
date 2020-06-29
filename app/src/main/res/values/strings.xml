@@ -6,6 +6,7 @@
     <string name="app_open_source_library_title" translatable="false">Open Source Library</string>
     <string name="app_request_overlay_permission_title">Display over other apps</string>
     <string name="app_request_overlay_permission_content">Clock On Screen need \"Display over other apps\" to display a clock.\nPlease, press OK button and activate \"Allow display over other apps\" in a screen appeared.\nIf you don\'t activate it, you can\'t use Clock On Screen.</string>
+    <string name="app_request_overlay_permission_content_android_R">Clock On Screen need \"Display over other apps\" to display a clock.\nPlease, press OK button and tap Clock On Screen and activate \"Allow display over other apps\" in a screen appeared.\nIf you don\'t activate it, you can\'t use Clock On Screen.</string>
     <string name="app_info_content">Clock On Screen is an android app that displays a date, time, battery state and network state as text on a screen.</string>
     <string name="app_info_content_oreo_suffix">\n\nFrom Android Oreo(8.0), you will see a notification such as \"Clock On Screen is displaying over other apps\".\nPlease, press and hold a corresponding notification, disable an option that appears and press \"DONE\" button to disable a notification.\nThis option is applied to each application separately, so you can see such notification from other applications normally.</string>
 

@@ -79,14 +79,20 @@ public final class COSMain extends Activity {
     // API 23(Marshmallow)이후 오버레이 권한을 켜도록 하는 Dialog 출력
     @TargetApi(Build.VERSION_CODES.M)
     public void induceSetOverlayPermission() {
-        if(PermissionDialog == null) {
-            PermissionDialog = new AlertDialog.Builder(this)
+        if (PermissionDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setPositiveButton(android.R.string.ok, null)
                     .setIcon(R.mipmap.ic_launcher)
-                    .setMessage(R.string.app_request_overlay_permission_content)
                     .setTitle(R.string.app_request_overlay_permission_title)
-                    .setCancelable(false)
-                    .create();
+                    .setCancelable(false);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                builder.setMessage(R.string.app_request_overlay_permission_content_android_R);
+            } else {
+                builder.setMessage(R.string.app_request_overlay_permission_content);
+            }
+
+            PermissionDialog = builder.create();
 
             PermissionDialog.show();
             PermissionDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
