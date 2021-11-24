@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion = '30.0.0'
+    compileSdkVersion 31
+    buildToolsVersion = '31.0.0'
     defaultConfig {
         applicationId "kr.hsg.clockonscreen"
         minSdkVersion 15
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 200513001
         versionName "2.6.0"
     }
@@ -32,5 +32,5 @@ tasks.whenTaskAdded { task ->
 
 dependencies {
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }
