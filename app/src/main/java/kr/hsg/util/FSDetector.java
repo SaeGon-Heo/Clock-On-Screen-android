@@ -12,8 +12,7 @@
 //            android:permission="android.permission.SYSTEM_ALERT_WINDOW">
 // </service>
 //
-// Must initialize using ui thread context
-// Note that "Min Api Level" is 11
+// You must have to initialize this using ui thread context
 
  /* --- Usage ---
 	private FSDetector detector;
@@ -25,8 +24,8 @@
     // set Listener
     detector.setOnFullScreenListener(new OnFullScreenListener() {
         @Override
-        public void fsChanged(Context context, boolean bIsFS) {
-            if(bIsFS) {
+        public void fsChanged(Context context, boolean bFSState) {
+            if (bFSState) {
                 // write your code
             }
         }
@@ -34,145 +33,130 @@
 
     <onDestroy>
     // deactivate detector
-    if(detector != null)
+    if (detector != null)
         detector.detach();
 */
 
-package kr.hsg.clockonscreen;
+package kr.hsg.util;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import java.lang.reflect.InvocationTargetException;
-
 public final class FSDetector extends LinearLayout {
-    //private final static String FLAG = "FSDetectorLog";
+    private final static String LOG_TAG = "FSDetectorLog";
 
-    private OnFullScreenListener OnFullScreenListener;
+    private OnFullScreenListener onFullScreenListener;
     private WindowManager winManager;
     private Context ctx;
     private boolean bError;
-    private boolean bAttachedOnFullScreenListener;
 
     public FSDetector(Context context) {
         super(context);
+        if (context == null) {
+            bError = true;
+            Log.e(LOG_TAG, "context is null!");
+            return;
+        }
+
         ctx = context;
 
         // Get Window Manager using default display context
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             DisplayManager dm = ((DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE));
-            if (dm != null) {
-                Display dis = dm.getDisplay(Display.DEFAULT_DISPLAY);
-                Context defaultDisContext = context.createDisplayContext(dis);
-                winManager = ((WindowManager) defaultDisContext.getSystemService(Context.WINDOW_SERVICE));
-            } else {
-                bError = true;
-                // Log.e(FLAG, "Window Manager creation error");
-            }
-        } else {
+            Display dis = dm.getDisplay(Display.DEFAULT_DISPLAY);
+            Context defaultDisContext = context.createDisplayContext(dis);
+            winManager = ((WindowManager) defaultDisContext.getSystemService(Context.WINDOW_SERVICE));
+        }
+        else {
             winManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
         }
 
-        if (ctx == null || winManager == null) {
+        if (winManager == null) {
             bError = true;
-            // Log.e(FLAG, "context error");
+            Log.e(LOG_TAG, "Failed to get WindowManager!");
+            return;
         }
 
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
     public boolean attach() {
-        if(bError) return false;
+        if (bError) return false;
 
-        // FSDetector를 최상단에 넣기 위한 layout 설정 값
+        // create layout configuration to insert FSDetector into top screen
         int __type;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             __type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         else
             __type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+
         // Fix for the cannot click install on sideloaded apps bug
         // Dont fill width, set to left side with a few pixels wide
         WindowManager.LayoutParams layout = new WindowManager.LayoutParams(
-                1, WindowManager.LayoutParams.MATCH_PARENT,
+                0,
+                WindowManager.LayoutParams.MATCH_PARENT,
                 __type,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
                         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
         layout.gravity = Gravity.LEFT;
 
-        // 화면 최상단에 FSDetector를 삽입
+        // insert FSDetector into top screen
         winManager.addView(this, layout);
 
         return true;
     }
 
     public boolean detach() {
-        if(bError) return false;
+        if (bError) return false;
 
         // FSDetector를 화면 최상단에서 제거
         this.clearAnimation();
-
         winManager.removeView(this);
 
         return true;
     }
 
-    // this does the magic
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if(bError) return;
-        //Log.d(FLAG, "onLayout called");
-        //this.setBackgroundColor(0xafffffff);
+        if (bError) return;
+        //Log.d(LOG_TAG, "onLayout called");
+
         if (changed) {
-            //Log.d(FLAG, "screen - " + r + " x " + b);
-            onFSChanged(b);
+            //Log.d(LOG_TAG, "onLayout - changed: " + changed);
+            onFSChanged();
         }
     }
 
-    // do some math... and update the listeners ect ect
-    private void onFSChanged(int bottom) {
-        //Log.d(FLAG, "FS changed");
-        if(OnFullScreenListener != null) {
-            Point size = new Point(0, 0);
-            int height;
-
-            // soft key 제외 영역 계산
-            Display dis = winManager.getDefaultDisplay();
-            dis.getSize(size);
-            height = size.y;
-
-            // soft key 포함 영역 계산
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                dis.getRealSize(size);
-            } else {
-                try {
-                    //size.x = (int) Display.class.getMethod("getRawWidth").invoke(dis);
-                    size.y = (int) Display.class.getMethod("getRawHeight").invoke(dis);
-                } catch (IllegalAccessException e) {} catch (InvocationTargetException e) {} catch (NoSuchMethodException e) {}
-            }
-
-            // LinearLayout의 bottom (세로 픽셀 크기)과 측정된 화면 크기 Point의 y값(세로)이 같으면 풀스크린 상태
-            //Log.d(FLAG, "screen FS " + (bottom == height || bottom == size.y) + ". scrSize:" + size.x + "/" + size.y + ", Bottom:" + bottom);
-            OnFullScreenListener.fsChanged(ctx, bottom == height || bottom == size.y);
+    private void onFSChanged() {
+        //Log.d(LOG_TAG, "FS changed");
+        if (bError || !hasOnFullScreenListener()) {
+            return;
         }
+
+        // getLocationOnScreen에서 얻은 y 값이 0인 경우 풀스크린
+        int loc[] = new int[2];
+        this.getLocationOnScreen(loc);
+        //Log.d(LOG_TAG, "y: " + location[1]);
+        //Log.d(LOG_TAG, "screen FS: " + (location[1] == 0));
+
+        onFullScreenListener.fsChanged(ctx, loc[1] == 0);
     }
 
-    public void setOnFullScreenListener
-            (OnFullScreenListener listener) {
-        this.OnFullScreenListener = listener;
-        this.bAttachedOnFullScreenListener = true;
+    public void setOnFullScreenListener(OnFullScreenListener listener) {
+        this.onFullScreenListener = listener;
     }
 
     public boolean hasOnFullScreenListener() {
-        return this.bAttachedOnFullScreenListener;
+        return this.onFullScreenListener != null;
     }
 
     public interface OnFullScreenListener {

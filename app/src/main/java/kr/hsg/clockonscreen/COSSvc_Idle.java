@@ -15,7 +15,8 @@
  */
 package kr.hsg.clockonscreen;
 
-import kr.hsg.clockonscreen.FSDetector.OnFullScreenListener;
+import kr.hsg.util.FSDetector;
+import kr.hsg.util.FSDetector.OnFullScreenListener;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

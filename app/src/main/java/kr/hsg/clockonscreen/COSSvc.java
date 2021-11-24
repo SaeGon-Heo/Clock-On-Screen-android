@@ -24,7 +24,8 @@
 
 package kr.hsg.clockonscreen;
 
-import kr.hsg.clockonscreen.FSDetector.OnFullScreenListener;
+import kr.hsg.util.FSDetector;
+import kr.hsg.util.FSDetector.OnFullScreenListener;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
