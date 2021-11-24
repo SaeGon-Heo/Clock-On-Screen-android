@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
@@ -310,7 +311,7 @@ final class COSSvcSubFunc {
     Notification getNotification(Context context, boolean isIdle) {
         Notification.Builder mNotiBuilder;
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // 알람 채널 관리자 생성
             NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (mNotificationManager == null) return null;
@@ -334,18 +335,22 @@ final class COSSvcSubFunc {
         } else {
             // 알림 빌더 생성
             mNotiBuilder = new Notification.Builder(context);
-            if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                 mNotiBuilder.setPriority(Notification.PRIORITY_MIN);
         }
 
         // 알림 터치 시 앱 메인화면 띄우기 위한 PendingIntent
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
         PendingIntent mPendingIntent = PendingIntent.getActivity(
                 context,
                 0,
                 new Intent(context, COSMain.class)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                flags
         );
 
         // 알림 설정
@@ -359,7 +364,7 @@ final class COSSvcSubFunc {
         }
 
         // 안드로이드 버전에 따라 분기
-        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             return mNotiBuilder.build();
         else
             return mNotiBuilder.getNotification();
