@@ -36,7 +36,6 @@ public final class COSSvcController {
 
     private boolean hasOverlayPermission() {
         if (!cosPermController.hasOverlayPermission()) {
-            // TODO set svc on and remove perm in android and test on boot
             cosPermController.openReqOverlayPermDialog();
             return false;
         }
@@ -67,18 +66,21 @@ public final class COSSvcController {
         ctx.startService(mSvc_Idle);
     }
 
-    public void startServiceOnBoot() {
-        if (!hasOverlayPermission()) {
-            return;
+    // return false if overlay permission is not granted
+    public boolean startServiceFromBroadcastReceiver() {
+        if (!cosPermController.hasOverlayPermission()) {
+            return false;
         }
 
         Intent mSvc_Idle = new Intent(ctx, COSSvc_Idle.class);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ctx.startForegroundService(mSvc_Idle);
+            return true;
         }
 
         ctx.startService(mSvc_Idle);
+        return true;
     }
 
     public void stopService() {

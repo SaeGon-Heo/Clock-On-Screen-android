@@ -17,6 +17,8 @@
     <string name="text_svc_on">Clock On Screen service is running</string>
     <string name="text_svc_idle">Clock On Screen service is currently idle</string>
 
+    <string name="toast_no_overlay_perm">No permission to run Clock On Screen</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_info">Info</string>
     <string name="action_exit">Exit</string>

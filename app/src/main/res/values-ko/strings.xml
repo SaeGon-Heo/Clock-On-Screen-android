@@ -13,6 +13,8 @@
     <string name="text_svc_on">Clock On Screen 서비스가 실행 중입니다</string>
     <string name="text_svc_idle">Clock On Screen 서비스가 현재 유휴 상태입니다</string>
 
+    <string name="toast_no_overlay_perm">Clock On Screen 실행에 필요한 권한이 없습니다</string>
+
     <string name="action_settings">설정</string>
     <string name="action_info">정보</string>
     <string name="action_exit">종료</string>
