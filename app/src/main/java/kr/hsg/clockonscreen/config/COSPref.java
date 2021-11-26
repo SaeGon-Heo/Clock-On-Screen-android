@@ -76,6 +76,7 @@ public final class COSPref {
         final Context appCtx = ctx.getApplicationContext();
 
         // 기본 시계 구조에 따라 포맷 문자열 저장
+        // TODO getClockText 함수 변경 반영
         pref.edit()
                 .putBoolean(appCtx.getString(R.string.pref_english_key_string), isEnglish)
                 .putString(appCtx.getString(R.string.pref_clockText_key_string), appCtx.getString(R.string.pref_clockText_default_string))
