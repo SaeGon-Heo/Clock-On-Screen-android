@@ -84,10 +84,6 @@ public final class COSSvcController {
     }
 
     public void stopService() {
-        if (!hasOverlayPermission()) {
-            return;
-        }
-
         Intent mSvc_Idle = new Intent(ctx, COSSvc_Idle.class);
         Intent mSvc = new Intent(ctx, COSSvc.class);
 

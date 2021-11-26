@@ -105,7 +105,9 @@ public final class COSInfo extends Activity {
         super.onResume();
         if (cosPref.isServiceRunning()) {
             cosSvcController.restartService();
+            return;
         }
+        cosSvcController.stopService();
     } // onResume
 
     @Override

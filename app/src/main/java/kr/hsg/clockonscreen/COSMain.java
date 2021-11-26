@@ -103,15 +103,15 @@ public final class COSMain extends Activity {
         // 설정값에 따라 서비스 상태를 토글
         iv.setOnClickListener(v -> {
             if (cosPref.isServiceRunning()) {
-                cosSvcController.stopService();
                 updateSvcStateUiOff();
                 cosPref.setServiceRunningOff();
+                cosSvcController.stopService();
                 return;
             }
 
-            cosSvcController.startService();
             updateSvcStateUiOn();
             cosPref.setServiceRunningOn();
+            cosSvcController.startService();
         });
     }
 
@@ -138,7 +138,10 @@ public final class COSMain extends Activity {
         super.onResume();
         if (cosPref.isServiceRunning()) {
             cosSvcController.restartService();
+            return;
         }
+        cosSvcController.stopService();
+        updateSvcStateUiOff();
     } // onResume
 
     // 메인 화면에만 메뉴를 로드
