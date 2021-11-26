@@ -52,6 +52,9 @@ public final class COSMain extends Activity {
         cosSvcController = new COSSvcController(this);
         cosPermController = new COSPermController(this);
 
+        // 첫 실행 또는 설정 초기화를 실행한 경우 초기 값 설정
+        cosPref.initPreferencesIfNeed();
+
         // 현재 Context의 Locale 업데이트
         new ContextLocaleUpdater(this).updateLocale(cosPref.getSavedLocale());
 
@@ -66,9 +69,6 @@ public final class COSMain extends Activity {
         if (!cosPermController.hasOverlayPermission()) {
             cosPermController.openReqOverlayPermDialog();
         }
-
-        // 첫 실행 또는 설정 초기화를 실행한 경우 초기 값 설정
-        cosPref.initPreferencesIfNeed();
 
         // 서비스 실행상태 시 안내문 및 아이콘 변경
         if (cosPref.isServiceRunning()) {
@@ -136,7 +136,6 @@ public final class COSMain extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        // 서비스가 켜진상태면 재실행
         if (cosPref.isServiceRunning()) {
             cosSvcController.restartService();
         }
