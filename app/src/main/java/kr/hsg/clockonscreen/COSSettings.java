@@ -249,7 +249,7 @@ public final class COSSettings extends PreferenceActivity
 
     // 시계 구조 설정 값을 DateTimeFormatter에 알맞은 포맷으로 변환
     // * 프로젝트 경로의 COS_structure.txt 파일 참조
-    static String getClockTextFormatted(String data) {
+    public static String getClockTextFormatted(String data) {
         StringBuilder SB = new StringBuilder();
 
         // 시계 구조 저장
@@ -632,7 +632,7 @@ public final class COSSettings extends PreferenceActivity
 
     // 시계 구조 설정 값을 기준으로 시계 문자열의 최대 크기를 계산
     // * 프로젝트 경로의 COS_structure.txt 파일 참조
-    static String getClockTextMax(String data, boolean mEnglish) {
+    public static String getClockTextMax(String data, boolean mEnglish) {
         StringBuilder SB = new StringBuilder();
 
         // 시계 구조 저장
