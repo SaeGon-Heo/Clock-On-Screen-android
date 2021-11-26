@@ -43,7 +43,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -51,59 +50,55 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public final class FSDetector extends LinearLayout {
-    private final static String LOG_TAG = "FSDetectorLog";
-
     private OnFullScreenListener onFullScreenListener;
-    private WindowManager winManager;
-    private Context ctx;
-    private boolean bError;
 
-    public FSDetector(Context context) {
-        super(context);
-        if (context == null) {
-            bError = true;
-            Log.e(LOG_TAG, "context is null!");
-            return;
+    private final WindowManager winManager;
+    private final Context ctx;
+
+    public FSDetector(Context ctx) {
+        super(ctx);
+        if (ctx == null) {
+            throw new RuntimeException("Context is null!");
         }
 
-        ctx = context;
+        this.ctx = ctx;
 
-        // Get Window Manager using default display context
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            DisplayManager dm = ((DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE));
-            Display dis = dm.getDisplay(Display.DEFAULT_DISPLAY);
-            Context defaultDisContext = context.createDisplayContext(dis);
-            winManager = ((WindowManager) defaultDisContext.getSystemService(Context.WINDOW_SERVICE));
-        }
-        else {
-            winManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-        }
-
+        winManager = getWinManager(ctx);
         if (winManager == null) {
-            bError = true;
-            Log.e(LOG_TAG, "Failed to get WindowManager!");
-            return;
+            throw new RuntimeException("Failed to get WindowManager!");
         }
 
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
-    public boolean attach() {
-        if (bError) return false;
+    private WindowManager getWinManager(Context ctx) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DisplayManager dm = ((DisplayManager)ctx.getSystemService(Context.DISPLAY_SERVICE));
+            Display dis = dm.getDisplay(Display.DEFAULT_DISPLAY);
+            Context defaultDisContext = ctx.createDisplayContext(dis);
 
+            return ((WindowManager) defaultDisContext.getSystemService(Context.WINDOW_SERVICE));
+        }
+
+        return ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE));
+    }
+
+    public boolean attach() {
         // create layout configuration to insert FSDetector into top screen
-        int __type;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            __type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        else
-            __type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+        int type;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+        else {
+            type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+        }
 
         // Fix for the cannot click install on sideloaded apps bug
         // Dont fill width, set to left side with a few pixels wide
         WindowManager.LayoutParams layout = new WindowManager.LayoutParams(
                 0,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                __type,
+                type,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
                         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
@@ -116,8 +111,6 @@ public final class FSDetector extends LinearLayout {
     }
 
     public boolean detach() {
-        if (bError) return false;
-
         // FSDetector를 화면 최상단에서 제거
         this.clearAnimation();
         winManager.removeView(this);
@@ -127,26 +120,19 @@ public final class FSDetector extends LinearLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (bError) return;
-        //Log.d(LOG_TAG, "onLayout called");
-
         if (changed) {
-            //Log.d(LOG_TAG, "onLayout - changed: " + changed);
             onFSChanged();
         }
     }
 
     private void onFSChanged() {
-        //Log.d(LOG_TAG, "FS changed");
-        if (bError || !hasOnFullScreenListener()) {
+        if (!hasOnFullScreenListener()) {
             return;
         }
 
         // getLocationOnScreen에서 얻은 y 값이 0인 경우 풀스크린
         int loc[] = new int[2];
         this.getLocationOnScreen(loc);
-        //Log.d(LOG_TAG, "y: " + location[1]);
-        //Log.d(LOG_TAG, "screen FS: " + (location[1] == 0));
 
         onFullScreenListener.fsChanged(ctx, loc[1] == 0);
     }
