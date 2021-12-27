@@ -53,7 +53,23 @@ public final class COSSvcController {
 
         ctx.stopService(mSvc);
         ctx.stopService(mSvc_Idle);
+
         ctx.startService(mSvc_Idle);
+    }
+
+    public void restartServiceInSetting() {
+        if (!hasOverlayPermission()) {
+            return;
+        }
+
+        Intent mSvc_Idle = new Intent(ctx, COSSvc_Idle.class);
+        Intent mSvc = new Intent(ctx, COSSvc.class);
+
+        ctx.stopService(mSvc);
+        ctx.stopService(mSvc_Idle);
+
+        mSvc.putExtra("PreferenceView", true);
+        ctx.startService(mSvc);
     }
 
     public void startService() {

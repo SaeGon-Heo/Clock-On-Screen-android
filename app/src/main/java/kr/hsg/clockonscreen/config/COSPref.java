@@ -21,21 +21,28 @@ import android.preference.PreferenceManager;
 
 import java.util.Locale;
 
-import kr.hsg.clockonscreen.COSSettings;
+import kr.hsg.clockonscreen.COSFragmentPref;
 import kr.hsg.clockonscreen.R;
 import kr.hsg.clockonscreen.dialog.AppInfoDialog;
 
 public final class COSPref {
+
+    private static final String KEY_SVC_RUNNING = "service_running";
+    private static final String KEY_INIT_PREF = "init_pref";
+
     private AppInfoDialog appInfoDialog;
 
     private final SharedPreferences pref;
     private final Context ctx;
+    private final Context appCtx;
 
     public COSPref(final Context ctx) {
         if (ctx == null) {
             throw new RuntimeException("Context is null!");
         }
         this.ctx = ctx;
+        this.appCtx = ctx.getApplicationContext();
+
         pref = PreferenceManager.getDefaultSharedPreferences(ctx.getApplicationContext());
         if (pref == null) {
             throw new RuntimeException("Failed to get SharedPreferences!");
@@ -43,37 +50,40 @@ public final class COSPref {
     }
 
     public boolean isServiceRunning() {
-        return pref.getBoolean("service_running", false);
+        return pref.getBoolean(KEY_SVC_RUNNING, false);
     }
 
     public void setServiceRunningOff() {
-        pref.edit().putBoolean("service_running", false).apply();
+        pref.edit().putBoolean(KEY_SVC_RUNNING, false).apply();
     }
 
     public void setServiceRunningOn() {
-        pref.edit().putBoolean("service_running", true).apply();
+        pref.edit().putBoolean(KEY_SVC_RUNNING, true).apply();
+    }
+
+    public boolean isEnglish() {
+        return pref.getBoolean(
+                ctx.getApplicationContext()
+                        .getString(R.string.pref_english_key_string),
+                true
+        );
     }
 
     public Locale getSavedLocale() {
-        if (pref.getBoolean(
-                ctx.getApplicationContext().getString(R.string.pref_english_key_string),
-                true))
-        {
+        if (isEnglish()) {
             return Locale.US;
         }
         return Locale.KOREA;
     }
 
     public void initPreferencesIfNeed() {
-        if (!pref.getBoolean("init_pref", true)) {
+        if (!pref.getBoolean(KEY_INIT_PREF, true)) {
             return;
         }
 
         // 사용중인 주 언어 확인 및 반영
-        String currentLocale = Locale.getDefault().toString();
+        final String currentLocale = Locale.getDefault().toString();
         final boolean isEnglish = !currentLocale.equals("ko_KR") && !currentLocale.equals("ko");
-
-        final Context appCtx = ctx.getApplicationContext();
 
         // 기본 시계 구조에 따라 포맷 문자열 저장
         // TODO getClockText 함수 변경 반영
@@ -82,19 +92,23 @@ public final class COSPref {
                 .putString(appCtx.getString(R.string.pref_clockText_key_string), appCtx.getString(R.string.pref_clockText_default_string))
                 .putString(appCtx.getString(R.string.pref_clockText_notfs_key_string), appCtx.getString(R.string.pref_clockText_default_string))
                 .putString(appCtx.getString(R.string.pref_clockTextMax_key_string),
-                        COSSettings.getClockTextMax(appCtx.getString(R.string.pref_clockText_default_string), isEnglish))
+                        COSFragmentPref.getClockTextMax(appCtx.getString(R.string.pref_clockText_default_string), isEnglish))
                 .putString(appCtx.getString(R.string.pref_clockTextMax_notfs_key_string),
-                        COSSettings.getClockTextMax(appCtx.getString(R.string.pref_clockText_default_string), isEnglish))
+                        COSFragmentPref.getClockTextMax(appCtx.getString(R.string.pref_clockText_default_string), isEnglish))
                 .putString(appCtx.getString(R.string.pref_clockTextFormatted_key_string),
-                        COSSettings.getClockTextFormatted(appCtx.getString(R.string.pref_clockText_default_string)))
+                        COSFragmentPref.getClockTextFormatted(appCtx.getString(R.string.pref_clockText_default_string)))
                 .putString(appCtx.getString(R.string.pref_clockTextFormatted_notfs_key_string),
-                        COSSettings.getClockTextFormatted(appCtx.getString(R.string.pref_clockText_default_string))).apply();
+                        COSFragmentPref.getClockTextFormatted(appCtx.getString(R.string.pref_clockText_default_string))).apply();
 
         openAppInfoDialog();
     }
 
     public void markInitPreferencesIsDone() {
-        pref.edit().putBoolean("init_pref", false).apply();
+        pref.edit().putBoolean(KEY_INIT_PREF, false).apply();
+    }
+
+    public String getClockText() {
+        return pref.getString(appCtx.getString(R.string.pref_clockText_key_string), appCtx.getString(R.string.pref_clockText_default_string));
     }
 
     public void openAppInfoDialog() {
